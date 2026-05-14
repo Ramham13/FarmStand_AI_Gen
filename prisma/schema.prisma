@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Farm {
+  id                 String    @id @default(cuid())
+  name               String
+  slug               String    @unique
+  description        String?
+  location           String?
+  imageUrl           String?
+  phone              String?
+  email              String?
+  website            String?
+  paymentLink        String?
+  sellerAcknowledged Boolean   @default(false)
+  acknowledgedAt     DateTime?
+  status             String    @default("ACTIVE")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  products           Product[]
+  userId             String    @unique
+}
+
+model Product {
+  id           String        @id @default(cuid())
+  farmId       String
+  farm         Farm          @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  name         String
+  category     String
+  description  String?
+  price        Float?
+  unit         String?
+  imageUrl     String?
+  availability String        @default("AVAILABLE")
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+  waitlist     Waitlist[]
+}
+
+model Reservation {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  message       String?
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Waitlist {
+  id            String    @id @default(cuid())
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerName  String
+  customerEmail String
+  notifiedAt    DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("FARMER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  type      String
+  reason    String
+  status    String   @default("PENDING")
+  data      String?
+  createdAt DateTime @default(now())
+}
