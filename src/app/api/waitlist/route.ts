@@ -1,23 +1,160 @@
 import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
+import { prisma } from "@/lib/db"
+import { getCurrentUser } from "@/lib/auth-server"
 
-// Demo mode - no database
-export async function POST(request: Request) {
-  const body = await request.json()
-  const { productId, customerName, customerEmail } = body
+// GET /api/waitlist - get waitlists for farmer's products
+export async function GET() {
+  try {
+    const user = await getCurrentUser()
+    
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    }
 
-  if (!productId || !customerName || !customerEmail) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    // For demo users, return empty
+    if (user.id.startsWith("demo-") || user.id.startsWith("user-")) {
+      return NextResponse.json([])
+    }
+
+    // Get farmer's farm
+    const farm = await prisma.farm.findUnique({
+      where: { userId: user.id },
+    })
+
+    if (!farm) {
+      return NextResponse.json([])
+    }
+
+    // Get all products for this farm
+    const products = await prisma.product.findMany({
+      where: { farmId: farm.id },
+      select: { id: true },
+    })
+
+    const productIds = products.map(p => p.id)
+
+    if (productIds.length === 0) {
+      return NextResponse.json([])
+    }
+
+    // Get waitlist entries with product info
+    const waitlistEntries = await prisma.waitlist.findMany({
+      where: { productId: { in: productIds } },
+      include: {
+        product: {
+          select: {
+            id: true,
+            name: true,
+            farmId: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    })
+
+    // Group by product
+    const grouped: Record<string, {
+      id: string
+      product: string
+      productId: string
+      customers: Array<{
+        id: string
+        name: string
+        email: string
+        position: number
+        joinedAt: string
+        notifiedAt: string | null
+      }>
+    }> = {}
+
+    for (const entry of waitlistEntries) {
+      const productName = entry.product.name
+      if (!grouped[productName]) {
+        grouped[productName] = {
+          id: entry.productId,
+          product: productName,
+          productId: entry.productId,
+          customers: [],
+        }
+      }
+      
+      // Calculate position (1-based index)
+      const position = grouped[productName].customers.length + 1
+      
+      grouped[productName].customers.push({
+        id: entry.id,
+        name: entry.customerName,
+        email: entry.customerEmail,
+        position,
+        joinedAt: entry.createdAt.toISOString(),
+        notifiedAt: entry.notifiedAt?.toISOString() || null,
+      })
+    }
+
+    return NextResponse.json(Object.values(grouped))
+  } catch (error) {
+    console.error("Get waitlist error:", error)
+    return NextResponse.json({ error: "Failed to get waitlist" }, { status: 500 })
   }
-
-  return NextResponse.json({
-    id: "wait-" + Date.now(),
-    productId,
-    customerName,
-    customerEmail,
-    createdAt: new Date().toISOString(),
-  }, { status: 201 })
 }
 
-export async function GET() {
-  return NextResponse.json([])
+// POST /api/waitlist - add customer to waitlist
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const { productId, customerName, customerEmail } = body
+
+    if (!productId || !customerName || !customerEmail) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    const entry = await prisma.waitlist.create({
+      data: {
+        productId,
+        customerName,
+        customerEmail,
+      },
+    })
+
+    return NextResponse.json({
+      id: entry.id,
+      productId: entry.productId,
+      customerName: entry.customerName,
+      customerEmail: entry.customerEmail,
+      createdAt: entry.createdAt.toISOString(),
+    }, { status: 201 })
+  } catch (error) {
+    console.error("Add to waitlist error:", error)
+    return NextResponse.json({ error: "Failed to add to waitlist" }, { status: 500 })
+  }
+}
+
+// PATCH /api/waitlist - update waitlist entry (e.g., mark as notified)
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json()
+    const { waitlistId, action } = body
+
+    if (!waitlistId) {
+      return NextResponse.json({ error: "Waitlist ID required" }, { status: 400 })
+    }
+
+    if (action === "notify") {
+      const entry = await prisma.waitlist.update({
+        where: { id: waitlistId },
+        data: { notifiedAt: new Date() },
+      })
+
+      return NextResponse.json({
+        id: entry.id,
+        notifiedAt: entry.notifiedAt?.toISOString() || null,
+      })
+    }
+
+    return NextResponse.json({ error: "Invalid action" }, { status: 400 })
+  } catch (error) {
+    console.error("Update waitlist error:", error)
+    return NextResponse.json({ error: "Failed to update waitlist" }, { status: 500 })
+  }
 }

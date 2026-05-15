@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -19,21 +19,9 @@ interface UserInfo {
   }
 }
 
-// Demo user for now - in production, fetch from server
-const defaultUser: UserInfo = {
-  id: "demo-user-1",
-  email: "farmer@example.com",
-  role: "FARMER",
-  createdAt: "2024-01-15T00:00:00.000Z",
-  farm: {
-    id: "demo-farm-1",
-    name: "Sunny Acres Farm",
-    slug: "sunny-acres"
-  }
-}
-
 export default function ProfilePage() {
-  const [user] = useState<UserInfo>(defaultUser)
+  const [user, setUser] = useState<UserInfo | null>(null)
+  const [loading, setLoading] = useState(true)
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -41,6 +29,21 @@ export default function ProfilePage() {
   })
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(res => {
+        if (!res.ok) return null
+        return res.json()
+      })
+      .then(data => {
+        setUser(data)
+        setLoading(false)
+      })
+      .catch(() => {
+        setLoading(false)
+      })
+  }, [])
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "Unknown"
@@ -114,6 +117,36 @@ export default function ProfilePage() {
     } finally {
       setIsChangingPassword(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 w-32 bg-gray-200 rounded"></div>
+            <div className="h-40 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <p className="text-gray-500">Please log in to view your profile.</p>
+              <Button asChild className="mt-4 bg-green-600 hover:bg-green-700">
+                <a href="/login">Log In</a>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (
