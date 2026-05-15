@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   let allProducts = farms.flatMap(farmData => 
     (farmData.products || [])
       .filter((p: any) => p.availability !== 'SOLD_OUT')
-      .map(product => ({
+      .map((product: any) => ({
         ...product,
         farmId: farmData.id,
         farmName: farmData.name,
