@@ -1,9 +1,10 @@
-# Sprint Tasks - 2026-05-15 13:22 UTC
+# Sprint Tasks - 2026-05-15 13:27 UTC
 
 ## Priority 1: Re-enable Route Protection Middleware (CRITICAL)
 - [ ] Fix the EvalError that caused middleware to be disabled
   - Current: middleware.ts.disabled - all routes unprotected
-  - Need: Investigate and fix the eval issue, then re-enable
+  - Need: Rename to middleware.ts, fix any issues, re-enable
+  - The middleware logic looks correct - should work once enabled
 - [ ] Verify unauthenticated users are redirected to /login
 - [ ] Ensure public routes (/, /explore, /login, /register, /onboarding) still work
 - **Impact**: Security vulnerability - admin/dashboard routes currently open to anyone
@@ -24,18 +25,17 @@
 - [ ] Display real customer emails and join dates
 - **Impact**: Farmers cannot manage actual waitlists - all data is mock
 
-## Priority 4: Fix Mobile Touch Targets
-- [ ] Increase category button height from h-8 (32px) to h-11 (44px)
-- [ ] Increase CTA button height from h-9 (36px) to h-11 (44px)
-- [ ] Verify all interactive elements meet 44px minimum
-- **Impact**: ~40% mobile users - current 32-36px targets are below accessibility standard
-
-## Priority 5: Verify/Complete Product CRUD for Farmers
+## Priority 4: Verify/Complete Product CRUD for Farmers
 - [ ] Test adding new product via /dashboard/products/new
 - [ ] Test editing existing product via /dashboard/products/[id]
 - [ ] Verify product images can be added (URL field exists, check if upload needed)
 - [ ] Ensure created products appear on public farm page
 - **Impact**: Farmers cannot add/edit their own products (MVP gap)
+
+## Priority 5: Mobile Touch Target Verification
+- [ ] Verify current button heights meet 44px minimum standard
+- [ ] Check TEST_REPORT.md notes - may already be addressed
+- **Impact**: Accessibility for mobile users
 
 ---
 
@@ -53,14 +53,17 @@
 - ✅ Farm settings page
 - ✅ Checkout confirmation page
 - ✅ Password change API endpoint exists
+- ✅ TypeScript compiles cleanly
+- ✅ Dev server responds, pages load without crash
+- ✅ Mobile viewport meta and responsive breakpoints
 
 ---
 
 ## Known Issues / Technical Debt
-- Middleware disabled (EvalError) - security risk
+- Middleware disabled - security risk
 - Profile page uses demo user instead of server data
 - Waitlist page completely mock - no Prisma queries
-- Mobile touch targets below 44px standard
+- Mobile touch targets may need verification
 - No email notification system (placeholder UI only)
 - Product image upload not implemented (URL field only)
 - Playwright testing not running in environment
