@@ -12,7 +12,7 @@ export const getFarms = cache(async () => {
         select: { name: true, availability: true },
       },
     },
-    orderBy: [{ featured: "desc" }, { name: "asc" }],
+    orderBy: { name: "asc" },
   })
 
   return farms.map((farm) => ({
