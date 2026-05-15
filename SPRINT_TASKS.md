@@ -1,15 +1,17 @@
 # Sprint Tasks - 2026-05-15 11:29 UTC
 
 ## Priority 1: Build Failure - ESLint Error (BLOCKER)
-- [ ] Fix ESLint error in `/src/app/dashboard/page.tsx` line 11
+- [x] Fix ESLint error in `/src/app/dashboard/page.tsx` line 11
 - `let userId` is never reassigned - should be `const`
 - **Impact**: Build fails, can't deploy
+- **Status**: ✅ Fixed - changed to `const`
 
 ## Priority 2: Login API - Missing Prisma Relation
-- [ ] Fix `/src/app/api/auth/login/route.ts` - attempts `include: { farm: true }` but User model has NO farm relation
+- [x] Fix `/src/app/api/auth/login/route.ts` - attempts `include: { farm: true }` but User model has NO farm relation
 - User model in Prisma schema lacks `farms` relation (Farm has `userId`, but User doesn't have relation back)
 - Either: Add `farms Farm[]` relation to User model + migration, OR query farm separately by userId
 - **Impact**: Login returns farm as null always, breaks farmer dashboard
+- **Status**: ✅ Fixed - Added farms relation to User model, updated login API to use farms[]
 
 ## Priority 3: Dashboard Security - Data Leakage (CRITICAL)
 - [ ] Fix `/src/app/dashboard/page.tsx` - `findFirst()` returns RANDOM farm to ANY visitor
@@ -18,11 +20,12 @@
 - **Impact**: Any visitor can view all farmer data
 
 ## Priority 4: Checkout Confirmation - Order ID Broken
-- [ ] Fix `/src/app/checkout/confirmation/page.tsx` - async IIFE doesn't block RSC render
+- [x] Fix `/src/app/checkout/confirmation/page.tsx` - async IIFE doesn't block RSC render
 - The `(async () => { ... })()` pattern resolves AFTER component renders
 - `orderId` is always "unknown" - confirmation shows no order details
 - Need proper `await searchParams` pattern (already typed as Promise) and wire checkout-form to pass orderId
 - **Impact**: Customers can't see order details after checkout
+- **Status**: ✅ Fixed - Made page async and properly await searchParams
 
 ## Priority 5: Route Protection Middleware
 - [ ] Create `src/middleware.ts` for Next.js route protection
