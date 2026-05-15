@@ -1,53 +1,54 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 11:22 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 11:31 PM UTC
 
-## Priority 1: CRITICAL - Fix Homepage Build Error
-- [ ] **Fix `"use client"` + `metadata` conflict in `src/app/page.tsx`**:
-  - Cannot export `metadata` from a client component (Next.js limitation)
-  - File has both `"use client"` on line 1 AND `export const metadata` on line 11
-  - Options: (A) Move metadata to `src/app/layout.tsx`, or (B) Refactor to use server component pattern
-  - **BLOCKER**: `npm run build` FAILS - this prevents any deployment
+## Priority 1: Dashboard Data Wiring
+- [ ] **Wire main dashboard (`/dashboard`) to show real farm data**:
+  - Replace demo/placeholder "0" values with real Prisma queries
+  - Show actual product count, reservations count, waitlist count per farm
+  - User dashboard should show stats for their specific farm
+  - Currently uses hardcoded demo mode even for real users
 
-## Priority 2: Next.js Image Configuration
-- [ ] **Add image domain config to `next.config.mjs`**:
-  - App uses `<Image />` component throughout but lacks domain config
-  - Add: `images: { remotePatterns: [{ hostname: "**" }] }` for external images
-  - Will fail at runtime otherwise
+## Priority 2: Cart Page Missing
+- [ ] **Add dedicated `/cart` page**:
+  - Currently cart only exists as a drawer component
+  - Add full cart page at `src/app/cart/page.tsx`
+  - Include: item list, quantity controls, remove buttons, subtotal, checkout CTA
+  - Mobile-friendly: full-page view instead of just drawer
 
-## Priority 3: Dashboard Data Wiring
-- [ ] **Wire main dashboard** (`/dashboard`) to show real data:
-  - Replace demo/placeholder data with real DB queries via Prisma
-  - Currently shows hardcoded "0" values for products/orders/reservations
-  - Wire `/dashboard/products`, `/dashboard/reservations`, `/dashboard/waitlist` pages
+## Priority 3: Checkout Flow Completion
+- [ ] **Ensure checkout fully persists reservations to DB**:
+  - Verify `/api/reservations` POST endpoint creates database records
+  - Add order confirmation page with order details
+  - Consider adding order history for customers
 
-## Priority 4: Loading States (UX)
-- [ ] **Add loading.tsx files** to key routes for Suspense boundaries:
-  - `src/app/dashboard/loading.tsx`
-  - `src/app/explore/loading.tsx`
-  - `src/app/products/loading.tsx`
-  - `src/app/farm/[slug]/loading.tsx`
-  - `src/app/farm/[slug]/product/[productId]/loading.tsx`
-- Currently NO loading.tsx files exist anywhere in the app
+## Priority 4: Mobile Navigation Issues
+- [ ] **Fix mobile nav and touch targets**:
+  - Verify navbar collapses properly on mobile
+  - Ensure all buttons are 44px+ touch target
+  - Check cart drawer works on mobile viewports
+  - Test checkout forms don't trigger iOS zoom (16px min font)
 
-## Priority 5: Mobile Checkout Verification
-- [ ] **Verify checkout forms work on mobile**:
-  - Ensure 16px minimum font on inputs (prevents iOS zoom on focus)
-  - 44px+ touch targets on checkout buttons
-  - Test forms in portrait mode on small viewports
-  - Check reservation-form, checkout-form, waitlist-form components
+## Priority 5: Product Availability States
+- [ ] **Improve product availability handling**:
+  - Show clear "Sold Out" / "Unavailable" states on product cards
+  - Disable add-to-cart for unavailable products
+  - Add waitlist signup for out-of-stock items
+  - Verify availability status syncs with DB
 
 ---
 
 ## Completed (Previous Sprints)
 
+- ✅ Build error fixed: metadata now in layout.tsx
+- ✅ Image config added to next.config.mjs
+- ✅ Loading states added: dashboard, explore, products, farm pages
 - ✅ Mobile viewport, horizontal scroll prevention, 44px touch targets
 - ✅ Error boundaries on explore, products, dashboard routes
 - ✅ Retry buttons on failed API calls
-- ✅ Skeleton loaders in Explore and Products client components
-- ✅ Checkout flow with farm contact info
+- ✅ Skeleton loaders in Explore and Products
+- ✅ Checkout form with farm contact info
 - ✅ Waitlist dashboard with notify UI
 - ✅ Cart localStorage persistence
 - ✅ Empty cart state with CTA to browse farms
-- ✅ Cart uses Next.js Image component
 - ✅ Registration/onboarding flow
 - ✅ Explore & Categories pages with filters
 - ✅ Farm profile & product detail pages with SEO metadata
@@ -55,12 +56,9 @@
 - ✅ Image upload API
 - ✅ CI/CD workflow setup
 - ✅ PostgreSQL (Neon) migration
-- ✅ Form loading states and disabled buttons
 - ✅ Search API wired to Explore page
-- ✅ Pagination in `/api/farms/search` with Load More button
-- ✅ SEO: robots.txt and sitemap.xml route handlers
-- ✅ Database indexes for Reservation, Product, Farm, Waitlist
-- ✅ Homepage has SEO metadata (title, description, OG tags)
+- ✅ Pagination in `/api/farms/search`
+- ✅ SEO: robots.txt and sitemap.xml
 
 ---
 
@@ -68,15 +66,14 @@
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Build | ❌ BROKEN | "use client" + metadata conflict (line 1 and 11) |
-| Image Config | ⚠️ Missing | Uses `<Image />` but no domain config |
-| Dashboard Data | ⚠️ Demo | Shows static "0" values (no DB queries) |
-| Loading States | ⚠️ Missing | No loading.tsx anywhere in app |
-| Mobile Checkout | ⚠️ Unverified | Needs testing |
-| Cart | ✅ Done | Empty state, Image component |
-| Auth Flow | ✅ Done | Login, register, onboarding |
-| Farm/Product SEO | ✅ Done | generateMetadata + OG tags |
-| Explore Page | ✅ Done | Search, filters, pagination |
+| Build | ✅ Fixed | Compiles successfully |
+| Image Config | ✅ Done | next.config.mjs has remotePatterns |
+| Loading States | ✅ Done | loading.tsx in key routes |
+| Dashboard Data | ⚠️ Demo | Shows static "0" - needs real queries |
+| Cart Page | ⚠️ Missing | Only drawer, no /cart page |
+| Mobile Nav | ⚠️ Needs Test | Should verify touch targets |
+| Product Availability | ⚠️ Needs Work | Availability states need polish |
+| Checkout DB | ⚠️ Needs Verify | Should confirm reservations persist |
 
 ---
 

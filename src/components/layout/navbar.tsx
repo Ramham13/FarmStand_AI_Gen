@@ -45,10 +45,10 @@ export function Navbar() {
 
         {/* Desktop Buttons */}
         <div className="hidden sm:flex items-center gap-2">
-          <button
-            onClick={() => setIsCartOpen(true)}
+          <Link
+            href="/cart"
             className="relative p-2 hover:bg-gray-100 rounded-full touch-manipulation"
-            aria-label="Open cart"
+            aria-label="View cart"
           >
             <ShoppingBag className="w-5 h-5 text-gray-600" />
             {totalItems > 0 && (
@@ -56,7 +56,7 @@ export function Navbar() {
                 {totalItems > 9 ? "9+" : totalItems}
               </span>
             )}
-          </button>
+          </Link>
           <Link href="/login">
             <Button variant="ghost" size="sm">Log In</Button>
           </Link>
@@ -67,10 +67,10 @@ export function Navbar() {
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-1 sm:hidden">
-          <button
-            onClick={() => setIsCartOpen(true)}
+          <Link
+            href="/cart"
             className="relative p-2 hover:bg-gray-100 rounded-full touch-manipulation"
-            aria-label="Open cart"
+            aria-label="View cart"
           >
             <ShoppingBag className="w-5 h-5 text-gray-600" />
             {totalItems > 0 && (
@@ -78,7 +78,7 @@ export function Navbar() {
                 {totalItems > 9 ? "9+" : totalItems}
               </span>
             )}
-          </button>
+          </Link>
           <button 
             onClick={() => setMobileOpen(!mobileOpen)}
             className="p-2.5"
