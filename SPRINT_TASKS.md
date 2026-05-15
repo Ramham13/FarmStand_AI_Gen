@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 14:47 UTC
+# Sprint Tasks - 2026-05-15 14:57 UTC
 
 ## Priority 1: Connect Profile Page to Real Authenticated User
 - [ ] Replace hardcoded `defaultUser` in `/profile/page.tsx` with server-side user data from cookie/auth
@@ -62,7 +62,9 @@
 - Products API uses mock data instead of Prisma (Priority 4)
 - Mobile dashboard UX needs real device testing (Priority 5)
 
-## Project Structure
+## Codebase Analysis Summary
+
+### Project Structure
 ```
 src/app/
 ├── api/auth/        # Auth endpoints
@@ -81,30 +83,28 @@ src/app/
 ├── login/register/onboarding  # Auth flows
 ```
 
-## Key Findings from Codebase Analysis
+### Data Layer (Prisma Schema)
+- **Farm**: id, name, slug, description, location, emoji, imageUrl, userId (relation to User)
+- **Product**: id, farmId, name, category, description, price, unit, imageUrl, availability, isActive
+- **Reservation**: id, productId, customerName, customerEmail, customerPhone, message, status
+- **Waitlist**: id, productId, customerName, customerEmail, notifiedAt, createdAt
+- **User**: id, email, password (bcrypt), role
 
-### Git History (recent commits)
-- Focus has been on bug fixes: auth cookie handling, hydration errors, login redirects
-- Middleware route protection was recently enabled
-- Test reports being updated regularly
-- Sprint tasks document updated after each commit
+### Key Findings
 
-### Components Status
-- **Profile**: Hardcoded `defaultUser` - not connected to auth (Priority 1)
-- **Waitlist Page**: Completely mock data, no API integration (Priority 2)
-- **Waitlist API**: Only demo POST, GET returns empty array, no PATCH (Priority 2, 3)
-- **Products API**: Uses `getAllFarms()` mock data - not connected to Prisma (Priority 4)
-- **Admin Dashboard**: Uses real Prisma queries - DONE
-- **Orders API**: Uses real Prisma queries - DONE
+**Git History (last 15 commits)**
+- Focus on bug fixes: auth cookie handling, hydration errors, login redirects
+- Middleware route protection recently enabled
+- Sprint tasks/test reports being updated regularly
+- No code implementation on the 5 priorities yet this sprint
 
-### Data Layer
-- Prisma schema is well-designed with proper relations
-- Waitlist has `notifiedAt` field ready for Priority 3
-- Product has `imageUrl` field - needs verification it works
+**Current Blockers**
+1. **Profile** - `defaultUser` hardcoded in `src/app/profile/page.tsx:23`
+2. **Waitlist Page** - Mock array in `src/app/dashboard/waitlist/page.tsx:7`
+3. **Products API** - Uses `getAllFarms()` mock in `src/app/api/products/route.ts:3`
+4. **Waitlist API** - No real GET/PATCH, only demo POST
 
-### Test Status (latest)
-- TypeScript: PASS
-- Dev Server: PASS
-- All core pages load: PASS
-- Mobile Viewport: PASS (overflow-x-hidden on body)
-- Touch Targets: PASS (buttons have touch-manipulation, min 44px heights)
+**Working Components**
+- Admin dashboard: Uses real Prisma queries ✅
+- Orders/reservations: Real DB operations ✅
+- Auth flow: Registration, login, middleware ✅
