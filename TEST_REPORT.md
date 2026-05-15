@@ -1,22 +1,26 @@
-# Test Report - Friday, May 15th, 2026, 5:21 PM UTC
+# Test Report - 2026-05-15 17:28 UTC
 
-## Last Commit: b9dc534 Switch from SQLite to PostgreSQL for Neon
+## Last Commit: e241a37 Sprint: Wire up admin reports actions + connect farm settings to DB
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
-| TypeScript | FAIL | Type error in src/app/admin/reports/page.tsx:76 - `status` is `string` not assignable to `ReportStatus` |
-| Home | PASS | Dev server running, page loads with featured farms |
+| TypeScript | PASS | No type errors |
+| Dev Server | PASS | Running on localhost:3000 |
+| Home | PASS | Loads correctly, responsive layout |
 | Explore | PASS | 8 farms found, category filters work |
 | Farm Profile | PASS | Sunny Meadow Farm loads with products |
 
+## Mobile/Touch Testing
+- Playwright browser not available (missing libraries)
+- Manual HTML analysis shows:
+  - `overflow-x-hidden` on body prevents horizontal scroll
+  - Buttons use `min-h-[44px]` / `h-11` (44px) - meets touch targets
+  - Mobile nav hidden behind hamburger menu on small screens
+  - Responsive classes used throughout (sm:, md:, lg:)
+
 ## Bugs Found
-- [x] **TypeScript Error** - `src/app/admin/reports/page.tsx(76:15)`: Type mismatch - the `reports` array from database query returns `status` as `string` type but the `Report` type expects `ReportStatus` enum. Needs type cast or proper typing.
+- [ ] None detected
 
 ## Summary
-FAIL - TypeScript compilation failed. The type error must be fixed before merging. Dev server works correctly and all tested pages (home, explore, farm profiles) load without crash. The error is in the admin reports page which is likely a new feature from the PostgreSQL migration.
-
-## Mobile/Touch Check (via HTML inspection)
-- Buttons have `min-h-[44px]` (44px minimum height) - compliant with touch targets
-- No horizontal scroll issues detected (`overflow-x-hidden` on body)
-- Category filter pills use `touch-manipulation` class for proper touch handling
+PASS - All core pages load without errors. TypeScript compiles cleanly. Responsive design appears properly implemented with touch-friendly button sizes and no horizontal scroll issues visible in HTML structure.
