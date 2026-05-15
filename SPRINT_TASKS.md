@@ -1,10 +1,10 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 4:57 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 5:07 PM UTC
 
 ## Priority 1: Fix Products API to Use Real Database Data
 - [ ] Update `/api/products/route.ts` to query Prisma Product table
 - [ ] Join with Farm table to get farmName, farmSlug, farmEmoji, farmLocation
 - [ ] Keep existing search/filter logic but apply to real DB
-- [ ] **Status**: Still using `getAllFarms()` from mock-data — core discovery feature broken despite seeded DB
+- **Status**: Still using `getAllFarms()` from mock-data — core discovery feature broken despite seeded DB
 - **Impact**: Products page (`/products`) not showing database products
 
 ## Priority 2: Wire Up Admin Reports Action Buttons
