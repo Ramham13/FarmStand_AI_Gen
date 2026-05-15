@@ -1,15 +1,35 @@
 import Link from "next/link"
-import { CheckCircle, ArrowRight, Package } from "lucide-react"
+import { CheckCircle, ArrowRight, Package, Mail, Phone, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
+
+// Server-side farm fetch
+async function getFarmInfo(slug: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/api/farms/${slug}`, { 
+      cache: 'no-store' 
+    })
+    if (res.ok) {
+      return await res.json()
+    }
+  } catch (e) {
+    console.error('Failed to fetch farm info:', e)
+  }
+  return null
+}
 
 export default async function ConfirmationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ orderId?: string }>
+  searchParams: Promise<{ orderId?: string; farm?: string }>
 }) {
   // Next.js 15 requires awaiting searchParams - this is async server component
   const params = await searchParams
   const orderId = params.orderId || "unknown"
+  const farmSlug = params.farm || ""
+  
+  // Fetch farm info for contact details
+  const farm = farmSlug ? await getFarmInfo(farmSlug) : null
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -48,6 +68,40 @@ export default async function ConfirmationPage({
             </li>
           </ul>
         </div>
+
+        {/* Farm Contact Info */}
+        {farm && (
+          <div className="bg-white rounded-lg p-6 mb-6 text-left shadow-sm">
+            <h2 className="font-semibold mb-3 flex items-center gap-2">
+              <Package className="w-5 h-5 text-green-600" />
+              Contact {farm.name}
+            </h2>
+            <div className="space-y-2 text-sm text-gray-600">
+              {farm.email && (
+                <p className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  <a href={`mailto:${farm.email}`} className="text-green-600 hover:underline">
+                    {farm.email}
+                  </a>
+                </p>
+              )}
+              {farm.phone && (
+                <p className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  <a href={`tel:${farm.phone}`} className="text-green-600 hover:underline">
+                    {farm.phone}
+                  </a>
+                </p>
+              )}
+              {farm.location && (
+                <p className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  {farm.location}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Actions */}
         <div className="flex flex-col gap-3">

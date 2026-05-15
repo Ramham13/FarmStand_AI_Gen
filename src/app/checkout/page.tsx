@@ -32,10 +32,11 @@ export default function CheckoutPage() {
     message: "",
   });
 
-  // Get farm info from cart items
+  // Fetch farm info from API when farmSlug is available
   useEffect(() => {
     if (items.length > 0) {
       const farm = items[0];
+      // Set initial farm name/slug from cart
       setFarmInfo({
         name: farm.farmName,
         slug: farm.farmSlug,
@@ -43,6 +44,22 @@ export default function CheckoutPage() {
         phone: null,
         address: null,
       });
+      
+      // Fetch full farm details (including contact info) from API
+      fetch(`/api/farms/${farm.farmSlug}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            setFarmInfo({
+              name: data.name || farm.farmName,
+              slug: farm.farmSlug,
+              email: data.email || null,
+              phone: data.phone || null,
+              address: data.location || null,
+            });
+          }
+        })
+        .catch(console.error);
     }
   }, [items]);
 
@@ -80,9 +97,10 @@ export default function CheckoutPage() {
         throw new Error(data.error || "Failed to process checkout");
       }
 
-      // Clear cart and redirect to confirmation
+      // Clear cart and redirect to confirmation (include farm slug for contact info)
       clearCart();
-      router.push(`/checkout/confirmation?orderId=${data.orderId}`);
+      const farmSlug = farmInfo?.slug || '';
+      router.push(`/checkout/confirmation?orderId=${data.orderId}&farm=${farmSlug}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -234,12 +252,36 @@ export default function CheckoutPage() {
 
             {/* Contact Info */}
             <div className="mt-6 pt-6 border-t text-sm text-gray-500">
-              <p className="mb-2">Questions? Contact the farm:</p>
-              <div className="space-y-1">
-                <p className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  Farm location details will be in confirmation email
-                </p>
+              <p className="mb-2 font-medium text-gray-700">Questions? Contact the farm:</p>
+              <div className="space-y-2">
+                {farmInfo?.email && (
+                  <p className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-green-600" />
+                    <a href={`mailto:${farmInfo.email}`} className="text-green-600 hover:underline">
+                      {farmInfo.email}
+                    </a>
+                  </p>
+                )}
+                {farmInfo?.phone && (
+                  <p className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-green-600" />
+                    <a href={`tel:${farmInfo.phone}`} className="text-green-600 hover:underline">
+                      {farmInfo.phone}
+                    </a>
+                  </p>
+                )}
+                {farmInfo?.address && (
+                  <p className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-green-600" />
+                    {farmInfo.address}
+                  </p>
+                )}
+                {!farmInfo?.email && !farmInfo?.phone && !farmInfo?.address && (
+                  <p className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    Farm location details will be in confirmation email
+                  </p>
+                )}
               </div>
             </div>
           </div>
