@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 15:32 UTC
+# Sprint Tasks - 2026-05-15 15:37 UTC
 
 ## Priority 1: Connect Dashboard Waitlist to Real Database
 - [ ] Replace hardcoded mock `waitlists` array in `/dashboard/waitlist/page.tsx` with fetch to `/api/waitlist`
@@ -29,7 +29,7 @@
 - **Impact**: Public farm pages show actual farm details and products
 - **Why Now**: Core public-facing page — what customers see when they browse farms
 
-## Priority 5: Cart Multi-Farm Checkout Flow (OR Document Single-Farm Model)
+## Priority 5: Cart Multi-Farm Checkout UX Decision
 - [ ] Current cart checkout restricts to one farm at a time
 - [ ] Either implement multi-farm checkout (create separate reservations per farm), OR
 - [ ] Document/implement clearer UX: warn user at add-to-cart if from different farm, or provide "checkout all" that creates multiple orders
