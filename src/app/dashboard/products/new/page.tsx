@@ -57,6 +57,17 @@ export default function NewProductPage() {
                 </div>
               </div>
 
+              {/* Image URL */}
+              <div className="space-y-2">
+                <Label htmlFor="imageUrl">Product Image URL</Label>
+                <Input 
+                  id="imageUrl" 
+                  type="url"
+                  placeholder="https://example.com/images/product.jpg" 
+                />
+                <p className="text-xs text-gray-500">Enter a URL to an image of your product</p>
+              </div>
+
               {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
