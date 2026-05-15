@@ -1,25 +1,33 @@
-# Sprint Tasks - 2026-05-15
+# Sprint Tasks - 2026-05-15 06:00 UTC
 
-## Priority 1
-- [ ] **Onboarding Backend Integration** - The multi-step onboarding form is static with no backend. Need API route to create Farm + link to user account.
+## Priority 1 - Core Features Missing
 
-- [ ] **Checkout Flow** - Cart drawer exists but no checkout. Need order creation, confirmation page, and customer order history.
+- [ ] **Checkout Flow** - Implement actual checkout/payment flow. Cart drawer exists but no way to complete a purchase. Need order creation, confirmation page, and status tracking.
 
-## Priority 2
-- [ ] **Real Search Integration** - Homepage and Explore search UI uses hardcoded data. Wire up to `/api/farms/search` endpoint.
+- [ ] **Order Management for Farmers** - Farmers need to see customer reservations, accept/reject them, and manage order status. Create `/dashboard/orders` page.
 
-- [ ] **Customer Account Page** - No way for customers to view their profile, past orders, or manage their account. Need `/account` or `/orders` page.
+- [ ] **Waitlist Notification System** - When a waitlisted product becomes available, farmers need ability to notify customers. Build notification trigger + email/display logic.
 
-## Priority 3
-- [ ] **Mobile Polish** - Recent commits show active mobile work. Continue refining touch targets, responsive layouts, and mobile navigation.
+## Priority 2 - UX Improvements
 
-- [ ] **Notification System** - No email/notification triggers for new reservations, waitlist updates, or order status changes.
+- [ ] **Advanced Product Filtering** - Explore page needs filtering by category, price range, region, availability. Currently basic only.
 
-- [ ] **Settings Page Completion** - Dashboard settings page exists but needs full CRUD for farm profile (image upload, description, payment link updates).
+- [ ] **Product Image Upload** - Farmers can't add images to products. Add image upload to product creation/edit (could use URL for MVP).
 
----
+- [ ] **Farm Profile Completeness** - Many farms lack images, descriptions, contact info. Improve onboarding to encourage complete profiles.
 
-### Notes
-- Recent sprints focused heavily on mobile UX (horizontal scroll fixes, navbar improvements, explore page)
-- Auth flow works (login/register → dashboard), but customer-side order tracking is missing
-- Admin has farms list + reports - consider adding farm approval/rejection workflow
+## Priority 3 - Mobile & Polish
+
+- [ ] **Mobile Cart Experience** - Review cart drawer on mobile: touch targets, scrolling, checkout button visibility.
+
+- [ ] **Empty States** - Add helpful empty states across the app (no products, no reservations, no farms in search).
+
+- [ ] **Loading Skeletons** - Replace Suspense fallbacks with proper skeleton loaders for better perceived performance.
+
+## Priority 4 - Technical Debt
+
+- [ ] **Authentication Hardening** - Add password reset flow, proper session handling, role-based access control beyond basic check.
+
+- [ ] **API Error Handling** - Review API routes for consistent error responses and better error messages to users.
+
+- [ ] **Database Indexes** - Add indexes on frequently queried fields (farm slug, product category, reservation status).
