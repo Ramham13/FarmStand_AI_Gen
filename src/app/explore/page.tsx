@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import { Search, MapPin, ArrowRight, Leaf, Check, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -172,8 +173,16 @@ type SortOption = "featured" | "name-asc" | "location"
 type AvailabilityType = "all" | "in_stock" | "seasonal" | "sold_out"
 
 export default function ExplorePage() {
-  const [search, setSearch] = useState("")
-  const [category, setCategory] = useState("all")
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+  
+  // Initialize state from URL query params
+  const initialSearch = searchParams.get("q") || ""
+  const initialCategory = searchParams.get("category") || "all"
+  
+  const [search, setSearch] = useState(initialSearch)
+  const [category, setCategory] = useState(initialCategory)
   const [sortBy, setSortBy] = useState<SortOption>("featured")
   const [region, setRegion] = useState("all")
   const [priceRange, setPriceRange] = useState("all")

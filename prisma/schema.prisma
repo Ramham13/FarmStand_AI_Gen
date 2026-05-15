@@ -13,6 +13,8 @@ model Farm {
   slug               String    @unique
   description        String?
   location           String?
+  region             String?
+  emoji              String?
   imageUrl           String?
   phone              String?
   email              String?
@@ -21,6 +23,8 @@ model Farm {
   sellerAcknowledged Boolean   @default(false)
   acknowledgedAt     DateTime?
   status             String    @default("ACTIVE")
+  featured           Boolean   @default(false)
+  priceRange         String?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   products           Product[]
