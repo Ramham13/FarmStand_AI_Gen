@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 15:47 UTC
+# Sprint Tasks - 2026-05-15 15:52 UTC
 
 ## Priority 1: Connect Dashboard Waitlist to Real Database
 - [ ] Replace hardcoded mock `waitlists` array in `/dashboard/waitlist/page.tsx` with fetch to `/api/waitlist`
