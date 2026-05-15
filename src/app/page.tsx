@@ -1,7 +1,35 @@
 import Link from "next/link";
-import { Search, ArrowRight, Leaf, Users, ShoppingBag } from "lucide-react";
+import { Search, ArrowRight, Leaf, Users, ShoppingBag, MapPin, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+// Featured farms for the homepage
+const featuredFarms = [
+  {
+    name: "Sunny Meadow Farm",
+    slug: "sunny-meadow-farm",
+    location: "Rural Valley, CA",
+    emoji: "🐔",
+    products: "Fresh Eggs, Tomatoes",
+    tagline: "Family-owned, free-range eggs",
+  },
+  {
+    name: "Green Acres Farm",
+    slug: "green-acres",
+    location: "Portland, OR",
+    emoji: "🌿",
+    products: "Herbs, Mixed Greens",
+    tagline: "Sustainable & regenerative",
+  },
+  {
+    name: "Valley View Dairy",
+    slug: "valley-view-dairy",
+    location: "Madison, WI",
+    emoji: "🥛",
+    products: "Artisan Cheese",
+    tagline: "Small-batch from grass-fed cows",
+  },
+];
 
 export default function Home() {
   return (
@@ -32,6 +60,56 @@ export default function Home() {
                 </Link>
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Farms Section */}
+      <section className="py-12 lg:py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Featured Farms</h2>
+              <p className="text-gray-600 mt-1">Discover top-rated local farms</p>
+            </div>
+            <Button variant="ghost" asChild className="hidden sm:flex">
+              <Link href="/explore">
+                View All <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredFarms.map((farm) => (
+              <Link key={farm.slug} href={`/farm/${farm.slug}`}>
+                <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer border-green-100">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-2xl shrink-0">
+                        {farm.emoji}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-gray-900 truncate">{farm.name}</h3>
+                          <Star className="h-4 w-4 text-amber-400 fill-amber-400 shrink-0" />
+                        </div>
+                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                          <MapPin className="h-3 w-3" /> {farm.location}
+                        </p>
+                        <p className="text-sm text-green-700 mt-2 font-medium">{farm.tagline}</p>
+                        <p className="text-xs text-gray-500 mt-1">{farm.products}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-6 text-center sm:hidden">
+            <Button variant="outline" asChild>
+              <Link href="/explore">
+                View All Farms <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

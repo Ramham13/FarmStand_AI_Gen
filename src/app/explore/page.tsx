@@ -76,15 +76,39 @@ const allFarms = [
     category: "PRODUCE",
     featured: false,
   },
+  {
+    id: "farm-7",
+    name: "Blooming Gardens",
+    slug: "blooming-gardens",
+    location: "Denver, CO",
+    description: "Beautiful container gardens, succulents, and herb starts.",
+    products: ["Herb Starts", "Succulents", "Petunias"],
+    emoji: "🌺",
+    category: "PLANTS",
+    featured: false,
+  },
+  {
+    id: "farm-8",
+    name: "Grandma's Kitchen",
+    slug: "grandmas-kitchen",
+    location: "Burlington, VT",
+    description: "Homemade baked goods and preserves from family recipes.",
+    products: ["Blueberry Jam", "Chocolate Chip Cookies", "Bread"],
+    emoji: "🧁",
+    category: "COTTAGE_FOOD",
+    featured: false,
+  },
 ]
 
 const categories = [
-  { value: "all", label: "All" },
-  { value: "EGGS", label: "🥚" },
-  { value: "PRODUCE", label: "🥬" },
-  { value: "DAIRY", label: "🥛" },
-  { value: "MEAT", label: "🥩" },
-  { value: "POULTRY", label: "🍗" },
+  { value: "all", label: "All Farms" },
+  { value: "EGGS", label: "🥚 Eggs" },
+  { value: "PRODUCE", label: "🥬 Produce" },
+  { value: "DAIRY", label: "🥛 Dairy" },
+  { value: "MEAT", label: "🥩 Meat" },
+  { value: "POULTRY", label: "🍗 Poultry" },
+  { value: "PLANTS", label: "🌱 Plants" },
+  { value: "COTTAGE_FOOD", label: "🍪 Cottage Food" },
 ]
 
 export default function ExplorePage() {
@@ -96,7 +120,13 @@ export default function ExplorePage() {
       farm.name.toLowerCase().includes(search.toLowerCase()) ||
       farm.products.some(p => p.toLowerCase().includes(search.toLowerCase())) ||
       farm.location.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory = category === "all" || farm.category === category
+    
+    // Filter by category - check if farm has products in that category
+    const matchesCategory = category === "all" || 
+      farm.category === category ||
+      (category === "EGGS" && farm.products.some(p => p.toLowerCase().includes("egg"))) ||
+      (category === "PRODUCE" && (farm.products.some(p => p.toLowerCase().includes("tomato")) || farm.products.some(p => p.toLowerCase().includes("greens")) || farm.products.some(p => p.toLowerCase().includes("herb")) || farm.products.some(p => p.toLowerCase().includes("basil")) || farm.products.some(p => p.toLowerCase().includes("apple")) || farm.products.some(p => p.toLowerCase().includes("pear"))))
+    
     return matchesSearch && matchesCategory
   })
 
@@ -125,20 +155,20 @@ export default function ExplorePage() {
             />
           </div>
           
-          {/* Category Pills */}
-          <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+          {/* Category Pills - Touch-friendly */}
+          <div className="flex gap-2 mt-3 overflow-x-auto pb-2 scrollbar-hide">
             {categories.map((cat) => (
               <button
                 key={cat.value}
                 onClick={() => setCategory(cat.value)}
-                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition-colors ${
+                className={`whitespace-nowrap px-4 py-2.5 rounded-full text-sm font-medium flex-shrink-0 transition-all min-h-[44px] ${
                   category === cat.value
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-green-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 {cat.label}
-                {category === cat.value && <Check className="inline ml-1 h-3 w-3" />}
+                {category === cat.value && <Check className="inline ml-1.5 h-3.5 w-3.5" />}
               </button>
             ))}
           </div>

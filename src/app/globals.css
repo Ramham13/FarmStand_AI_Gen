@@ -5,19 +5,44 @@
 @layer base {
   html {
     @apply overflow-x-hidden;
+    -webkit-overflow-scrolling: touch;
   }
   
   body {
     @apply bg-gray-50 text-gray-900 overflow-x-hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Prevent horizontal overflow on all elements */
   * {
     @apply max-w-full;
+    box-sizing: border-box;
+  }
+
+  /* Touch-friendly tap targets (minimum 44px) */
+  button, 
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
   }
 
   /* Allow horizontal scrolling only for specific needs */
   .allow-overflow {
     @apply overflow-auto;
+  }
+
+  /* Safe area padding for mobile */
+  .safe-area-pad {
+    padding-left: env(safe-area-inset-left, 16px);
+    padding-right: env(safe-area-inset-right, 16px);
+  }
+}
+
+/* Mobile-first responsive improvements */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
