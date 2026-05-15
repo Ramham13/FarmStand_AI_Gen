@@ -1,26 +1,9 @@
-// Mock prisma for demo mode - no database required
-export const prisma = {
-  user: {
-    findUnique: async () => null,
-    create: async () => ({}),
-  },
-  farm: {
-    findMany: async () => [],
-    findUnique: async () => null,
-    create: async () => ({}),
-  },
-  product: {
-    findMany: async () => [],
-    findUnique: async () => null,
-    create: async () => ({}),
-  },
-  reservation: {
-    findMany: async () => [],
-    create: async () => ({}),
-  },
-  waitlist: {
-    findMany: async () => [],
-    findFirst: async () => null,
-    create: async () => ({}),
-  },
-} as any
+import { PrismaClient } from "@prisma/client"
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
+}
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
