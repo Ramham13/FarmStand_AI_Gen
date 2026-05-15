@@ -172,7 +172,7 @@ const availabilityOptions = [
 type SortOption = "featured" | "name-asc" | "location"
 type AvailabilityType = "all" | "in_stock" | "seasonal" | "sold_out"
 
-export default function ExplorePage() {
+function ExploreContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -611,5 +611,15 @@ export default function ExplorePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+import { Suspense } from "react"
+
+export default function ExplorePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <ExploreContent />
+    </Suspense>
   )
 }
