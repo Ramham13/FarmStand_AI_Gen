@@ -23,10 +23,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Find user
+    // Find user with farm
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { farm: true },
+      include: { farm: true } as any,
     })
 
     if (!user) {
