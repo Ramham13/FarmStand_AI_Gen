@@ -1,21 +1,20 @@
-# Sprint Tasks - 2026-05-15 07:10 UTC
+# Sprint Tasks - 2026-05-15 07:24 UTC
 
-## Priority 1 (Critical - Blocks)
-- [ ] Rebuild Explore page (`/explore`) - critical public browsing page, folder exists but is empty
-- [ ] Create Categories page (`/categories`) - linked in navbar but doesn't exist
+## Priority 1 (Critical - Core Features)
+- [ ] End-to-end reservation flow test: customer submits reservation on farm page → appears in farmer dashboard → can confirm/decline → status updates persist
+- [ ] Waitlist dashboard integration: verify waitlist entries display in `/dashboard/waitlist`, farmer can notify/manage entries
+- [ ] Verify Orders API and dashboard: check `/api/orders` creates orders from cart checkout, `/dashboard/orders` displays order history
 
-## Priority 2 (High - User-Facing)
-- [ ] Verify Explore/Categories routing works - test navigation from homepage and navbar
-- [ ] Test reservation → order flow: customer places reservation → appears in farmer's orders dashboard
+## Priority 2 (High - Search & Discovery)
+- [ ] Explore page text search: add farm name/location text search to `/explore` alongside existing category filters
+- [ ] Verify `/onboarding` flow: after farmer registers, ensure they're directed to onboarding to create farm profile and acknowledge seller agreement
 
-## Priority 3 (Medium - Core Features)
-- [ ] Complete Orders API integration - verify `GET /api/orders` and `POST /api/orders` work end-to-end with dashboard
-- [ ] Review and commit uncommitted changes:
-  - `src/app/dashboard/products/page.tsx`
-  - `src/lib/farms.ts` and `src/lib/products.ts`
-  - `components.json`
+## Priority 3 (Medium - Compliance & UX)
+- [ ] Platform disclaimers: add "no native payments" notice to cart drawer, checkout confirmation, and farm profile pages per SPEC.md
+- [ ] Seller responsibility notice: verify acknowledgment checkbox and notice text appear on onboarding/farm setup
+- [ ] Admin Reports page: verify `/admin/reports` displays flagged content and can moderate (hide/suspend) farms/products
 
-## Priority 4 (Lower - Cleanup)
-- [ ] Clean up empty folders (`src/app/explore/` is empty)
-- [ ] Mobile UX polish: verify responsiveness on dashboard, cart drawer, farm profiles
-- [ ] Test cart flow end-to-end (add item → cart drawer → checkout/reservation)
+## Priority 4 (Lower - Polish & Verification)
+- [ ] Checkout flow end-to-end: verify cart checkout redirects to farm's paymentLink and creates order record
+- [ ] Mobile cart drawer: verify cart drawer and checkout work smoothly on mobile viewports
+- [ ] TypeScript/ESLint: ensure no new warnings introduced in this sprint cycle
