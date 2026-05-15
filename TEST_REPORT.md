@@ -1,22 +1,19 @@
-# Test Report - 2026-05-15 18:09 UTC
+# Test Report - 2026-05-15 18:43 UTC
 
-## Last Commit: f754dd2 Sprint: Fix TypeScript imports and update test report
+## Last Commit: 79647d3 Sprint: Add customer orders tracking page + CI/CD workflow + dynamic homepage
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
 | TypeScript | PASS | No type errors |
-| Home (/) | PASS | Loads correctly, all content renders |
-| Explore (/explore) | PASS | Loads correctly |
-| Farm Profile (/farm/*) | FAIL | Returns 404 - database not seeded |
+| Home (/) | FAIL | Returns 500 error - TypeError: Cannot read properties of undefined (reading 'clientModules') |
+| Explore (/explore) | FAIL | Returns 200 but embedded 500 error in page props |
+| Farm Profile (/farm/[slug]) | FAIL | No farms in DB to test; route exists but returns 404 for unknown slugs |
 
 ## Bugs Found
-- [x] **Farm profiles return 404** - The homepage links to `/farm/sunny-meadow-farm`, `/farm/green-acres`, etc., but these return 404 because the farms don't exist in the database. The `getFarmBySlug` function queries Prisma for farms with status "ACTIVE" but no seed data has been loaded.
+- [x] Runtime crash on home page - Next.js server error: "Cannot read properties of undefined (reading 'clientModules')"
+- [x] Same error propagates to explore page
+- [x] No farms accessible to test farm profile pages
 
 ## Summary
-PARTIAL PASS - TypeScript and core pages work, but farm profiles are broken due to missing seed data. The explore page shows links to farms that don't load.
-
-## Action Items
-- Run `npx prisma db push` to create tables
-- Run `npx tsx prisma/seed.ts` to seed demo farms (seed.ts exists with matching data)
-- Or add fallback mock data for development
+FAIL - Server returns 500 errors on all pages. TypeScript compiles but runtime crashes. The recent commit may have broken something in the app rendering pipeline.

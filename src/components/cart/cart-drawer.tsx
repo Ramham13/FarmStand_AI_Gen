@@ -56,8 +56,8 @@ export function CartDrawer() {
     // Get unique farms in cart
     const farms = [...new Set(items.map((i) => i.farmSlug))];
     if (farms.length === 1) {
-      const farm = items[0];
-      window.location.href = `/farm/${farm.farmSlug}?checkout=true`;
+      // Redirect to checkout page
+      window.location.href = `/checkout`;
     } else {
       alert("Checkout is only available for a single farm at a time. Please checkout farm by farm.");
     }

@@ -1,71 +1,70 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 6:07 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 6:42 PM UTC
 
-## Priority 1: Order Status Change Notifications
-- [ ] Add email notification to customer when farmer confirms/declines/cancels an order
-- [ ] Create `sendOrderStatusUpdate()` function in email.ts
-- [ ] Wire up PATCH /api/orders to trigger status update email
-- **Status**: Missing - customers currently don't know when their order status changes
-- **Impact**: Poor customer experience - no feedback on reservation requests
+## Priority 1: Complete Checkout Flow
+- [ ] Create `/checkout` page for cart checkout flow
+- [ ] Implement checkout API to process cart items into reservations
+- [ ] Add order summary with farmer contact info (phone, email)
+- [ ] Connect "Proceed to Checkout" from cart drawer to actual checkout page
+- [ ] Handle multi-farm cart edge case (currently shows alert)
+- **Status**: NOT STARTED - Cart drawer exists but no checkout page
+- **Impact**: Users can't complete checkout to submit reservations
 
-## Priority 2: Quantity Selection for Reservations
-- [ ] Add quantity selector to reservation form on farm page
-- [ ] Update orders API to accept and store quantity
-- [ ] Display quantity in dashboard orders list
-- [ ] Show quantity in farmer order notifications
-- **Status**: Currently hardcoded to 1
-- **Impact**: Customers can't order multiple of the same product
+## Priority 2: Error Handling & Resilience
+- [ ] Add error boundaries to prevent full-page crashes on component errors
+- [ ] Add retry buttons on failed API calls (Explore, Products, Reservations)
+- [ ] Implement loading states with proper skeletons for Explore/Products
+- [ ] Add toast notifications for failed actions (server action errors)
+- **Status**: NOT STARTED - No error UI
+- **Impact**: Users see blank pages or confusing errors when things fail
 
-## Priority 3: Automated Test Suite in CI/CD
-- [ ] Set up GitHub Actions workflow to run Playwright tests
-- [ ] Add mobile viewport test to CI
-- [ ] Add TypeScript compilation check to CI
-- [ ] Add ESLint check to CI
-- **Status**: Tests exist in test-mobile.spec.ts but not automated
-- **Impact**: No regression detection between deploys
+## Priority 3: Automated Test Suite
+- [ ] Install Playwright browser dependencies
+- [ ] Create e2e tests for critical flows (homepage load, farm browse, reservation)
+- [ ] Add mobile viewport test
+- [ ] Configure CI to run tests on push/PR
+- **Status**: PARTIAL - test-mobile.spec.ts exists but can't run (missing browser deps)
+- **Impact**: No regression detection, manual testing required
 
-## Priority 4: Performance & Database Optimization
-- [ ] Add database indexes for frequently queried fields (farmId, productId, status)
+## Priority 4: Dashboard UX Polish
+- [ ] Add helpful empty states with CTAs for:
+  - No products (link to add first product)
+  - No reservations (explanation text)
+  - No waitlist (explanation text)
+- [ ] Add quick stats cards on dashboard overview
+- [ ] Add "View on Site" button to easily preview farm page
+- **Status**: PARTIAL - Basic empty states exist but not helpful
+- **Impact**: New farmers confused about next steps
+
+## Priority 5: Performance Optimization
 - [ ] Add loading skeletons to Explore and Products pages
 - [ ] Implement pagination for products API (currently returns all)
-- **Status**: Basic implementation works but could be slow at scale
+- [ ] Add database indexes for frequently queried fields
+- **Status**: NOT STARTED
 - **Impact**: Poor performance with large datasets
-
-## Priority 5: UX Polish - Empty States & Error Handling
-- [ ] Improve empty state on dashboard with helpful CTAs
-- [ ] Add better error boundaries for failed page loads
-- [ ] Add retry buttons on failed API calls in dashboard
-- [ ] Verify loading spinners display correctly during data fetches
-- **Status**: Basic error handling exists
-- **Impact**: Users may be confused when something fails
 
 ---
 
-## Completed (Prior Sprints)
+## Completed (This Sprint)
+- ✅ Customer orders tracking page (/orders) - email lookup
+- ✅ CI/CD workflow (.github/workflows/test.yml)
+- ✅ Dynamic homepage with featured farms from DB
+- ✅ Order status email notifications
+- ✅ Quantity selection for reservations
 - ✅ TypeScript compiles cleanly
-- ✅ Dev server runs and pages load correctly
-- ✅ Database seeded with 8 farms and products
-- ✅ Global Products API with search & filters uses real DB
+- ✅ Dev server runs correctly
+
+## Completed (Prior Sprints)
+- ✅ Global Products API with search & filters
 - ✅ Dashboard reservations with real data
 - ✅ Dashboard orders listing with status updates
 - ✅ Order status PATCH endpoint
 - ✅ Registration/onboarding flow
-- ✅ Checkout confirmation page (per-product)
-- ✅ Explore & Categories pages connected to real DB
-- ✅ Farm public page connected to real DB (includes imageUrl display)
-- ✅ Waitlist dashboard connected to real DB (API + UI)
-- ✅ Waitlist notification system (API + email + Notify button)
-- ✅ Admin reports page shows real data from DB
-- ✅ Admin Reports action buttons (Resolve/Dismiss) now work
-- ✅ Farm Settings now connected to database (read/write)
-- ✅ Cart multi-farm UX (warns user, redirects to single farm checkout)
-- ✅ Mobile responsive with touch targets verified
-- ✅ Server Action Export Error fixed
-- ✅ Middleware route protection enabled (security)
-- ✅ PostgreSQL migration complete (Neon)
-- ✅ Image upload API and UI component created
-- ✅ New product page image upload wired
-- ✅ Edit product page image upload wired
-- ✅ Farm settings page image upload wired
-- ✅ Public pages display product images (explore, products, farm profile)
-- ✅ Global "no native payments" disclaimer in footer
-- ✅ Order confirmation emails (customer + farmer)
+- ✅ Checkout confirmation page
+- ✅ Explore & Categories pages
+- ✅ Farm public page
+- ✅ Waitlist dashboard & notification
+- ✅ Admin reports page
+- ✅ Farm Settings connected to DB
+- ✅ Cart multi-farm UX
+- ✅ Mobile responsive verified
+- ✅ PostgreSQL (Neon) configured
