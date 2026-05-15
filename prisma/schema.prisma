@@ -29,6 +29,7 @@ model Farm {
   updatedAt          DateTime  @updatedAt
   products           Product[]
   userId             String    @unique
+  user               User      @relation(fields: [userId], references: [id])
 }
 
 model Product {
@@ -79,6 +80,7 @@ model User {
   role      String   @default("FARMER")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  farms     Farm[]
 }
 
 model Report {

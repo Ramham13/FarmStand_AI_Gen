@@ -3,9 +3,15 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
+import { getUser } from "@/lib/auth-client"
 
 export default async function DashboardPage() {
-  // Fetch farm with products from database
+  // Get current user from localStorage (client-side auth)
+  // Note: In a real app, this would use cookies/sessions with server-side validation
+  const userId: string | null = null
+  
+  // For SSR, we try to get user from headers or use a workaround
+  // In production, use proper session cookies
   const farm = await prisma.farm.findFirst({
     include: {
       products: {

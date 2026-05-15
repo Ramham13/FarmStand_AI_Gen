@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: false,
   webpack: (config) => {
     // Handle CSS in containers where PostCSS might not be fully supported
     config.module.rules.push({

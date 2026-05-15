@@ -1,57 +1,61 @@
-# Sprint Tasks - 2026-05-15 08:14 UTC
+# Sprint Tasks - 2026-05-15 11:29 UTC
 
-## Priority 1: Checkout Flow (Critical - Customer Can't Reserve)
-- [ ] **Add checkout param handling**: Farm page (`/farm/[slug]`) must check for `?checkout=true` param and render checkout form when present
-- [ ] **Build checkout form UI**: Customer info (name, email, phone), message field, order summary showing selected product, submit to `POST /api/reservations`
-- [ ] **Wire reservations to DB**: Replace demo mode in `src/app/api/reservations/route.ts` with actual Prisma create operation
-- [ ] **Add confirmation page**: After successful POST, redirect to `/checkout/confirmation` with order details
+## Priority 1: Build Failure - ESLint Error (BLOCKER)
+- [ ] Fix ESLint error in `/src/app/dashboard/page.tsx` line 11
+- `let userId` is never reassigned - should be `const`
+- **Impact**: Build fails, can't deploy
 
-## Priority 2: Onboarding API (Blocking Farm Creation)
-- [ ] **Create POST /api/onboarding**: API route to handle form submission from `/onboarding` page
-- [ ] **Implement user creation**: Hash password, create User record, create Farm with slug from farm name
-- [ ] **Handle slug uniqueness**: Check if slug exists, return 409 error if taken
-- [ ] **Add initial products**: Handle optional initial product data in onboarding
-- [ ] **Post-create redirect**: Send user to `/dashboard` after successful farm creation
+## Priority 2: Login API - Missing Prisma Relation
+- [ ] Fix `/src/app/api/auth/login/route.ts` - attempts `include: { farm: true }` but User model has NO farm relation
+- User model in Prisma schema lacks `farms` relation (Farm has `userId`, but User doesn't have relation back)
+- Either: Add `farms Farm[]` relation to User model + migration, OR query farm separately by userId
+- **Impact**: Login returns farm as null always, breaks farmer dashboard
 
-## Priority 3: Real Data - Public Pages (Data Integrity)
-- [ ] **Replace mock data on public farm pages**: Update `/farm/[slug]/page.tsx` to fetch real farm data from Prisma instead of hardcoded mockFarms object
-- [ ] **Fix search API**: Ensure `/api/farms/search` returns proper DB results with Prisma query
-- [ ] **Replace mock search on homepage**: Update homepage search to call `/api/farms/search?q=...` instead of filtering in-page mock array
-- [ ] **Add categories API**: Create `/api/categories` endpoint for category filtering
+## Priority 3: Dashboard Security - Data Leakage (CRITICAL)
+- [ ] Fix `/src/app/dashboard/page.tsx` - `findFirst()` returns RANDOM farm to ANY visitor
+- No user filtering - any visitor sees whoever is in DB first
+- Must filter by logged-in user's ID (localStorage is client-only, RSC doesn't have access)
+- **Impact**: Any visitor can view all farmer data
 
-## Priority 4: Customer Order Tracking (Missing Feature)
-- [ ] **Create /orders page**: Customer-facing page to view their reservation history (query by email)
-- [ ] **Add order lookup**: Simple form to check order status by order ID + email
-- [ ] **Dashboard reservations view**: Verify farmer can see incoming reservations with full details
+## Priority 4: Checkout Confirmation - Order ID Broken
+- [ ] Fix `/src/app/checkout/confirmation/page.tsx` - async IIFE doesn't block RSC render
+- The `(async () => { ... })()` pattern resolves AFTER component renders
+- `orderId` is always "unknown" - confirmation shows no order details
+- Need proper `await searchParams` pattern (already typed as Promise) and wire checkout-form to pass orderId
+- **Impact**: Customers can't see order details after checkout
 
-## Priority 5: Real Auth (Technical Debt)
-- [ ] **Real auth API**: Replace demo mode in `/api/auth/login` and `/api/auth/register` with actual password hashing and DB lookups
-- [ ] **Session persistence**: Implement proper session cookies or JWT for login state
-- [ ] **Protect dashboard routes**: Add middleware to protect `/dashboard/*` routes with session check
+## Priority 5: Route Protection Middleware
+- [ ] Create `src/middleware.ts` for Next.js route protection
+- Protect `/dashboard/*` and `/admin/*` routes
+- Redirect unauthenticated users to `/login`
+- Keep public: `/`, `/explore`, `/categories`, `/farm/*`, `/login`, `/register`
+- **Impact**: Unprotected routes expose farmer data
 
 ---
 
-## Completed (Recent)
-- ✅ Mobile CSS fixes (touch targets, responsive breakpoints)
-- ✅ Category filtering (Explore/Categories pages)
-- ✅ All pages load (200 OK verification)
-- ✅ Cart drawer functionality
-- ✅ Farmer dashboard with products, reservations, waitlist views
-- ✅ Reservation/Waitlist forms (farmer side)
-- ✅ TypeScript compiles cleanly
-- ✅ Prisma DB integration on dashboard
+## Completed (from prior sprints)
+- ✅ Prisma schema + migrations
+- ✅ Cart functionality (drawer, add-to-cart button)
+- ✅ Category filtering on Explore/Categories pages
+- ✅ Search API with Prisma queries
+- ✅ Reservations API (POST/GET)
+- ✅ Waitlist form API
+- ✅ Farmer dashboard UI structure
+- ✅ Mobile CSS responsive breakpoints
+- ✅ Farm pages wired to database
+- ✅ Checkout UI components
+- ✅ Register page exists
+- ✅ Login page exists
+- ✅ Admin pages structure
+- ✅ Platform disclaimers
 
-## Known Gaps
-- No global products API (only farm-specific)
-- No categories API endpoint
-- Admin pages exist but untested
-- Dashboard `findFirst()` gets ANY farm, not the logged-in user's farm
-- No product availability toggle in dashboard UI
-- Public farm pages use mock data, not real DB
-- Onboarding form has no backend (no /api/onboarding route)
-
-## Not in Scope
-- Native payment processing
-- Email notifications
-- Farm verification workflow
-- Analytics dashboard
+## Known Gaps (Backlog)
+- No global products API (only farm-specific via /api/farms/[slug]/listings)
+- Admin pages exist but untested (/admin/farms, /admin/reports)
+- No email notifications
+- No user profile management
+- No search UI on individual farm pages
+- Onboarding flow verification needed
+- Client-only auth (localStorage) - no HTTP-only cookies
+- No admin authentication check
+- Order management flow not fully implemented (no Order model, just Reservations)

@@ -323,6 +323,14 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                           unit={product.unit || "item"}
                           imageUrl={undefined}
                         />
+                        <a
+                          href={`/farm/${farm.slug}?checkout=true&productId=${product.id}&productName=${encodeURIComponent(product.name)}&price=${product.price || 0}&unit=${encodeURIComponent(product.unit || "item")}`}
+                          className="block w-full"
+                        >
+                          <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-medium">
+                            Buy Now
+                          </Button>
+                        </a>
                         <ReservationForm productId={product.id} productName={product.name} />
                         <p className="text-xs text-gray-400 text-center">Reserve for pickup</p>
                       </div>

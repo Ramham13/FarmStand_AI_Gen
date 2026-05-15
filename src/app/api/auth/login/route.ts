@@ -1,36 +1,52 @@
 import { NextResponse } from "next/server"
+import { prisma } from "@/lib/db"
+import { verifyPassword } from "@/lib/auth"
 
-function simpleHash(str: string): string {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash
-  }
-  return Math.abs(hash).toString(36)
-}
-
-// Demo mode - no database
 export async function POST(request: Request) {
-  const body = await request.json()
-  const { email, password } = body
+  try {
+    const body = await request.json()
+    const { email, password } = body
 
-  if (!email || !password) {
-    return NextResponse.json({ error: "Email and password required" }, { status: 400 })
-  }
+    if (!email || !password) {
+      return NextResponse.json({ error: "Email and password required" }, { status: 400 })
+    }
 
-  // Demo credentials
-  if (email === "test@farm.com" && password === "test123") {
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        farms: true,
+      },
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+    }
+
+    // Verify password
+    const isValid = await verifyPassword(password, user.password)
+    if (!isValid) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+    }
+
+    // Return user info (exclude password)
+    // Take the first farm if user has multiple
+    const userFarm = user.farms?.[0] || null
     return NextResponse.json({
       success: true,
       user: {
-        id: "user-1",
-        email: "test@farm.com",
-        role: "FARMER",
-        farm: { id: "farm-1", name: "Sunny Meadow Farm", slug: "sunny-meadow-farm" },
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        farm: userFarm ? {
+          id: userFarm.id,
+          name: userFarm.name,
+          slug: userFarm.slug,
+        } : null,
       },
     })
+  } catch (error) {
+    console.error("Login error:", error)
+    return NextResponse.json({ error: "Login failed" }, { status: 500 })
   }
-
-  return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
 }
