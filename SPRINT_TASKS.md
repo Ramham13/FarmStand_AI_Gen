@@ -1,40 +1,41 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 7:27 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 7:42 PM UTC
 
-## Priority 1: SEO & Meta Tags (High Visibility)
-- [ ] Add generateMetadata to home page (`/page.tsx`) - OpenGraph, Twitter cards
-- [ ] Add generateMetadata to farm profile (`/farm/[slug]/page.tsx`) - dynamic OG tags
-- [ ] Add generateMetadata to product page (`/farm/[slug]/product/[productId]/page.tsx`)
-- [ ] Add generateMetadata to explore page (`/explore/page.tsx`)
-- [ ] Create `robots.txt` and `sitemap.xml` route handlers
-- **Impact**: Missing SEO basics; poor social sharing previews; search engines can't crawl effectively
+## Priority 1: SEO & Discovery (High Visibility)
+- [ ] Add `generateMetadata` to home page (`/page.tsx`) - dynamic OG tags, Twitter cards
+- [ ] Add `generateMetadata` to farm profile (`/farm/[slug]/page.tsx`) - farm name in title/description
+- [ ] Add `generateMetadata` to product page (`/farm/[slug]/product/[productId]/page.tsx`)
+- [ ] Create `robots.txt` route handler at `/app/robots.ts`
+- [ ] Create `sitemap.xml` route handler at `/app/sitemap.ts`
+- **Impact**: Missing SEO basics; poor social sharing; search engines can't crawl effectively
 
 ## Priority 2: API Pagination (Scalability)
-- [ ] Implement pagination in `/api/farms/search` with cursor or offset-based pagination
-- [ ] Implement pagination in `/api/farms/[slug]/listings`
-- [ ] Add page info to API responses (total count, hasNext, hasPrev)
-- [ ] Add pagination UI to Explore page (Load More button or infinite scroll)
-- **Impact**: All products loaded at once; performance degrades with large datasets
+- [ ] Update `/api/farms/search` to accept `page` and `limit` query params
+- [ ] Update `/api/farms/[slug]/listings` with pagination support
+- [ ] Return pagination metadata (total, page, limit, hasMore) in API responses
+- [ ] Add "Load More" button to Explore page with pagination state
+- **Impact**: All farms/products loaded at once; performance degrades with growth
 
 ## Priority 3: Database Indexes (Performance)
-- [ ] Add compound index on `Reservation(status, createdAt)` for dashboard queries
-- [ ] Add index on `Product(availability, isActive)` for public product queries
+- [ ] Add compound index on `Reservation(status, createdAt)` in schema.prisma
+- [ ] Add index on `Product(availability, isActive)` for public queries
 - [ ] Add index on `Waitlist(productId, createdAt)` for waitlist ordering
-- [ ] Run `npx prisma db push` to apply indexes
+- [ ] Run `npx prisma db push` to apply to Neon PostgreSQL
 - **Impact**: Poor query performance at scale; full table scans on common queries
 
-## Priority 4: E2E Test Environment (CI/CD Essential)
-- [ ] Fix Playwright system dependencies or switch to alternative testing (Vitest for unit)
-- [ ] Verify e2e tests actually run: `npx playwright test`
-- [ ] Add basic e2e tests for critical flows: homepage, explore, farm page, reservation submit
-- [ ] Add CI step to run tests on push/PR
-- **Impact**: No regression detection; manual testing required for every deploy
+## Priority 4: Form UX & Loading States (User Experience)
+- [ ] Add loading spinner to checkout form submit button
+- [ ] Add loading state to reservation form submit
+- [ ] Add loading state to waitlist form submit
+- [ ] Show error toast when form submission fails (not just console.log)
+- [ ] Disable submit button while pending to prevent double-submit
+- **Impact**: Users can't tell if form is processing; double-submits cause duplicate reservations
 
-## Priority 5: Waitlist Management (Dashboard)
-- [ ] Add ability to notify next person on waitlist when product becomes available
-- [ ] Show waitlist count on product cards in dashboard
-- [ ] Add "Notify All" option for farmers
-- **Status**: Page exists at `/dashboard/waitlist`, needs notification functionality
-- **Impact**: Farmers can't notify customers when items available
+## Priority 5: E2E Test Infrastructure (CI/CD Essential)
+- [ ] Install Playwright: `npx playwright install chromium`
+- [ ] Create `e2e/basic.spec.ts` - homepage load, explore, farm profile, checkout flow
+- [ ] Add `test:e2e` script to package.json
+- [ ] Add e2e step to `.github/workflows/test.yml`
+- **Impact**: No automated regression detection; every deploy needs manual testing
 
 ---
 
@@ -46,11 +47,10 @@
 - ✅ Checkout confirmation page shows farm contact details
 - ✅ TypeScript compiles cleanly
 - ✅ Dev server runs correctly
-- ✅ Mobile viewport meta tag
-- ✅ Horizontal scroll prevention (overflow-x-hidden)
-- ✅ Touch targets (min-h-[44px])
-- ✅ Waitlist dashboard page exists (`/dashboard/waitlist`)
-- ✅ Farm(slug) unique constraint in Prisma
+- ✅ Mobile viewport meta tag, horizontal scroll prevention, touch targets (44px)
+- ✅ Waitlist dashboard page exists with notify UI
+- ✅ Farm slug unique constraint in Prisma
+- ✅ Cart persists to localStorage
 
 ## Completed (Prior Sprints)
 - ✅ Registration/onboarding flow
@@ -72,8 +72,15 @@
 - ✅ Customer orders tracking page (`/orders`)
 - ✅ Body overflow-x-hidden for mobile
 
-## Critical Gaps
-1. **SEO** - No social sharing, no search engine indexing help (no metadata, robots.txt, sitemap)
-2. **Pagination** - Will break with large dataset
-3. **Tests** - No automated regression detection
-4. **Waitlist notifications** - Farmers can't notify customers when items available
+## Codebase Notes
+- **Stack**: Next.js 14 (App Router) + TypeScript + Tailwind + shadcn/ui + Prisma + PostgreSQL (Neon)
+- **Explore API**: Uses hardcoded `take: 50`, no pagination
+- **Schema**: No custom indexes defined; relies on Prisma defaults
+- **Auth**: Cookie-based (`auth-user-id`); no refresh mechanism visible
+- **Scripts**: Only dev/build/start/lint - no test scripts
+
+## What's Working Well
+- Clean component architecture with shadcn/ui
+- Cart persistence via localStorage works
+- Error boundaries in place for major routes
+- Mobile optimizations in place (viewport, scroll, touch targets)
