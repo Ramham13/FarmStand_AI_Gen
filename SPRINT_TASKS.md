@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 15:27 UTC
+# Sprint Tasks - 2026-05-15 15:32 UTC
 
 ## Priority 1: Connect Dashboard Waitlist to Real Database
 - [ ] Replace hardcoded mock `waitlists` array in `/dashboard/waitlist/page.tsx` with fetch to `/api/waitlist`
@@ -58,13 +58,14 @@
 - ✅ Dashboard products page uses real Prisma queries
 - ✅ Waitlist API (GET/POST/PATCH) fully implemented with Prisma
 - ✅ Cart persistence (localStorage) — UI components complete
+- ✅ Profile page uses real /api/auth/me endpoint
 
 ## Known Issues / Technical Debt
 - Waitlist dashboard page still uses mock data (Priority 1)
 - Products API still uses mock data (Priority 2)
 - Explore/Categories still using mock data (Priority 3)
 - Farm public page still using hardcoded `mockFarms` (Priority 4)
-- Cart checkout is single-farm only — needs UX clarification (Priority 5)
+- Cart multi-farm checkout UX unclear (Priority 5)
 
 ## Codebase Analysis Summary
 
@@ -72,21 +73,21 @@
 ```
 src/app/
 ├── api/
-│   ├── auth/me      # ✅ Returns real user + farm from DB (demo fallback)
-│   ├── products/    # ⚠️ Still uses mock data (Priority 2)
-│   ├── waitlist/    # ✅ Full CRUD with Prisma
-│   ├── farms/       # ✅ Real CRUD
-│   ├── orders/      # ✅ GET/POST/PATCH (uses Reservation model)
-│   └── reservations/# ✅ Full CRUD
+│   ├── auth/me         ✅ Returns real user + farm from DB (demo fallback)
+│   ├── products/       ⚠️ Still uses mock data (Priority 2)
+│   ├── waitlist/       ✅ Full CRUD with Prisma
+│   ├── farms/          ✅ Real CRUD
+│   ├── orders/         ✅ GET/POST/POST/PATCH (uses Reservation model)
+│   └── reservations/   ✅ Full CRUD
 ├── dashboard/       
-│   ├── orders/      # ✅ Real DB (reservations)
-│   ├── products/    # ✅ Real DB
-│   ├── reservations/# ✅ Real DB
-│   └── waitlist/    # ⚠️ Mock data (Priority 1)
-├── explore/         # ⚠️ Mock data (Priority 3)
-├── categories/      # ⚠️ Mock data (Priority 3)
-├── farm/[slug]/    # ⚠️ Mock data (Priority 4)
-└── profile/        # ✅ Uses /api/auth/me
+│   ├── orders/         ✅ Real DB (reservations)
+│   ├── products/       ✅ Real DB
+│   ├── reservations/   ✅ Real DB
+│   └── waitlist/       ⚠️ Mock data (Priority 1)
+├── explore/            ⚠️ Mock data (Priority 3)
+├── categories/         ⚠️ Mock data (Priority 3)
+├── farm/[slug]/        ⚠️ Mock data (Priority 4)
+└── profile/            ✅ Uses /api/auth/me
 ```
 
 ### Data Model
@@ -95,16 +96,19 @@ src/app/
 - **Waitlist** tracks interested customers per product
 - Cart persisted to localStorage (client-side only)
 
-### What's Changed Since Last Sprint
-- All completed items from previous sprint remain done
-- No new features added since last sprint cycle
-
 ### Current Blockers
 1. Waitlist dashboard page not fetching from `/api/waitlist`
 2. Products API still using `getAllFarms()` mock
 3. Explore/Categories still using mock data
 4. Farm public page still using hardcoded `mockFarms`
 5. Cart multi-farm checkout UX unclear
+
+### What's Changed Since Last Sprint
+- Added `/api/auth/me` with real user + farm data from DB (with demo fallback)
+- Updated profile page to use real auth endpoint
+- Updated waitlist API with comprehensive CRUD operations
+- All completed items from previous sprint remain done
+- No new features added since last sprint cycle
 
 ### Working Components
 - Waitlist API: Full Prisma CRUD ✅
@@ -113,3 +117,10 @@ src/app/
 - Admin dashboard: Real Prisma queries ✅
 - Dashboard products/orders/reservations: Real DB ✅
 - Mobile-friendly: Touch targets, viewport, overflow handling ✅
+
+## Test Coverage Status
+- TypeScript: ✅ Compiles cleanly
+- Dev server: ✅ Responding
+- Pages load: ✅ No crashes
+- Mobile: ✅ Touch targets, viewport meta, no horizontal scroll
+- Playwright: ⚠️ Skipped (missing system library in environment)
