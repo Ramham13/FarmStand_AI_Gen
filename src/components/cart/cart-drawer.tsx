@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 function CartItemRow({ item, onUpdateQuantity, onRemove }: { item: CartItem; onUpdateQuantity: (qty: number) => void; onRemove: () => void }) {
   return (
@@ -59,7 +60,7 @@ export function CartDrawer() {
       // Redirect to checkout page
       window.location.href = `/checkout`;
     } else {
-      alert("Checkout is only available for a single farm at a time. Please checkout farm by farm.");
+      toast.warning("Checkout is only available for a single farm at a time. Please checkout farm by farm.");
     }
   };
 

@@ -5,8 +5,47 @@ import { Toaster } from "@/components/ui/sonner"
 import { Providers } from "@/components/providers"
 
 export const metadata: Metadata = {
-  title: "Virtual Farm Stand - Local Farms, Fresh Products",
-  description: "Discover local farms, fresh produce, and artisan goods. Connect directly with farmers in your area.",
+  title: {
+    default: "Virtual Farm Stand - Local Farms, Fresh Products",
+    template: "%s | Virtual Farm Stand",
+  },
+  description: "Discover local farms, fresh produce, eggs, dairy, and artisan goods. Connect directly with farmers in your area. No fees, no middleman.",
+  keywords: ["local farms", "farm stand", "fresh produce", "eggs", "dairy", "farmers market", "organic", "sustainable"],
+  authors: [{ name: "Virtual Farm Stand" }],
+  creator: "Virtual Farm Stand",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://farmstand.example.com",
+    siteName: "Virtual Farm Stand",
+    title: "Virtual Farm Stand - Local Farms, Fresh Products",
+    description: "Discover local farms, fresh produce, and artisan goods. Connect directly with farmers in your area.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Virtual Farm Stand - Connect with Local Farms",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Virtual Farm Stand - Local Farms, Fresh Products",
+    description: "Discover local farms, fresh produce, and artisan goods. Connect directly with farmers.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   viewport: "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
 }
 

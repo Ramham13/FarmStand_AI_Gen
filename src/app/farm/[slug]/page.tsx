@@ -1,7 +1,42 @@
 import { notFound } from "next/navigation"
+import { Metadata } from "next"
 import { FarmPageClient } from "./farm-page-client"
 import { CheckoutForm } from "@/components/farm/checkout-form"
 import { getFarmBySlug } from "@/lib/farms"
+
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}): Promise<Metadata> {
+  const { slug } = await params
+  const farm = await getFarmBySlug(slug)
+  
+  if (!farm) {
+    return {
+      title: "Farm Not Found - Virtual Farm Stand",
+    }
+  }
+  
+  return {
+    title: `${farm.name} - Virtual Farm Stand`,
+    description: farm.description 
+      ? `${farm.name} - ${farm.description.slice(0, 160)}`
+      : `Visit ${farm.name} on Virtual Farm Stand. Find fresh, locally-grown products directly from the farm.`,
+    openGraph: {
+      title: `${farm.name} - Virtual Farm Stand`,
+      description: farm.description || `Discover fresh products from ${farm.name}`,
+      type: "website",
+      url: `/farm/${slug}`,
+      siteName: "Virtual Farm Stand",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${farm.name} - Virtual Farm Stand`,
+      description: farm.description || `Discover fresh products from ${farm.name}`,
+    },
+  }
+}
 
 export default async function FarmPage({ 
   params, 
@@ -36,3 +71,5 @@ export default async function FarmPage({
 
   return <FarmPageClient farm={farm} />
 }
+
+export const dynamic = "force-dynamic"

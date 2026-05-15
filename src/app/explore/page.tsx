@@ -7,12 +7,18 @@ import { ExploreSearch } from "./explore-search"
 export const metadata = {
   title: "Explore Farms - Virtual Farm Stand",
   description: "Discover local farms near you. Find fresh produce, eggs, dairy, and more directly from farmers.",
+  openGraph: {
+    title: "Explore Local Farms - Virtual Farm Stand",
+    description: "Discover local farms, fresh produce, eggs, dairy, and artisan goods.",
+    type: "website",
+  },
 }
 
-async function getSearchResults(query: string, category?: string) {
+async function getSearchResults(query: string, category?: string, page: number = 1) {
   const params = new URLSearchParams()
   if (query) params.set("q", query)
   if (category) params.set("category", category)
+  params.set("page", page.toString())
   params.set("limit", "12")
 
   const res = await fetch(`/api/farms/search?${params.toString()}`, {
@@ -29,16 +35,17 @@ async function getSearchResults(query: string, category?: string) {
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string }>
+  searchParams: Promise<{ q?: string; category?: string; page?: string }>
 }) {
-  const { q: query, category } = await searchParams
+  const { q: query, category, page } = await searchParams
+  const currentPage = page ? parseInt(page, 10) : 1
   
   // Use search API if query present, otherwise use server function
   let farms: any[] = []
   let pagination = { total: 0, page: 1, limit: 12, hasMore: false }
   
-  if (query) {
-    const result = await getSearchResults(query, category)
+  if (query || category) {
+    const result = await getSearchResults(query || '', category, currentPage)
     farms = result.farms || []
     pagination = result.pagination || pagination
   } else {

@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -129,10 +130,11 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
       <div className="bg-gradient-to-r from-green-700 to-green-800 text-white">
         {farm.imageUrl && (
           <div className="relative h-32 sm:h-48 md:h-56 w-full overflow-hidden">
-            <img 
+            <Image 
               src={farm.imageUrl} 
               alt={farm.name} 
-              className="w-full h-full object-cover opacity-40"
+              fill
+              className="object-cover opacity-40"
             />
           </div>
         )}
@@ -297,10 +299,11 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                 <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow">
                   <div className={`h-28 sm:h-32 bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
                     {product.imageUrl ? (
-                      <img 
+                      <Image 
                         src={product.imageUrl} 
                         alt={product.name} 
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     ) : (
                       <span className="text-4xl filter drop-shadow-sm">{emoji}</span>

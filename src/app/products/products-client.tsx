@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -278,10 +279,11 @@ export function ProductsClient({
                 {/* Product Image */}
                 {product.imageUrl ? (
                   <div className="relative h-32 w-full">
-                    <img 
+                    <Image 
                       src={product.imageUrl} 
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                 ) : (

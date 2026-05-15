@@ -1,7 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 interface Farm {
   id: string
@@ -34,14 +37,66 @@ export function ExploreClient({
   initialQuery = "",
   pagination 
 }: ExploreClientProps) {
-  const [searchQuery] = useState(initialQuery)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [allFarms, setAllFarms] = useState(farms)
+  const [loading, setLoading] = useState(false)
+  const [loadMoreHasMore, setLoadMoreHasMore] = useState(pagination?.hasMore ?? false)
+  const [currentPage, setCurrentPage] = useState(pagination?.page ?? 1)
+
+  const total = pagination?.total ?? farms.length
+  const limit = pagination?.limit ?? 12
+  const displayedCount = allFarms.length
+
+  const handleLoadMore = async () => {
+    const nextPage = currentPage + 1
+    setLoading(true)
+
+    try {
+      // Build URL with params
+      const params = new URLSearchParams()
+      if (initialQuery) params.set("q", initialQuery)
+      if (selectedCategory) params.set("category", selectedCategory)
+      params.set("page", nextPage.toString())
+      params.set("limit", limit.toString())
+
+      const res = await fetch(`/api/farms/search?${params.toString()}`)
+      const data = await res.json()
+
+      if (data.farms && Array.isArray(data.farms)) {
+        const newFarms = data.farms.map((f: any) => ({
+          id: f.id,
+          name: f.name,
+          slug: f.slug,
+          description: f.description || "",
+          location: f.location || "",
+          emoji: f.emoji || "🌾",
+          imageUrl: f.imageUrl,
+          categories: f.categories || [],
+        }))
+
+        setAllFarms((prev) => [...prev, ...newFarms])
+        setLoadMoreHasMore(data.pagination?.hasMore ?? false)
+        setCurrentPage(nextPage)
+
+        // Update URL without page refresh
+        const newParams = new URLSearchParams(searchParams.toString())
+        newParams.set("page", nextPage.toString())
+        router.push(`/explore?${newParams.toString()}`, { scroll: false })
+      }
+    } catch (error) {
+      console.error("Failed to load more farms:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
   
-  if (farms.length === 0) {
+  if (allFarms.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg">
-          {searchQuery 
-            ? `No farms found for "${searchQuery}".`
+          {initialQuery 
+            ? `No farms found for "${initialQuery}".`
             : "No farms found for this category."}
         </p>
         <Link href="/explore" className="text-green-600 hover:text-green-700 mt-2 inline-block">
@@ -51,19 +106,18 @@ export function ExploreClient({
     )
   }
 
-  const total = pagination?.total ?? farms.length
-  const hasMore = pagination?.hasMore ?? false
+  const hasMore = loadMoreHasMore
 
   return (
     <div>
       <p className="text-sm text-gray-500 mb-4 sm:mb-6">
         {total} farm{total !== 1 ? 's' : ''} found
-        {searchQuery && <span> matching "{searchQuery}"</span>}
+        {initialQuery && <span> matching "{initialQuery}"</span>}
         {selectedCategory && <span> in {selectedCategory}</span>}
       </p>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {farms.map((farm) => (
+        {allFarms.map((farm) => (
           <Link
             key={farm.id}
             href={`/farm/${farm.slug}`}
@@ -71,10 +125,11 @@ export function ExploreClient({
           >
             {farm.imageUrl ? (
               <div className="relative h-32 sm:h-40 w-full">
-                <img 
+                <Image 
                   src={farm.imageUrl} 
                   alt={farm.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               </div>
@@ -131,9 +186,29 @@ export function ExploreClient({
       {hasMore && (
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-500 mb-4">
-            Showing {farms.length} of {total} farms
+            Showing {displayedCount} of {total} farms
           </p>
+          <button
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation min-h-[44px]"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Load More Farms"
+            )}
+          </button>
         </div>
+      )}
+      
+      {!hasMore && displayedCount > 0 && (
+        <p className="text-center text-sm text-gray-500 mt-8">
+          Showing all {displayedCount} farm{displayedCount !== 1 ? 's' : ''}
+        </p>
       )}
     </div>
   )

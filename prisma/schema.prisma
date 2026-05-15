@@ -30,6 +30,8 @@ model Farm {
   products           Product[]
   userId             String    @unique
   user               User      @relation(fields: [userId], references: [id])
+
+  @@index([status])
 }
 
 model Product {
@@ -48,6 +50,8 @@ model Product {
   updatedAt    DateTime      @updatedAt
   reservations Reservation[]
   waitlist     Waitlist[]
+
+  @@index([availability, isActive])
 }
 
 model Reservation {
@@ -62,6 +66,8 @@ model Reservation {
   status        String   @default("PENDING")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([status, createdAt])
 }
 
 model Waitlist {
@@ -72,6 +78,8 @@ model Waitlist {
   customerEmail String
   notifiedAt    DateTime?
   createdAt     DateTime  @default(now())
+
+  @@index([productId, createdAt])
 }
 
 model User {

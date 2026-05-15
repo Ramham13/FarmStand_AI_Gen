@@ -1,84 +1,89 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 9:07 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 11:22 PM UTC
 
-## Priority 1: SEO - Critical for Discovery
-- [ ] Add `generateMetadata` to farm profile (`/farm/[slug]/page.tsx`) - OG tags with farm name/image
-- [ ] Add `generateMetadata` to product page (`/farm/[slug]/product/[productId]/page.tsx`)
-- [ ] Add `generateMetadata` to homepage and explore page
-- [ ] Create `robots.txt` route handler (`src/app/robots.ts`)
-- [ ] Create `sitemap.xml` route handler (`src/app/sitemap.ts`)
+## Priority 1: CRITICAL - Fix Homepage Build Error
+- [ ] **Fix `"use client"` + `metadata` conflict in `src/app/page.tsx`**:
+  - Cannot export `metadata` from a client component (Next.js limitation)
+  - File has both `"use client"` on line 1 AND `export const metadata` on line 11
+  - Options: (A) Move metadata to `src/app/layout.tsx`, or (B) Refactor to use server component pattern
+  - **BLOCKER**: `npm run build` FAILS - this prevents any deployment
 
-## Priority 2: Pagination UI - Incomplete Feature
-- [ ] Add actual "Load More" button to Explore page (currently shows "Showing X of Y" text only)
-- [ ] Implement server action or API call to fetch next page
-- [ ] Update URL with page param for shareability
-- [ ] Add loading state during pagination fetch
+## Priority 2: Next.js Image Configuration
+- [ ] **Add image domain config to `next.config.mjs`**:
+  - App uses `<Image />` component throughout but lacks domain config
+  - Add: `images: { remotePatterns: [{ hostname: "**" }] }` for external images
+  - Will fail at runtime otherwise
 
-## Priority 3: Dashboard Data Connection
-- [ ] Connect `/dashboard` page to real database queries (currently shows placeholder data)
-- [ ] Implement farm stats: product count, reservation count, waitlist count
-- [ ] Connect `/dashboard/products` to list actual products
-- [ ] Connect `/dashboard/reservations` to show real reservation requests
-- [ ] Connect `/dashboard/waitlist` to show real waitlist entries
+## Priority 3: Dashboard Data Wiring
+- [ ] **Wire main dashboard** (`/dashboard`) to show real data:
+  - Replace demo/placeholder data with real DB queries via Prisma
+  - Currently shows hardcoded "0" values for products/orders/reservations
+  - Wire `/dashboard/products`, `/dashboard/reservations`, `/dashboard/waitlist` pages
 
-## Priority 4: Database Performance Indexes
-- [ ] Add compound index on `Reservation(status, createdAt)` in schema.prisma
-- [ ] Add index on `Product(availability, isActive)` for public queries
-- [ ] Add index on `Farm(status, region)` for filtered searches
-- [ ] Add index on `Waitlist(productId, createdAt)` for waitlist ordering
-- [ ] Run `npx prisma db push` to apply to PostgreSQL
+## Priority 4: Loading States (UX)
+- [ ] **Add loading.tsx files** to key routes for Suspense boundaries:
+  - `src/app/dashboard/loading.tsx`
+  - `src/app/explore/loading.tsx`
+  - `src/app/products/loading.tsx`
+  - `src/app/farm/[slug]/loading.tsx`
+  - `src/app/farm/[slug]/product/[productId]/loading.tsx`
+- Currently NO loading.tsx files exist anywhere in the app
 
-## Priority 5: Performance Optimization
-- [ ] Add `priority` prop to above-fold LCP images (hero images, farm covers)
-- [ ] Add dynamic imports for heavy components (Explore, Dashboard)
-- [ ] Verify all form error handling shows toast on failure
-- [ ] Add retry logic for network failures in forms
+## Priority 5: Mobile Checkout Verification
+- [ ] **Verify checkout forms work on mobile**:
+  - Ensure 16px minimum font on inputs (prevents iOS zoom on focus)
+  - 44px+ touch targets on checkout buttons
+  - Test forms in portrait mode on small viewports
+  - Check reservation-form, checkout-form, waitlist-form components
 
 ---
 
 ## Completed (Previous Sprints)
+
 - ✅ Mobile viewport, horizontal scroll prevention, 44px touch targets
 - ✅ Error boundaries on explore, products, dashboard routes
 - ✅ Retry buttons on failed API calls
-- ✅ Skeleton loaders on Explore and Products
+- ✅ Skeleton loaders in Explore and Products client components
 - ✅ Checkout flow with farm contact info
 - ✅ Waitlist dashboard with notify UI
 - ✅ Cart localStorage persistence
+- ✅ Empty cart state with CTA to browse farms
+- ✅ Cart uses Next.js Image component
 - ✅ Registration/onboarding flow
-- ✅ Explore & Categories with filters
-- ✅ Farm profile & product detail pages
+- ✅ Explore & Categories pages with filters
+- ✅ Farm profile & product detail pages with SEO metadata
 - ✅ Admin reports page
 - ✅ Image upload API
-- ✅ CI/CD workflow
+- ✅ CI/CD workflow setup
 - ✅ PostgreSQL (Neon) migration
 - ✅ Form loading states and disabled buttons
-- ✅ Search API wired to Explore page (query param works!)
-- ✅ Pagination in `/api/farms/search` (page, limit, offset, hasMore)
+- ✅ Search API wired to Explore page
+- ✅ Pagination in `/api/farms/search` with Load More button
+- ✅ SEO: robots.txt and sitemap.xml route handlers
+- ✅ Database indexes for Reservation, Product, Farm, Waitlist
+- ✅ Homepage has SEO metadata (title, description, OG tags)
 
-## Codebase Analysis Summary
+---
+
+## Codebase Analysis
 
 | Area | Status | Notes |
 |------|--------|-------|
-| SEO | ❌ Missing | No generateMetadata, sitemap.xml, or robots.txt |
-| DB Indexes | ❌ None | All tables have zero indexes |
-| Pagination UI | ⚠️ Incomplete | API ready, button missing |
-| Dashboard | ⚠️ Placeholder | Shows demo data, not real queries |
-| Forms | ✅ Done | Uses sonner, needs error path verification |
-| Mobile | ✅ Done | Viewport, touch targets verified |
-| Performance | ⚠️ LCP | No priority on LCP images |
-| Homepage | ✅ Done | Search, featured farms, categories |
-| Cart | ✅ Done | localStorage persistence |
-| Checkout | ✅ Done | Reservation flow + contact info |
-| Auth | ✅ Done | Login, register, onboarding |
+| Build | ❌ BROKEN | "use client" + metadata conflict (line 1 and 11) |
+| Image Config | ⚠️ Missing | Uses `<Image />` but no domain config |
+| Dashboard Data | ⚠️ Demo | Shows static "0" values (no DB queries) |
+| Loading States | ⚠️ Missing | No loading.tsx anywhere in app |
+| Mobile Checkout | ⚠️ Unverified | Needs testing |
+| Cart | ✅ Done | Empty state, Image component |
+| Auth Flow | ✅ Done | Login, register, onboarding |
+| Farm/Product SEO | ✅ Done | generateMetadata + OG tags |
+| Explore Page | ✅ Done | Search, filters, pagination |
 
-## Recent Git History (Last 5 Commits)
-- d63a4d1 - Update sprint tasks and test report
-- afb7b81 - Update sprint tasks and test report
-- 202bc86 - Update test report - all tests passing
-- 57ea155 - Complete daily test run and update task tracking
-- a488cfb - Update test report and task tracking
+---
 
-## Files Analyzed
-- `src/app/` - 15 route directories including explore, dashboard, farm, checkout, orders
-- `src/components/` - ui (shadcn), cart, farm, layout components
-- `prisma/schema.prisma` - PostgreSQL with 6 models (Farm, Product, Reservation, Waitlist, User, Report)
-- API routes: farms/search, products, reservations, waitlist, orders, checkout, upload, auth
+## Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Database**: PostgreSQL (Neon)
+- **ORM**: Prisma
