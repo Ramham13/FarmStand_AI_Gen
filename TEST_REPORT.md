@@ -1,24 +1,18 @@
-# Test Report - Friday, May 15th, 2026, 8:49 PM UTC
+# Test Report - 2026-05-15 20:54 UTC
 
-## Last Commit: 202bc86 - Update test report - all tests passing
+## Last Commit: afb7b81 Update sprint tasks and test report
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
-| TypeScript | PASS | No type errors (npx tsc --noEmit) |
-| Dev Server | PASS | Server running on localhost:3000 |
-| Home (/) | PASS | Loads with hero, featured farms, category buttons |
-| Explore (/explore) | PASS | Loads 8 farms with filtering options |
-| Farm Profile (/farm/sunny-meadow-farm) | PASS | Shows farm details, products, contact info |
-
-## Mobile/Touch Check (via HTML analysis)
-- **Viewport meta**: Present with width=device-width
-- **Horizontal scroll**: Prevented via `overflow-x-hidden` on body
-- **Touch targets**: Buttons have `min-h-[44px]` (44px minimum touch target)
-- **Responsive classes**: Uses sm:, md:, lg: breakpoints properly
+| TypeScript | PASS | No type errors |
+| Home (/) | PASS | Loads correctly, hero section, featured farms displayed |
+| Explore (/explore) | PASS | 8 farms found, category filters work |
+| Farm Profiles (/farm/profiles) | FAIL | Route does not exist - 404. Correct route is /farm/[slug] |
+| Farm Profile (/farm/sunny-meadow-farm) | PASS | Individual farm page loads with products |
 
 ## Bugs Found
-- None
+- [ ] `/farm/profiles` returns 404 - This is a test issue, not a bug. The route doesn't exist; farms are accessed via `/farm/[slug]` pattern (e.g., `/farm/sunny-meadow-farm`)
 
 ## Summary
-PASS - All tests passing. Dev server running, TypeScript compiles clean, all pages load without errors.
+PASS - Core functionality works. TypeScript compiles cleanly, dev server runs, all valid pages load correctly. The "farm profiles" page test used an incorrect URL - the route pattern is `/farm/[slug]` not `/farm/profiles`.
