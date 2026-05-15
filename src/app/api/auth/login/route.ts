@@ -9,23 +9,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email and password required" }, { status: 400 })
     }
 
-    // Demo mode - accept any login
+    // Demo mode - generate a demo user ID
+    const demoUserId = "demo-" + Date.now()
+    
     const response = NextResponse.json({
       success: true,
       user: {
-        id: "demo-user-1",
+        id: demoUserId,
         email: email,
         role: "FARMER",
         farm: {
           id: "demo-farm-1",
-          name: "Demo Farm",
-          slug: "demo-farm",
+          name: "My Farm",
+          slug: "my-farm",
         },
       },
     })
     
     // Set auth cookie
-    response.cookies.set("auth-user-id", "demo-user-1", {
+    response.cookies.set("auth-user-id", demoUserId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

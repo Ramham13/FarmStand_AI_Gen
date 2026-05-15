@@ -25,6 +25,21 @@ export async function getCurrentUser(): Promise<ServerUser | null> {
     return null
   }
   
+  // Demo mode - handle demo/user IDs
+  if (userId.startsWith("demo-") || userId.startsWith("user-")) {
+    // Return a demo user for demo accounts
+    return {
+      id: userId,
+      email: "demo@farm.com",
+      role: "FARMER",
+      farm: {
+        id: "demo-farm-1",
+        name: "Demo Farm",
+        slug: "demo-farm",
+      },
+    }
+  }
+  
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },

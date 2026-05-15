@@ -76,3 +76,44 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to create order" }, { status: 500 })
   }
 }
+// PATCH /api/orders - Update order status
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json()
+    const { orderId, status } = body
+
+    if (!orderId || !status) {
+      return NextResponse.json(
+        { error: "Missing required fields: orderId, status" },
+        { status: 400 }
+      )
+    }
+
+    // Validate status
+    const validStatuses = ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"]
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` },
+        { status: 400 }
+      )
+    }
+
+    // Update the reservation status
+    const order = await prisma.reservation.update({
+      where: { id: orderId },
+      data: { status },
+      include: {
+        product: {
+          include: {
+            farm: true,
+          },
+        },
+      },
+    })
+
+    return NextResponse.json(order)
+  } catch (error) {
+    console.error("Error updating order:", error)
+    return NextResponse.json({ error: "Failed to update order" }, { status: 500 })
+  }
+}

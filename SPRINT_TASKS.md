@@ -1,59 +1,61 @@
-# Sprint Tasks - 2026-05-15 11:51 UTC
+# Sprint Tasks - 2026-05-15 12:22 UTC
 
-## Priority 1: Dashboard Security - Data Leakage (CRITICAL)
-- [x] Fix `/src/app/dashboard/page.tsx` - Already properly filters by user.id using getCurrentUser()
-- No user filtering - any visitor sees whoever is in DB first
-- Must filter by logged-in user's ID (localStorage is client-only, RSC doesn't have access)
-- Need: Proper session/cookie-based auth OR middleware that passes user context
-- **Impact**: Any visitor can view all farmer data
+## Priority 1: Critical Bug Fix (Build Broken)
+- [ ] Fix TypeScript error in `/api/products/route.ts` - lines 19, 20 have implicit `any` type
+  - `p` and `product` parameters need explicit types or proper type inference
+  - **Impact**: Build fails, blocks all testing and deployment
 
-## Priority 2: Route Protection Middleware
-- [x] Create `src/middleware.ts` for Next.js route protection
-- Protect `/dashboard/*` and `/admin/*` routes
-- Redirect unauthenticated users to `/login`
-- Keep public: `/`, `/explore`, `/categories`, `/farm/*`, `/login`, `/register`
-- **Impact**: Unprotected routes expose farmer data
+## Priority 2: User Account Management
+- [ ] Create `/profile` page for user account settings (separate from farm settings)
+- [ ] Allow password change with current password verification
+- [ ] Show account metadata (email, role, created date)
+- [ ] Implement proper auth - current `/dashboard/settings` is farm settings only
+- **Impact**: Users cannot manage their own account - security gap
 
-## Priority 3: Admin Authentication Check
-- [x] Add auth check to `/admin/*` pages - Already has getCurrentUser() + isAdmin() checks
-- Currently admin pages are fully public with no access control
-- Need: Verify user has admin role before rendering
-- **Impact**: Anyone can access platform moderation tools
+## Priority 3: Mobile UX Verification
+- [ ] Run mobile test suite after TypeScript fix
+- [ ] Verify horizontal scroll doesn't occur on mobile viewports (375px)
+- [ ] Test touch targets are adequate (44px minimum)
+- [ ] Test cart drawer works on mobile
+- [ ] Verify checkout forms are mobile-friendly
+- **Impact**: Mobile users may have poor experience
 
-## Priority 4: Client-Side Auth Security Gaps
-- [x] Already uses HTTP-only cookies (auth-user-id) + server-side validation in auth-server.ts
-- `getUser()` in auth-client.ts returns null on server-side
-- Dashboard RSC can't verify user identity securely
-- Need: Proper session cookie + server-side validation OR middleware-based auth
-- **Impact**: No real security - tokens stored in easily accessible localStorage
+## Priority 4: Order Status Workflow
+- [x] Add PATCH endpoint to update order/reservation status (CONFIRMED, COMPLETED, CANCELLED) - DONE
+- [x] Add status update buttons on dashboard orders page - DONE
+- [x] Add visual status badges (PENDING=yellow, CONFIRMED=blue, COMPLETED=green, CANCELLED=red) - DONE
+- **Impact**: Order fulfillment workflow complete ✅
 
-## Priority 5: TypeScript/Build Verification
-- [x] TypeScript passes; build hits system resource limit but compiles successfully
-- Verify no type errors or warnings
-- **Impact**: Prevents deployment issues
-
----
-
-## Already Fixed (from prior sprints)
-- ✅ ESLint error - `let userId` → `const`
-- ✅ Prisma User-Farm relation added
-- ✅ Checkout confirmation page properly awaits searchParams
-- ✅ Category filtering on Explore/Categories pages
-- ✅ Cart functionality (drawer, add-to-cart)
-- ✅ Search API with Prisma queries
-- ✅ Reservations API (POST/GET)
-- ✅ Waitlist form API
-- ✅ Mobile CSS responsive breakpoints
-- ✅ Farm pages wired to database
-- ✅ Platform disclaimers
+## Priority 5: Global Products Browse UI
+- [x] Create `/products` page to consume `/api/products` endpoint - DONE
+- [x] Add search bar with query param - DONE
+- [x] Add category filter UI - DONE
+- [x] Add price range filter UI - DONE
+- [x] Display product grid with farm info - DONE
+- **Impact**: Products discovery now available ✅
 
 ---
 
-## Known Gaps (Backlog - Not Priority This Sprint)
-- No global products API (only farm-specific via /api/farms/[slug]/listings)
-- No email notifications (placeholder UI only)
-- No user profile management page
-- No search UI on individual farm pages
-- Onboarding flow verification needed
-- Order management flow not fully implemented (no Order model, just Reservations)
-- Admin pages exist but lack real database data (hardcoded stats)
+## Completed (from prior sprints)
+- ✅ Global Products API with search & filters
+- ✅ Farm page search functionality
+- ✅ Dashboard reservations page
+- ✅ Dashboard orders listing
+- ✅ Order API (uses reservations)
+- ✅ Cart functionality
+- ✅ Route protection middleware
+- ✅ Security hardening
+- ✅ Category filtering on explore
+- ✅ Farm settings page
+- ✅ Checkout confirmation page (wired to checkout form)
+
+---
+
+## Backlog (Future Sprints)
+- Email notifications system
+- Admin dashboard with real database stats
+- Onboarding flow improvements
+- Payment integration (currently external payment links only)
+- Review/rating system
+- Farm favoriting
+- Waitlist management UI improvements

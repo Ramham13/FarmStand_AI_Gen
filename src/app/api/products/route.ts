@@ -1,6 +1,17 @@
 import { NextResponse } from 'next/server'
 import { getAllFarms } from '@/lib/mock-data'
 
+// Type for products from mock data
+interface FarmProduct {
+  id: string
+  name: string
+  description?: string
+  category: string
+  price: number
+  unit: string
+  availability: string
+}
+
 // GET /api/products - list all active products across all farms with search & filters
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -16,8 +27,8 @@ export async function GET(request: Request) {
   // Flatten products from all farms and add farm info
   let allProducts = farms.flatMap(farmData => 
     (farmData.products || [])
-      .filter((p: any) => p.availability !== 'SOLD_OUT')
-      .map((product: any) => ({
+      .filter((p: FarmProduct) => p.availability !== 'SOLD_OUT')
+      .map((product: FarmProduct) => ({
         ...product,
         farmId: farmData.id,
         farmName: farmData.name,

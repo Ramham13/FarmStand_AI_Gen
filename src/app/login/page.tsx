@@ -32,7 +32,14 @@ export default function LoginPage() {
       if (data.success) {
         // Store user info in localStorage
         localStorage.setItem("user", JSON.stringify(data.user))
-        router.push("/dashboard")
+        
+        // Set cookie for server-side auth
+        document.cookie = `auth-user-id=${data.user.id}; path=/; max-age=${7 * 24 * 60 * 60}`
+        
+        // Small delay to ensure cookie is set before navigation
+        setTimeout(() => {
+          router.push("/dashboard")
+        }, 100)
       } else {
         setError(data.error || "Login failed")
       }
@@ -60,7 +67,7 @@ export default function LoginPage() {
               <Input 
                 id="email" 
                 type="email" 
-                placeholder="you@example.com" 
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
@@ -70,23 +77,23 @@ export default function LoginPage() {
               <Label htmlFor="password">Password</Label>
               <Input 
                 id="password" 
-                type="password" 
-                placeholder="••••••••" 
+                type="password"
+                placeholder="Your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
               />
             </div>
-            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={loading}>
+            <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700">
               {loading ? "Signing in..." : "Sign In"}
             </Button>
+            <p className="text-center text-sm text-gray-600">
+              Don&apos;t have an account?{" "}
+              <Link href="/register" className="text-green-600 hover:underline">
+                Create one
+              </Link>
+            </p>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <span className="text-gray-500">Don't have an account? </span>
-            <Link href="/register" className="text-green-600 hover:underline">
-              Register
-            </Link>
-          </div>
         </CardContent>
       </Card>
     </div>
