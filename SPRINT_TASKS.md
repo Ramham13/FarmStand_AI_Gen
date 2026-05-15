@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 07:59 UTC
+# Sprint Tasks - 2026-05-15 08:04 UTC
 
 ## Priority 1: Checkout Flow (Critical - Customer Can't Buy)
 - [ ] **Add checkout param handling**: Farm page (`/farm/[slug]`) must check for `?checkout=true` and render checkout form when param present
