@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { ExploreClient } from "./explore-client"
-import { getAllFarms, categories } from "@/lib/mock-data"
+import { getFarms, categories } from "@/lib/farms"
 
 export const metadata = {
   title: "Explore Farms - Virtual Farm Stand",
@@ -13,7 +13,7 @@ export default async function ExplorePage({
   searchParams: Promise<{ category?: string }>
 }) {
   const { category } = await searchParams
-  const farms = category ? getAllFarms().filter(f => f.categories.includes(category)) : getAllFarms()
+  const farms = await getFarms(category ? { category } : undefined)
   
   return (
     <div className="min-h-screen bg-gray-50">

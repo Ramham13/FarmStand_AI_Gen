@@ -1,40 +1,42 @@
-# Sprint Tasks - 2026-05-15 15:57 UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 4:37 PM UTC
 
-## Priority 1: Connect Dashboard Waitlist to Real Database
-- [ ] Replace hardcoded mock `waitlists` array in `/dashboard/waitlist/page.tsx` with fetch to `/api/waitlist`
-- [ ] Add loading and error states to waitlist page
-- [ ] Wire up "Notify" button to call PATCH `/api/waitlist` with `action: "notify"`
-- [ ] Display `notifiedAt` status in customer row (badge/color)
-- **Impact**: Farmers see their real waitlist data, not just mock customers
-- **Why Now**: The API is already built — just needs the UI connected
+## Priority 1: CRITICAL - Fix Server Action Export Error (BLOCKING)
+- [ ] Remove `"use server"` directive from line 1 of `src/lib/farms.ts`
+- [ ] The `categories` array export is a plain object, not an async function - violates Next.js "use server" rule
+- [ ] Verify /explore and /farm/[slug] pages load after fix
+- **Impact**: Core browsing functionality is broken - customers cannot view farms or products
+- **Why Now**: This is a runtime crash blocking the entire discovery flow
 
-## Priority 2: Migrate Products API from Mock to Real Database
-- [ ] Replace `getAllFarms()` mock calls in `/api/products/route.ts` with Prisma query
-- [ ] Ensure Product includes `imageUrl` field from Farm
-- [ ] Connect POST to create new products in database
-- **Impact**: Products page shows actual farm products, not stale mock data
-- **Why Now**: Products page is a core discovery feature — needs real data
+## Priority 2: Wire Up Admin Reports Action Buttons
+- [ ] Connect "Resolve" button in `/admin/reports` to call PATCH endpoint with `action: "resolve"`
+- [ ] Connect "Dismiss" button to call PATCH endpoint with `action: "dismiss"`
+- [ ] Add loading states and optimistic updates
+- [ ] Refresh list after action completes
+- **Impact**: Admins can actually act on flagged content
+- **Why Now**: UI exists but buttons do nothing — blocks moderation workflow
 
-## Priority 3: Migrate Explore & Categories Pages from Mock to Real DB
-- [ ] Replace `getAllFarms()` import in `/explore/page.tsx` with Prisma query
-- [ ] Replace `getFarmsByCategory` in `/categories/page.tsx` with real DB filtering
-- [ ] Ensure category buttons filter real farms
-- **Impact**: Explore and Categories pages show real farm data
-- **Why Now**: Primary entry points for finding farms — critical for customer experience
+## Priority 3: Fix Products API to Use Real Database Data
+- [ ] Update `/api/products` route to query Prisma instead of `getAllFarms()` mock data
+- [ ] Join with Farm table to get farmName, farmSlug, farmEmoji, farmLocation
+- [ ] Keep search/filter logic but apply to real database products
+- [ ] Ensure filters return unique categories from real products
+- **Impact**: Products page shows actual database products, not stale mock data
+- **Why Now**: Core discovery feature broken - customers see mock data, not real farm products
 
-## Priority 4: Connect Farm Public Page to Real Database
-- [ ] Replace hardcoded `mockFarms` object in `/farm/[slug]/page.tsx` with Prisma query
-- [ ] Fetch farm by slug and include related products from DB
-- [ ] Handle 404 for non-existent farms
-- **Impact**: Public farm pages show actual farm details and products
-- **Why Now**: Core public-facing page — what customers see when they browse farms
+## Priority 4: Implement Product Image Upload
+- [ ] Add file upload input to `/dashboard/products/new` page
+- [ ] Add file upload to `/dashboard/products/[id]/edit` page
+- [ ] Implement local storage in `/public/uploads` (MVP approach)
+- [ ] Display uploaded images on public farm pages and product detail
+- **Impact**: Products show real images, better visual appeal for customers
+- **Why Now**: Schema supports imageUrl but only accepts URL strings - no upload UI
 
-## Priority 5: Cart Multi-Farm Checkout UX Decision
-- [ ] Current cart checkout restricts to one farm at a time
-- [ ] Either implement multi-farm checkout (create separate reservations per farm), OR
-- [ ] Document/implement clearer UX: warn user at add-to-cart if from different farm, or provide "checkout all" that creates multiple orders
-- **Impact**: Enables bulk ordering from multiple farms OR clarifies checkout behavior
-- **Why Now**: Cart UI exists but serves limited purpose without clear multi-farm handling
+## Priority 5: Connect Farm Settings to Database
+- [ ] Update `/dashboard/settings` page to fetch current farm data from DB
+- [ ] Connect form to PATCH API endpoint to update farm in database
+- [ ] Ensure farmer can edit: name, slug, description, location, phone, email, website, paymentLink
+- **Impact**: Farmers can update farm details after initial setup
+- **Why Now**: Form exists but uses hardcoded mock values - no real updates persist
 
 ---
 
@@ -42,78 +44,24 @@
 - ✅ Middleware route protection enabled (security)
 - ✅ TypeScript compiles cleanly
 - ✅ Dev server responds, core pages load
-- ✅ Global Products API with search & filters
+- ✅ Global Products API with search & filters (UI)
 - ✅ Dashboard reservations with real data
-- ✅ Dashboard orders listing with status updates (reservations)
+- ✅ Dashboard orders listing with status updates
 - ✅ Order status PATCH endpoint
 - ✅ Registration/onboarding flow
 - ✅ Checkout confirmation page (per-product)
-- ✅ Farm page search
-- ✅ Landing page with featured farms
-- ✅ Auth cookie handling in middleware
-- ✅ Demo mode for auth APIs to avoid DB errors
-- ✅ Mobile viewport CSS (overflow-x-hidden)
-- ✅ Touch targets (44px minimum)
-- ✅ Admin dashboard with real DB stats
-- ✅ Dashboard products page uses real Prisma queries
-- ✅ Waitlist API (GET/POST/PATCH) fully implemented with Prisma
-- ✅ Cart persistence (localStorage) — UI components complete
-- ✅ Profile page uses real /api/auth/me endpoint
+- ✅ Explore & Categories pages connected to real DB
+- ✅ Farm public page connected to real DB
+- ✅ Waitlist dashboard connected to real DB (API + UI)
+- ✅ Admin reports page shows real data from DB
+- ✅ Cart multi-farm UX (warns user, redirects to single farm checkout)
+- ✅ Mobile responsive with touch targets verified
 
-## Known Issues / Technical Debt
-- Waitlist dashboard page still uses mock data (Priority 1)
-- Products API still uses mock data (Priority 2)
-- Explore/Categories still using mock data (Priority 3)
-- Farm public page still using hardcoded `mockFarms` (Priority 4)
-- Cart multi-farm checkout UX unclear (Priority 5)
+---
 
-## Codebase Analysis Summary
-
-### Project Structure
-```
-src/app/
-├── api/
-│   ├── auth/me         ✅ Returns real user + farm from DB (demo fallback)
-│   ├── products/       ⚠️ Still uses mock data (Priority 2)
-│   ├── waitlist/       ✅ Full CRUD with Prisma
-│   ├── farms/          ✅ Real CRUD
-│   ├── orders/         ✅ GET/POST/POST/PATCH (uses Reservation model)
-│   └── reservations/   ✅ Full CRUD
-├── dashboard/       
-│   ├── orders/         ✅ Real DB (reservations)
-│   ├── products/       ✅ Real DB
-│   ├── reservations/   ✅ Real DB
-│   ├── waitlist/       ⚠️ Mock data (Priority 1)
-│   └── settings/       ✅ Settings page
-├── explore/            ⚠️ Mock data (Priority 3)
-├── categories/         ⚠️ Mock data (Priority 3)
-├── farm/[slug]/        ⚠️ Mock data (Priority 4)
-├── admin/              ✅ Real DB queries
-└── profile/            ✅ Uses /api/auth/me
-```
-
-### Data Model
-- **Farm** → **Product** → **Reservation** (used as Orders)
-- No separate Order model — reservations with status PENDING/CONFIRMED/COMPLETED serve as orders
-- **Waitlist** tracks interested customers per product
-- Cart persisted to localStorage (client-side only)
-
-### Current Blockers
-1. Waitlist dashboard page not fetching from `/api/waitlist`
-2. Products API still using `getAllFarms()` mock
-3. Explore/Categories still using mock data
-4. Farm public page still using hardcoded `mockFarms`
-5. Cart multi-farm checkout UX unclear
-
-### What's Changed Since Last Sprint
-- Recent commits focused on test report and documentation updates
-- All core tests passing (TypeScript, mobile, viewport, touch targets)
-- No new features — focus remains on migrating mock data to real DB
-
-### Working Components
-- Waitlist API: Full Prisma CRUD ✅
-- Cart: Persistence + UI ✅
-- Auth API: Real DB + demo fallback ✅
-- Admin dashboard: Real Prisma queries ✅
-- Dashboard products/orders/reservations: Real DB ✅
-- Mobile-friendly: Touch targets, viewport, overflow handling ✅
+## Bug Report (from TEST_REPORT.md - CRITICAL)
+- **File**: `src/lib/farms.ts`
+- **Issue**: `"use server"` directive on line 1 with plain `categories` array export
+- **Error**: `A "use server" file can only export async functions, found object.`
+- **Affected Pages**: /explore, /farm/[slug] (500 errors)
+- **Fix**: Remove `"use server"` directive (these are cached data functions, not Server Actions)

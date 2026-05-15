@@ -1,7 +1,15 @@
-"use server"
-
 import { prisma } from "@/lib/db"
 import { cache } from "react"
+
+// Product categories
+export const categories = [
+  { id: "PRODUCE", name: "Produce", emoji: "🥬", description: "Fresh vegetables and fruits" },
+  { id: "EGGS", name: "Eggs", emoji: "🥚", description: "Farm-fresh eggs" },
+  { id: "DAIRY", name: "Dairy", emoji: "🥛", description: "Milk, cheese, and artisan dairy" },
+  { id: "MEAT", name: "Meat", emoji: "🥩", description: "Grass-fed and heritage meats" },
+  { id: "POULTRY", name: "Poultry", emoji: "🐔", description: "Chicken, duck, and more" },
+  { id: "PLANTS", name: "Plants", emoji: "🌱", description: "Seedlings, herbs, and nursery stock" },
+]
 
 export type FarmFilters = {
   category?: string
@@ -45,11 +53,10 @@ export const getFarms = cache(async (filters?: FarmFilters) => {
     id: farm.id,
     name: farm.name,
     slug: farm.slug,
-    location: farm.location,
-    region: farm.region,
-    description: farm.description,
-    emoji: farm.emoji,
-    category: "PRODUCE", // Default category
+    location: farm.location || "",
+    description: farm.description || "",
+    emoji: farm.emoji || "🌾",
+    categories: [...new Set(farm.products.map((p) => p.category))],
     featured: farm.featured,
     priceRange: farm.priceRange,
     // Determine overall availability based on products
@@ -73,9 +80,29 @@ export const getFarmBySlug = cache(async (slug: string) => {
   if (!farm) return null
 
   return {
-    ...farm,
+    id: farm.id,
+    name: farm.name,
+    slug: farm.slug,
+    description: farm.description || "",
+    location: farm.location || "",
+    phone: farm.phone || undefined,
+    email: farm.email || undefined,
+    website: farm.website || undefined,
+    paymentLink: farm.paymentLink || undefined,
+    status: farm.status,
+    emoji: farm.emoji || "🌾",
     // Get unique categories from products
     categories: [...new Set(farm.products.map((p) => p.category))],
+    // Return full product objects for the farm page
+    products: farm.products.map((p) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description || "",
+      category: p.category,
+      price: p.price || 0,
+      unit: p.unit || "item",
+      availability: p.availability,
+    })),
   }
 })
 

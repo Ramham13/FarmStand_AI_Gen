@@ -1,19 +1,55 @@
-import { categories, getFarmsByCategory, getAllFarms } from "@/lib/mock-data"
+import { categories } from "@/lib/farms"
 import { CategoriesClient } from "./categories-client"
+import { prisma } from "@/lib/db"
 
 export const metadata = {
   title: "Categories - Virtual Farm Stand",
   description: "Browse farms by category. Find fresh produce, eggs, dairy, meat, poultry, and plants from local farms.",
 }
 
+async function getFarmsByCategory() {
+  const farms = await prisma.farm.findMany({
+    where: { status: "ACTIVE" },
+    include: {
+      products: {
+        where: { isActive: true },
+        select: { category: true },
+      },
+    },
+  })
+
+  // Group farms by category
+  const farmsByCategory: Record<string, typeof farms> = {}
+  
+  for (const farm of farms) {
+    const farmCategories = [...new Set(farm.products.map(p => p.category))]
+    
+    for (const cat of farmCategories) {
+      if (!farmsByCategory[cat]) {
+        farmsByCategory[cat] = []
+      }
+      farmsByCategory[cat].push(farm)
+    }
+  }
+
+  return farmsByCategory
+}
+
 export default async function CategoriesPage() {
-  // Get farms grouped by category
+  const farmsByCategory = await getFarmsByCategory()
+  
+  // Get farms by category
   const categoryData = categories.map(cat => ({
     ...cat,
-    farms: getFarmsByCategory(cat.id)
+    farms: farmsByCategory[cat.id]?.map(f => ({
+      id: f.id,
+      name: f.name,
+      slug: f.slug,
+      emoji: f.emoji || "🌾",
+    })) || []
   }))
   
-  const totalFarms = getAllFarms().length
+  const totalFarms = await prisma.farm.count({ where: { status: "ACTIVE" } })
 
   return (
     <div className="min-h-screen bg-gray-50">
