@@ -3,16 +3,21 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
-import { getUser } from "@/lib/auth-client"
+import { getCurrentUser } from "@/lib/auth-server"
+import { redirect } from "next/navigation"
 
 export default async function DashboardPage() {
-  // Get current user from localStorage (client-side auth)
-  // Note: In a real app, this would use cookies/sessions with server-side validation
-  const userId: string | null = null
+  // Server-side authentication check
+  const user = await getCurrentUser()
   
-  // For SSR, we try to get user from headers or use a workaround
-  // In production, use proper session cookies
+  // If not logged in, redirect to login
+  if (!user) {
+    redirect("/login")
+  }
+  
+  // Get the farm belonging to the current user only
   const farm = await prisma.farm.findFirst({
+    where: { userId: user.id },
     include: {
       products: {
         where: { isActive: true },

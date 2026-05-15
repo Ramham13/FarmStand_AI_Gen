@@ -32,6 +32,23 @@ export function clearUser(): void {
   localStorage.removeItem("user")
 }
 
+export async function logout(): Promise<void> {
+  if (typeof window === "undefined") return
+  
+  // Call logout API to clear server cookie
+  try {
+    await fetch("/api/auth/logout", { method: "POST" })
+  } catch {
+    // Ignore errors
+  }
+  
+  // Clear local storage
+  localStorage.removeItem("user")
+  
+  // Redirect to home
+  window.location.href = "/"
+}
+
 export function requireUser(): User {
   const user = getUser()
   if (!user) {

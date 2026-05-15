@@ -32,7 +32,9 @@ export async function POST(request: Request) {
     // Return user info (exclude password)
     // Take the first farm if user has multiple
     const userFarm = user.farms?.[0] || null
-    return NextResponse.json({
+    
+    // Create response with user data
+    const response = NextResponse.json({
       success: true,
       user: {
         id: user.id,
@@ -45,6 +47,17 @@ export async function POST(request: Request) {
         } : null,
       },
     })
+    
+    // Set auth cookie for server-side authentication
+    response.cookies.set("auth-user-id", user.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    })
+    
+    return response
   } catch (error) {
     console.error("Login error:", error)
     return NextResponse.json({ error: "Login failed" }, { status: 500 })

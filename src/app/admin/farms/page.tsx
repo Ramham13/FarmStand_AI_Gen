@@ -3,14 +3,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, MoreHorizontal, Eye, Pencil, Ban } from "lucide-react";
+import { getCurrentUser, isAdmin } from "@/lib/auth-server";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
 
-export default function AdminFarmsPage() {
-  const farms = [
-    { id: "1", name: "Sunny Acres Farm", slug: "sunny-acres", location: "Portland, OR", status: "ACTIVE", products: 12, createdAt: "Jan 2024" },
-    { id: "2", name: "Happy Hen Homestead", slug: "happy-hen", location: "Austin, TX", status: "ACTIVE", products: 8, createdAt: "Feb 2024" },
-    { id: "3", name: "Green Valley Dairy", slug: "green-valley", location: "Madison, WI", status: "SUSPENDED", products: 15, createdAt: "Mar 2024" },
-    { id: "4", name: "Test Farm", slug: "test-farm", location: "Test, ST", status: "PENDING", products: 3, createdAt: "May 2024" },
-  ];
+export default async function AdminFarmsPage() {
+  // Server-side authentication and admin role check
+  const user = await getCurrentUser();
+  
+  if (!user) {
+    redirect("/login");
+  }
+  
+  const adminCheck = await isAdmin();
+  if (!adminCheck) {
+    redirect("/dashboard");
+  }
+
+  const farms = await prisma.farm.findMany({
+    include: {
+      products: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
   const statusConfig = {
     ACTIVE: { label: "Active", className: "bg-green-100 text-green-700" },
@@ -56,6 +73,8 @@ export default function AdminFarmsPage() {
               <tbody>
                 {farms.map((farm) => {
                   const status = statusConfig[farm.status as keyof typeof statusConfig];
+                  const productCount = farm.products?.length || 0;
+                  const createdAtFormatted = farm.createdAt.toLocaleDateString("en-US", { month: "short", year: "numeric" });
                   return (
                     <tr key={farm.id} className="border-b">
                       <td className="py-4">
@@ -68,8 +87,8 @@ export default function AdminFarmsPage() {
                       <td className="py-4">
                         <Badge className={status.className}>{status.label}</Badge>
                       </td>
-                      <td className="py-4 text-gray-600">{farm.products}</td>
-                      <td className="py-4 text-gray-600">{farm.createdAt}</td>
+                      <td className="py-4 text-gray-600">{productCount}</td>
+                      <td className="py-4 text-gray-600">{createdAtFormatted}</td>
                       <td className="py-4">
                         <div className="flex gap-1">
                           <Button size="sm" variant="ghost">

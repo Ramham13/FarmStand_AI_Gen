@@ -2,8 +2,34 @@ import Link from "next/link";
 import { Package, Users, AlertTriangle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCurrentUser, isAdmin } from "@/lib/auth-server";
+import { prisma } from "@/lib/db";
+import { redirect } from "next/navigation";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  // Server-side authentication and admin role check
+  const user = await getCurrentUser();
+  
+  if (!user) {
+    redirect("/login");
+  }
+  
+  const adminCheck = await isAdmin();
+  if (!adminCheck) {
+    // Not an admin - redirect to dashboard
+    redirect("/dashboard");
+  }
+
+  // Get real statistics from database
+  const [totalFarms, totalProducts, activeFarms, suspendedFarms, pendingFarms, flaggedReports] = await Promise.all([
+    prisma.farm.count(),
+    prisma.product.count(),
+    prisma.farm.count({ where: { status: "ACTIVE" } }),
+    prisma.farm.count({ where: { status: "SUSPENDED" } }),
+    prisma.farm.count({ where: { status: "PENDING" } }),
+    prisma.report.count({ where: { status: "PENDING" } }),
+  ]);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -19,8 +45,8 @@ export default function AdminPage() {
             <Users className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-gray-500">3 pending review</p>
+            <div className="text-2xl font-bold">{totalFarms}</div>
+            <p className="text-xs text-gray-500">{pendingFarms} pending review</p>
           </CardContent>
         </Card>
         <Card>
@@ -29,8 +55,8 @@ export default function AdminPage() {
             <Package className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">156</div>
-            <p className="text-xs text-gray-500">12 flagged</p>
+            <div className="text-2xl font-bold">{totalProducts}</div>
+            <p className="text-xs text-gray-500">listings</p>
           </CardContent>
         </Card>
         <Card>
@@ -39,8 +65,8 @@ export default function AdminPage() {
             <Users className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">20</div>
-            <p className="text-xs text-gray-500">4 suspended</p>
+            <div className="text-2xl font-bold text-green-600">{activeFarms}</div>
+            <p className="text-xs text-gray-500">{suspendedFarms} suspended</p>
           </CardContent>
         </Card>
         <Card>
@@ -49,7 +75,7 @@ export default function AdminPage() {
             <AlertTriangle className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-600">3</div>
+            <div className="text-2xl font-bold text-amber-600">{flaggedReports}</div>
             <p className="text-xs text-gray-500">needs attention</p>
           </CardContent>
         </Card>

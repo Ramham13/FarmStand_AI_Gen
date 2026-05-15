@@ -1,13 +1,13 @@
-# Sprint Tasks - 2026-05-15 11:38 UTC
+# Sprint Tasks - 2026-05-15 11:46 UTC
 
-## Priority 1: Dashboard Security - Data Leakage (CRITICAL - UNFIXED)
+## Priority 1: Dashboard Security - Data Leakage (CRITICAL)
 - [ ] Fix `/src/app/dashboard/page.tsx` - `findFirst()` returns RANDOM farm to ANY visitor
 - No user filtering - any visitor sees whoever is in DB first
 - Must filter by logged-in user's ID (localStorage is client-only, RSC doesn't have access)
 - Need: Proper session/cookie-based auth OR middleware that passes user context
 - **Impact**: Any visitor can view all farmer data
 
-## Priority 2: Route Protection Middleware (UNFIXED)
+## Priority 2: Route Protection Middleware
 - [ ] Create `src/middleware.ts` for Next.js route protection
 - Protect `/dashboard/*` and `/admin/*` routes
 - Redirect unauthenticated users to `/login`
@@ -27,11 +27,10 @@
 - Need: Proper session cookie + server-side validation OR middleware-based auth
 - **Impact**: No real security - tokens stored in easily accessible localStorage
 
-## Priority 5: TypeScript/Type Safety Cleanup
-- [ ] Verify all TypeScript errors are resolved
-- Test report mentions type inference issue in login route (may need to verify)
-- Run `npm run build` to confirm clean compile
-- **Impact**: Prevents production deployment issues
+## Priority 5: TypeScript/Build Verification
+- [ ] Run `npm run build` to confirm clean production build
+- Verify no type errors or warnings
+- **Impact**: Prevents deployment issues
 
 ---
 
