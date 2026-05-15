@@ -1,6 +1,6 @@
-# Sprint Tasks - 2026-05-15 15:22 UTC
+# Sprint Tasks - 2026-05-15 15:27 UTC
 
-## Priority 1: Connect Waitlist Dashboard to Real DB
+## Priority 1: Connect Dashboard Waitlist to Real Database
 - [ ] Replace hardcoded mock `waitlists` array in `/dashboard/waitlist/page.tsx` with fetch to `/api/waitlist`
 - [ ] Add loading and error states to waitlist page
 - [ ] Wire up "Notify" button to call PATCH `/api/waitlist` with `action: "notify"`
@@ -15,26 +15,26 @@
 - **Impact**: Products page shows actual farm products, not stale mock data
 - **Why Now**: Products page is a core discovery feature — needs real data
 
-## Priority 3: Migrate Explore & Categories Pages from Mock to Real
+## Priority 3: Migrate Explore & Categories Pages from Mock to Real DB
 - [ ] Replace `getAllFarms()` import in `/explore/page.tsx` with Prisma query
 - [ ] Replace `getFarmsByCategory` in `/categories/page.tsx` with real DB filtering
 - [ ] Ensure category buttons filter real farms
 - **Impact**: Explore and Categories pages show real farm data
-- **Why Now**: Primary entry points for finding farms
+- **Why Now**: Primary entry points for finding farms — critical for customer experience
 
 ## Priority 4: Connect Farm Public Page to Real Database
 - [ ] Replace hardcoded `mockFarms` object in `/farm/[slug]/page.tsx` with Prisma query
 - [ ] Fetch farm by slug and include related products from DB
 - [ ] Handle 404 for non-existent farms
-- **Impact**: Public farm pages show actual farm details
-- **Why Now**: Core public-facing page — critical for customer experience
+- **Impact**: Public farm pages show actual farm details and products
+- **Why Now**: Core public-facing page — what customers see when they browse farms
 
-## Priority 5: Multi-Item Cart Checkout
-- [ ] Cart drawer exists but checkout is per-product only
-- [ ] Implement cart checkout flow (create reservations for all items in cart)
-- [ ] Or clarify product-by-product checkout model
-- **Impact**: Enables bulk ordering from multiple products
-- **Why Now**: Cart UI exists but serves limited purpose without multi-item checkout
+## Priority 5: Cart Multi-Farm Checkout Flow (OR Document Single-Farm Model)
+- [ ] Current cart checkout restricts to one farm at a time
+- [ ] Either implement multi-farm checkout (create separate reservations per farm), OR
+- [ ] Document/implement clearer UX: warn user at add-to-cart if from different farm, or provide "checkout all" that creates multiple orders
+- **Impact**: Enables bulk ordering from multiple farms OR clarifies checkout behavior
+- **Why Now**: Cart UI exists but serves limited purpose without clear multi-farm handling
 
 ---
 
@@ -64,7 +64,7 @@
 - Products API still uses mock data (Priority 2)
 - Explore/Categories still using mock data (Priority 3)
 - Farm public page still using hardcoded `mockFarms` (Priority 4)
-- Cart checkout is per-product only — no multi-item checkout flow (Priority 5)
+- Cart checkout is single-farm only — needs UX clarification (Priority 5)
 
 ## Codebase Analysis Summary
 
@@ -89,23 +89,22 @@ src/app/
 └── profile/        # ✅ Uses /api/auth/me
 ```
 
-### Data Model Notes
+### Data Model
 - **Farm** → **Product** → **Reservation** (used as Orders)
 - No separate Order model — reservations with status PENDING/CONFIRMED/COMPLETED serve as orders
 - **Waitlist** tracks interested customers per product
 - Cart persisted to localStorage (client-side only)
 
 ### What's Changed Since Last Sprint
-- Waitlist API: Full Prisma CRUD ✅
-- Cart: localStorage persistence ✅
-- Profile API: Real DB + demo fallback ✅
+- All completed items from previous sprint remain done
+- No new features added since last sprint cycle
 
 ### Current Blockers
 1. Waitlist dashboard page not fetching from `/api/waitlist`
 2. Products API still using `getAllFarms()` mock
 3. Explore/Categories still using mock data
 4. Farm public page still using hardcoded `mockFarms`
-5. No multi-item checkout flow (cart exists but limited use)
+5. Cart multi-farm checkout UX unclear
 
 ### Working Components
 - Waitlist API: Full Prisma CRUD ✅
