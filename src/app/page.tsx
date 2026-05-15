@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-// Searchable farms data (used for search)
-const searchableFarms = [
+// Fallback farms data (used if API fails)
+const fallbackFarms = [
   {
     name: "Sunny Meadow Farm",
     slug: "sunny-meadow-farm",
@@ -67,9 +67,6 @@ const searchableFarms = [
   },
 ];
 
-// Featured farms for the homepage
-const featuredFarms = searchableFarms.slice(0, 3);
-
 // Category quick filters
 const categories = [
   { value: "EGGS", label: "🥚 Eggs", color: "bg-amber-100 hover:bg-amber-200 text-amber-800" },
@@ -79,17 +76,64 @@ const categories = [
   { value: "PLANTS", label: "🌱 Plants", color: "bg-emerald-100 hover:bg-emerald-200 text-emerald-800" },
 ];
 
+interface Farm {
+  name: string;
+  slug: string;
+  location: string;
+  emoji: string;
+  description?: string;
+  tagline?: string;
+  products?: string[] | string;
+  featured?: boolean;
+}
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [searchableFarms, setSearchableFarms] = useState<Farm[]>(fallbackFarms);
+  const [featuredFarms, setFeaturedFarms] = useState<Farm[]>([]);
+  const [loading, setLoading] = useState(true);
   const searchRef = useRef<HTMLDivElement>(null);
 
+  // Fetch farms from API on mount
+  useEffect(() => {
+    async function fetchFarms() {
+      try {
+        const res = await fetch('/api/farms');
+        const data = await res.json();
+        if (data.farms && Array.isArray(data.farms)) {
+          const farms = data.farms.map((f: any) => ({
+            name: f.name,
+            slug: f.slug,
+            location: f.location,
+            emoji: f.emoji || "🌾",
+            description: f.description,
+            products: f.products || [],
+            featured: f.featured,
+          }));
+          setSearchableFarms(farms);
+          // Use featured farms from DB, fallback to first 3
+          const featured = farms.filter((f: Farm) => f.featured).slice(0, 3);
+          setFeaturedFarms(featured.length > 0 ? featured : farms.slice(0, 3));
+        }
+      } catch (error) {
+        console.error('Failed to fetch farms:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchFarms();
+  }, []);
+
   const searchResults = searchQuery.trim().length > 0
-    ? searchableFarms.filter(farm => 
-        farm.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        farm.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        farm.products.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? searchableFarms.filter(farm => {
+        const productsStr = Array.isArray(farm.products) 
+          ? farm.products.join(", ") 
+          : (farm as any).products || "";
+        return farm.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          farm.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          productsStr.toLowerCase().includes(searchQuery.toLowerCase());
+      })
     : [];
 
   // Close dropdown when clicking outside
@@ -253,7 +297,7 @@ export default function Home() {
             </Button>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredFarms.map((farm) => (
+            {(loading ? fallbackFarms.slice(0, 3) : featuredFarms).map((farm) => (
               <Link key={farm.slug} href={`/farm/${farm.slug}`}>
                 <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer border-green-100">
                   <CardContent className="p-4">
@@ -269,8 +313,12 @@ export default function Home() {
                         <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                           <MapPin className="h-3 w-3" /> {farm.location}
                         </p>
-                        <p className="text-sm text-green-700 mt-2 font-medium">{farm.tagline}</p>
-                        <p className="text-xs text-gray-500 mt-1">{farm.products}</p>
+                        <p className="text-sm text-green-700 mt-2 font-medium">
+                          {(farm as any).description || (farm as any).tagline || "Fresh local products"}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {Array.isArray(farm.products) ? farm.products.join(", ") : (farm as any).products}
+                        </p>
                       </div>
                     </div>
                   </CardContent>
