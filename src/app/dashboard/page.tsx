@@ -1,174 +1,104 @@
-import { prisma } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-async function getFarmsWithData() {
-  const farms = await prisma.farm.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      products: true,
-    },
-    take: 10,
-  })
-  return farms
+// Mock data for demo
+const mockFarm = {
+  id: "farm-1",
+  name: "Sunny Meadow Farm",
+  slug: "sunny-meadow-farm",
+  location: "Rural Valley, CA",
+  phone: "(555) 123-4567",
+  email: "sunny@farm.com",
+  status: "ACTIVE",
+  products: [
+    { id: "p1", name: "Fresh Eggs", price: 6, availability: "AVAILABLE", reservations: [] },
+    { id: "p2", name: "Heirloom Tomatoes", price: 4.50, availability: "AVAILABLE", reservations: [] },
+  ],
 }
 
 export default async function DashboardPage() {
-  const farms = await getFarmsWithData()
-  const myFarm = farms[0] // For MVP demo - just show first farm
-
-  if (!myFarm) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-12">
-          <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p className="text-gray-500 text-lg">No farms yet.</p>
-              <Link href="/register">
-                <Button className="mt-4">Create Your Farm Stand</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  // Get reservations for this farm's products
-  const productIds = myFarm.products.map(p => p.id)
-  const reservations = await prisma.reservation.findMany({
-    where: { productId: { in: productIds } },
-    orderBy: { createdAt: "desc" },
-    include: { product: true },
-    take: 10,
-  })
-
-  // Get waitlist entries
-  const waitlist = await prisma.waitlist.findMany({
-    where: { productId: { in: productIds } },
-    orderBy: { createdAt: "asc" },
-    include: { product: true },
-  })
+  const myFarm = mockFarm
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <Link href={`/farm/${myFarm.slug}`}>
-            <Button variant="outline">View Public Page</Button>
-          </Link>
+      <div className="container mx-auto px-4 py-12">
+        <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+        
+        {/* Farm Overview */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Farm Status</CardTitle>
+              <CardDescription>Your farm stand</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <Badge variant="default">{myFarm.status}</Badge>
+              </div>
+              <p className="mt-2 text-sm text-gray-500">{myFarm.name}</p>
+              <p className="text-sm text-gray-500">{myFarm.location}</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Active Products</CardTitle>
+              <CardDescription>Currently listed</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{myFarm.products.length}</p>
+              <p className="text-sm text-gray-500">products</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Reservations</CardTitle>
+              <CardDescription>This week</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">0</p>
+              <p className="text-sm text-gray-500">pending</p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Farm Info Card */}
-        <Card className="mb-6">
+        {/* Products */}
+        <Card className="mb-8">
           <CardHeader>
-            <CardTitle>{myFarm.name}</CardTitle>
-            <CardDescription>
-              {myFarm.location || "No location set"} • {myFarm.status}
-            </CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Your Products</CardTitle>
+                <CardDescription>Manage your product listings</CardDescription>
+              </div>
+              <Button>Add Product</Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4">
-              <Link href="/dashboard/farm">
-                <Button variant="outline">Edit Farm Info</Button>
-              </Link>
-              <Link href="/dashboard/products">
-                <Button variant="outline">Manage Products</Button>
-              </Link>
+            <div className="space-y-4">
+              {myFarm.products.map((product) => (
+                <div key={product.id} className="flex justify-between items-center p-4 border rounded-lg">
+                  <div>
+                    <p className="font-medium">{product.name}</p>
+                    <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
+                  </div>
+                  <Badge variant={product.availability === "AVAILABLE" ? "default" : "secondary"}>
+                    {product.availability}
+                  </Badge>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Stats */}
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{myFarm.products.length}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{myFarm.products.filter(p => p.isActive).length}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Pending Reservations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{reservations.filter(r => r.status === "PENDING").length}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Waitlist Count</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{waitlist.length}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Reservations */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Reservations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {reservations.length === 0 ? (
-                <p className="text-gray-500">No reservations yet.</p>
-              ) : (
-                <div className="space-y-3">
-                  {reservations.map((res) => (
-                    <div key={res.id} className="flex justify-between items-center border-b pb-2">
-                      <div>
-                        <p className="font-medium">{res.customerName}</p>
-                        <p className="text-sm text-gray-500">{res.product.name}</p>
-                      </div>
-                      <Badge variant={res.status === "PENDING" ? "default" : res.status === "CONFIRMED" ? "secondary" : "destructive"}>
-                        {res.status}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Waitlist */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Waitlist</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {waitlist.length === 0 ? (
-                <p className="text-gray-500">No one on waitlist.</p>
-              ) : (
-                <div className="space-y-3">
-                  {waitlist.map((entry) => (
-                    <div key={entry.id} className="flex justify-between items-center border-b pb-2">
-                      <div>
-                        <p className="font-medium">{entry.customerName}</p>
-                        <p className="text-sm text-gray-500">{entry.product.name}</p>
-                      </div>
-                      <Button size="sm" variant="outline">Notify</Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        {/* Quick Links */}
+        <div className="flex gap-4">
+          <Link href={`/farm/${myFarm.slug}`}>
+            <Button variant="outline">View Public Page</Button>
+          </Link>
+          <Button variant="outline">Edit Farm Profile</Button>
         </div>
       </div>
     </div>

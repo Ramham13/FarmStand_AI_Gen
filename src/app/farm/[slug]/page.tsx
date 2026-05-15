@@ -1,23 +1,10 @@
-import { notFound } from "next/navigation"
-import { prisma } from "@/lib/db"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ReservationForm } from "@/components/farm/reservation-form"
-import { WaitlistForm } from "@/components/farm/waitlist-form"
-
-async function getFarm(slug: string) {
-  const farm = await prisma.farm.findUnique({
-    where: { slug, status: "ACTIVE" },
-    include: {
-      products: {
-        where: { isActive: true },
-        orderBy: { createdAt: "desc" }
-      }
-    }
-  })
-  return farm
-}
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ReservationForm } from "@/components/farm/reservation-form";
+import { WaitlistForm } from "@/components/farm/waitlist-form";
 
 const availabilityConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   AVAILABLE: { label: "Available", variant: "default" },
@@ -43,9 +30,45 @@ const categoryLabels: Record<string, string> = {
   OTHER: "Other",
 }
 
+// Mock data for SSR
+const mockFarms: Record<string, any> = {
+  'sunny-meadow-farm': {
+    id: 'farm-1',
+    name: 'Sunny Meadow Farm',
+    slug: 'sunny-meadow-farm',
+    description: 'Family-owned farm specializing in fresh eggs and vegetables. Our chickens are free-range and we use organic farming practices.',
+    location: 'Rural Valley, CA',
+    phone: '(555) 123-4567',
+    email: 'sunny@farm.com',
+    website: null,
+    paymentLink: 'https://venmo.com/sunny-meadow',
+    status: 'ACTIVE',
+    products: [
+      { id: 'p1', name: 'Fresh Eggs', category: 'EGGS', description: 'Dozen of fresh free-range eggs', price: 6, unit: 'dozen', availability: 'AVAILABLE' },
+      { id: 'p2', name: 'Heirloom Tomatoes', category: 'PRODUCE', description: 'Organic heirloom tomatoes', price: 4.50, unit: 'lb', availability: 'AVAILABLE' },
+    ],
+  },
+  'green-acres': {
+    id: 'farm-2',
+    name: 'Green Acres Farm',
+    slug: 'green-acres',
+    description: 'Sustainable farm growing heirloom vegetables and herbs.',
+    location: 'Portland, OR',
+    phone: '(555) 987-6543',
+    email: 'info@greenacres.farm',
+    website: null,
+    paymentLink: 'https://paypal.me/greenacres',
+    status: 'ACTIVE',
+    products: [
+      { id: 'p3', name: 'Fresh Herb Bundle', category: 'PRODUCE', description: 'Basil, rosemary, thyme', price: 5, unit: 'bundle', availability: 'AVAILABLE' },
+      { id: 'p4', name: 'Mixed Greens', category: 'PRODUCE', description: 'Fresh mixed lettuce', price: 3.50, unit: 'bag', availability: 'AVAILABLE' },
+    ],
+  },
+}
+
 export default async function FarmPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const farm = await getFarm(slug)
+  const farm = mockFarms[slug]
 
   if (!farm) {
     notFound()
@@ -104,7 +127,7 @@ export default async function FarmPage({ params }: { params: Promise<{ slug: str
           </Card>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {farm.products.map((product) => {
+            {farm.products.map((product: any) => {
               const config = availabilityConfig[product.availability] || { label: product.availability, variant: "outline" as const }
               return (
                 <Card key={product.id} className="overflow-hidden">
