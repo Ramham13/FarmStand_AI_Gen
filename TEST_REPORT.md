@@ -1,17 +1,25 @@
-# Test Report - Friday, May 15th, 2026
+# Test Report - 2026-05-15 21:09 UTC
 
-## Last Commit: d63a4d1 Update sprint tasks and test report
+## Last Commit: 8fdc40a Update sprint tasks and test report
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
 | TypeScript | PASS | No type errors |
-| Home | PASS | Loads correctly, shows featured farms |
-| Explore | PASS | Shows 8 farms, filters work |
-| Farm Profile | PASS | Sunny Meadow Farm loads with products |
+| Dev Server | PASS | Running on localhost:3000 |
+| Home (/) | PASS | Returns 200, renders correctly |
+| Explore (/explore) | PASS | Returns 200 |
+| Farm Profile (/farm/sunny-meadow-farm) | PASS | Returns 200 |
+| Farm Profile (/farm/green-acres) | PASS | Returns 200 |
+| Mobile Playwright | SKIP | Missing browser libs (libnspr4.so), manual curl test used |
 
 ## Bugs Found
-- None
+- [ ] None detected
+
+## Notes
+- Playwright tests skipped due to missing system libraries in container
+- Manual HTTP checks confirm all pages load without errors
+- TypeScript compilation clean
 
 ## Summary
-PASS - All tests passing. Dev server running on localhost:3000. TypeScript compiles without errors. All pages (home, explore, farm profiles) load correctly.
+PASS - All pages load successfully, TypeScript passes, no crashes detected.

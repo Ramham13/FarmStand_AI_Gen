@@ -1,4 +1,4 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 9:02 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 9:07 PM UTC
 
 ## Priority 1: SEO - Critical for Discovery
 - [ ] Add `generateMetadata` to farm profile (`/farm/[slug]/page.tsx`) - OG tags with farm name/image
@@ -20,7 +20,7 @@
 - [ ] Connect `/dashboard/reservations` to show real reservation requests
 - [ ] Connect `/dashboard/waitlist` to show real waitlist entries
 
-## Priority 4: Database Performance
+## Priority 4: Database Performance Indexes
 - [ ] Add compound index on `Reservation(status, createdAt)` in schema.prisma
 - [ ] Add index on `Product(availability, isActive)` for public queries
 - [ ] Add index on `Farm(status, region)` for filtered searches
@@ -65,6 +65,10 @@
 | Forms | ✅ Done | Uses sonner, needs error path verification |
 | Mobile | ✅ Done | Viewport, touch targets verified |
 | Performance | ⚠️ LCP | No priority on LCP images |
+| Homepage | ✅ Done | Search, featured farms, categories |
+| Cart | ✅ Done | localStorage persistence |
+| Checkout | ✅ Done | Reservation flow + contact info |
+| Auth | ✅ Done | Login, register, onboarding |
 
 ## Recent Git History (Last 5 Commits)
 - d63a4d1 - Update sprint tasks and test report
@@ -73,8 +77,8 @@
 - 57ea155 - Complete daily test run and update task tracking
 - a488cfb - Update test report and task tracking
 
-## Key Files Analyzed
+## Files Analyzed
 - `src/app/` - 15 route directories including explore, dashboard, farm, checkout, orders
-- `src/components/` - ui, cart, farm, layout, admin components
-- `prisma/schema.prisma` - Models defined but no indexes
-- API routes: farms/search, products, reservations, waitlist, orders, checkout, upload
+- `src/components/` - ui (shadcn), cart, farm, layout components
+- `prisma/schema.prisma` - PostgreSQL with 6 models (Farm, Product, Reservation, Waitlist, User, Report)
+- API routes: farms/search, products, reservations, waitlist, orders, checkout, upload, auth
