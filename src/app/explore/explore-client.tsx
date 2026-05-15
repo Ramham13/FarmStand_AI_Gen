@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useState } from "react"
 
 interface Farm {
   id: string
@@ -13,16 +14,36 @@ interface Farm {
   categories: string[]
 }
 
+interface Pagination {
+  total: number
+  page: number
+  limit: number
+  hasMore: boolean
+}
+
 interface ExploreClientProps {
   farms: Farm[]
   selectedCategory?: string
+  initialQuery?: string
+  pagination?: Pagination
 }
 
-export function ExploreClient({ farms, selectedCategory }: ExploreClientProps) {
+export function ExploreClient({ 
+  farms, 
+  selectedCategory,
+  initialQuery = "",
+  pagination 
+}: ExploreClientProps) {
+  const [searchQuery] = useState(initialQuery)
+  
   if (farms.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">No farms found for this category.</p>
+        <p className="text-gray-500 text-lg">
+          {searchQuery 
+            ? `No farms found for "${searchQuery}".`
+            : "No farms found for this category."}
+        </p>
         <Link href="/explore" className="text-green-600 hover:text-green-700 mt-2 inline-block">
           View all farms →
         </Link>
@@ -30,10 +51,14 @@ export function ExploreClient({ farms, selectedCategory }: ExploreClientProps) {
     )
   }
 
+  const total = pagination?.total ?? farms.length
+  const hasMore = pagination?.hasMore ?? false
+
   return (
     <div>
       <p className="text-sm text-gray-500 mb-4 sm:mb-6">
-        {farms.length} farm{farms.length !== 1 ? 's' : ''} found
+        {total} farm{total !== 1 ? 's' : ''} found
+        {searchQuery && <span> matching "{searchQuery}"</span>}
         {selectedCategory && <span> in {selectedCategory}</span>}
       </p>
       
@@ -101,6 +126,15 @@ export function ExploreClient({ farms, selectedCategory }: ExploreClientProps) {
           </Link>
         ))}
       </div>
+      
+      {/* Pagination - Load More */}
+      {hasMore && (
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-500 mb-4">
+            Showing {farms.length} of {total} farms
+          </p>
+        </div>
+      )}
     </div>
   )
 }

@@ -7,42 +7,52 @@ export async function GET(request: NextRequest) {
   const category = searchParams.get("category");
   const region = searchParams.get("region");
   const availability = searchParams.get("availability");
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = Math.min(parseInt(searchParams.get("limit") || "12"), 50);
+  const offset = (page - 1) * limit;
 
   try {
-    const farms = await prisma.farm.findMany({
-      where: {
-        status: "ACTIVE",
-        ...(query && {
-          OR: [
-            { name: { contains: query } },
-            { description: { contains: query } },
-            { location: { contains: query } },
-          ],
-        }),
-        ...(category && category !== "all" && {
-          products: {
-            some: { category },
-          },
-        }),
-        ...(region && region !== "all" && {
-          region: { equals: region },
-        }),
-      },
-      include: {
+    const where: any = {
+      status: "ACTIVE",
+      ...(query && {
+        OR: [
+          { name: { contains: query } },
+          { description: { contains: query } },
+          { location: { contains: query } },
+        ],
+      }),
+      ...(category && category !== "all" && {
         products: {
-          where: { isActive: true },
-          select: {
-            id: true,
-            name: true,
-            category: true,
-            price: true,
-            unit: true,
-            availability: true,
+          some: { category },
+        },
+      }),
+      ...(region && region !== "all" && {
+        region: { equals: region },
+      }),
+    };
+
+    const [farms, total] = await Promise.all([
+      prisma.farm.findMany({
+        where,
+        include: {
+          products: {
+            where: { isActive: true },
+            select: {
+              id: true,
+              name: true,
+              category: true,
+              price: true,
+              unit: true,
+              availability: true,
+            },
           },
         },
-      },
-      take: 50,
-    });
+        orderBy: { name: "asc" },
+        take: limit,
+        skip: offset,
+      }),
+      prisma.farm.count({ where }),
+    ]);
 
     // Filter by availability if needed (since it's on product level)
     let filteredFarms = farms;
@@ -57,7 +67,17 @@ export async function GET(request: NextRequest) {
         .filter((farm: any) => farm.products.length > 0);
     }
 
-    return NextResponse.json({ farms: filteredFarms });
+    const hasMore = offset + filteredFarms.length < total;
+
+    return NextResponse.json({
+      farms: filteredFarms,
+      pagination: {
+        total,
+        page,
+        limit,
+        hasMore,
+      },
+    });
   } catch (error) {
     console.error("Search error:", error);
     return NextResponse.json(

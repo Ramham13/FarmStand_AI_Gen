@@ -2,19 +2,50 @@ import { Suspense } from "react"
 import { ExploreClient } from "./explore-client"
 import { getFarms, categories } from "@/lib/farms"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ExploreSearch } from "./explore-search"
 
 export const metadata = {
   title: "Explore Farms - Virtual Farm Stand",
   description: "Discover local farms near you. Find fresh produce, eggs, dairy, and more directly from farmers.",
 }
 
+async function getSearchResults(query: string, category?: string) {
+  const params = new URLSearchParams()
+  if (query) params.set("q", query)
+  if (category) params.set("category", category)
+  params.set("limit", "12")
+
+  const res = await fetch(`/api/farms/search?${params.toString()}`, {
+    cache: "no-store",
+  })
+  
+  if (!res.ok) {
+    return { farms: [], pagination: { total: 0, page: 1, limit: 12, hasMore: false } }
+  }
+  
+  return res.json()
+}
+
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ q?: string; category?: string }>
 }) {
-  const { category } = await searchParams
-  const farms = await getFarms(category ? { category } : undefined)
+  const { q: query, category } = await searchParams
+  
+  // Use search API if query present, otherwise use server function
+  let farms: any[] = []
+  let pagination = { total: 0, page: 1, limit: 12, hasMore: false }
+  
+  if (query) {
+    const result = await getSearchResults(query, category)
+    farms = result.farms || []
+    pagination = result.pagination || pagination
+  } else {
+    const serverFarms = await getFarms(category ? { category } : undefined)
+    farms = serverFarms
+    pagination = { total: serverFarms.length, page: 1, limit: 12, hasMore: false }
+  }
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -60,6 +91,7 @@ export default async function ExplorePage({
               </a>
             ))}
           </div>
+          <ExploreSearch initialQuery={query} />
         </div>
       </section>
 
@@ -92,7 +124,12 @@ export default async function ExplorePage({
             ))}
           </div>
         }>
-          <ExploreClient farms={farms} selectedCategory={category} />
+          <ExploreClient 
+            farms={farms} 
+            selectedCategory={category} 
+            initialQuery={query}
+            pagination={pagination}
+          />
         </Suspense>
       </section>
     </div>
