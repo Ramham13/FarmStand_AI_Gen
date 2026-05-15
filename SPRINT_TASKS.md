@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 15:12 UTC
+# Sprint Tasks - 2026-05-15 15:22 UTC
 
 ## Priority 1: Connect Waitlist Dashboard to Real DB
 - [ ] Replace hardcoded mock `waitlists` array in `/dashboard/waitlist/page.tsx` with fetch to `/api/waitlist`
@@ -6,30 +6,35 @@
 - [ ] Wire up "Notify" button to call PATCH `/api/waitlist` with `action: "notify"`
 - [ ] Display `notifiedAt` status in customer row (badge/color)
 - **Impact**: Farmers see their real waitlist data, not just mock customers
+- **Why Now**: The API is already built — just needs the UI connected
 
 ## Priority 2: Migrate Products API from Mock to Real Database
 - [ ] Replace `getAllFarms()` mock calls in `/api/products/route.ts` with Prisma query
 - [ ] Ensure Product includes `imageUrl` field from Farm
 - [ ] Connect POST to create new products in database
 - **Impact**: Products page shows actual farm products, not stale mock data
+- **Why Now**: Products page is a core discovery feature — needs real data
 
 ## Priority 3: Migrate Explore & Categories Pages from Mock to Real
 - [ ] Replace `getAllFarms()` import in `/explore/page.tsx` with Prisma query
 - [ ] Replace `getFarmsByCategory` in `/categories/page.tsx` with real DB filtering
 - [ ] Ensure category buttons filter real farms
 - **Impact**: Explore and Categories pages show real farm data
+- **Why Now**: Primary entry points for finding farms
 
 ## Priority 4: Connect Farm Public Page to Real Database
 - [ ] Replace hardcoded `mockFarms` object in `/farm/[slug]/page.tsx` with Prisma query
 - [ ] Fetch farm by slug and include related products from DB
 - [ ] Handle 404 for non-existent farms
 - **Impact**: Public farm pages show actual farm details
+- **Why Now**: Core public-facing page — critical for customer experience
 
-## Priority 5: Profile Page Demo Mode Enhancement
-- [ ] The `/api/auth/me` returns hardcoded "demo@farm.com" for demo users
-- [ ] Consider using actual demo farm from DB instead of hardcoded values
-- [ ] Ensure profile page loads without errors for demo users
-- **Impact**: Profile shows consistent demo data across the app
+## Priority 5: Multi-Item Cart Checkout
+- [ ] Cart drawer exists but checkout is per-product only
+- [ ] Implement cart checkout flow (create reservations for all items in cart)
+- [ ] Or clarify product-by-product checkout model
+- **Impact**: Enables bulk ordering from multiple products
+- **Why Now**: Cart UI exists but serves limited purpose without multi-item checkout
 
 ---
 
@@ -39,10 +44,10 @@
 - ✅ Dev server responds, core pages load
 - ✅ Global Products API with search & filters
 - ✅ Dashboard reservations with real data
-- ✅ Dashboard orders listing with status updates
+- ✅ Dashboard orders listing with status updates (reservations)
 - ✅ Order status PATCH endpoint
 - ✅ Registration/onboarding flow
-- ✅ Checkout confirmation page
+- ✅ Checkout confirmation page (per-product)
 - ✅ Farm page search
 - ✅ Landing page with featured farms
 - ✅ Auth cookie handling in middleware
@@ -52,47 +57,59 @@
 - ✅ Admin dashboard with real DB stats
 - ✅ Dashboard products page uses real Prisma queries
 - ✅ Waitlist API (GET/POST/PATCH) fully implemented with Prisma
+- ✅ Cart persistence (localStorage) — UI components complete
 
 ## Known Issues / Technical Debt
-- Waitlist dashboard page still uses mock data (Priority 1 - *this sprint*)
-- Products API uses mock data (Priority 2)
-- Explore/Categories pages use mock data (Priority 3)
-- Farm public page uses mock data (Priority 4)
-- Profile demo mode returns hardcoded values (Priority 5)
+- Waitlist dashboard page still uses mock data (Priority 1)
+- Products API still uses mock data (Priority 2)
+- Explore/Categories still using mock data (Priority 3)
+- Farm public page still using hardcoded `mockFarms` (Priority 4)
+- Cart checkout is per-product only — no multi-item checkout flow (Priority 5)
 
 ## Codebase Analysis Summary
 
 ### Project Structure
 ```
 src/app/
-├── api/auth/me     # ✅ Returns real user + farm from DB (demo fallback)
-├── api/products/   # ⚠️ Still uses mock data (Priority 2)
-├── api/waitlist/   # ✅ Full CRUD with Prisma (Priority 1 - page needs connecting)
-├── api/farms/      # ✅ Real CRUD
-├── dashboard/      
-│   ├── orders/     # ✅ Real DB
-│   ├── products/   # ✅ Real DB
+├── api/
+│   ├── auth/me      # ✅ Returns real user + farm from DB (demo fallback)
+│   ├── products/    # ⚠️ Still uses mock data (Priority 2)
+│   ├── waitlist/    # ✅ Full CRUD with Prisma
+│   ├── farms/       # ✅ Real CRUD
+│   ├── orders/      # ✅ GET/POST/PATCH (uses Reservation model)
+│   └── reservations/# ✅ Full CRUD
+├── dashboard/       
+│   ├── orders/      # ✅ Real DB (reservations)
+│   ├── products/    # ✅ Real DB
 │   ├── reservations/# ✅ Real DB
-│   └── waitlist/  # ⚠️ Mock data (Priority 1 - needs API connection)
-├── explore/        # ⚠️ Mock data (Priority 3)
-├── categories/     # ⚠️ Mock data (Priority 3)
+│   └── waitlist/    # ⚠️ Mock data (Priority 1)
+├── explore/         # ⚠️ Mock data (Priority 3)
+├── categories/      # ⚠️ Mock data (Priority 3)
 ├── farm/[slug]/    # ⚠️ Mock data (Priority 4)
-└── profile/        # ✅ Uses /api/auth/me (demo fallback in API)
+└── profile/        # ✅ Uses /api/auth/me
 ```
 
+### Data Model Notes
+- **Farm** → **Product** → **Reservation** (used as Orders)
+- No separate Order model — reservations with status PENDING/CONFIRMED/COMPLETED serve as orders
+- **Waitlist** tracks interested customers per product
+- Cart persisted to localStorage (client-side only)
+
 ### What's Changed Since Last Sprint
-- **Waitlist API** (`/api/waitlist/route.ts`): Now has full GET/POST/PATCH with real Prisma queries!
-- **Profile API** (`/api/auth/me`): Returns real user + farm from DB
-- **Tests passing**: All pages load, TypeScript clean, mobile-friendly
+- Waitlist API: Full Prisma CRUD ✅
+- Cart: localStorage persistence ✅
+- Profile API: Real DB + demo fallback ✅
 
 ### Current Blockers
 1. Waitlist dashboard page not fetching from `/api/waitlist`
 2. Products API still using `getAllFarms()` mock
 3. Explore/Categories still using mock data
 4. Farm public page still using hardcoded `mockFarms`
+5. No multi-item checkout flow (cart exists but limited use)
 
 ### Working Components
 - Waitlist API: Full Prisma CRUD ✅
+- Cart: Persistence + UI ✅
 - Auth API: Real DB + demo fallback ✅
 - Admin dashboard: Real Prisma queries ✅
 - Dashboard products/orders/reservations: Real DB ✅
