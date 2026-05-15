@@ -1,57 +1,58 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
+// Routes that require authentication
+const protectedRoutes = ["/dashboard", "/admin"]
+
+// Routes that are public (no auth required)
+const publicRoutes = [
+  "/",
+  "/explore",
+  "/categories",
+  "/login",
+  "/register",
+  "/onboarding",
+]
+
+// Check if route starts with any of the given prefixes
+function routeStartsWith(path: string, prefixes: string[]): boolean {
+  return prefixes.some((prefix) => path.startsWith(prefix) || path === prefix)
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Check for auth cookie
   const authUserId = request.cookies.get("auth-user-id")?.value
+  const isAuthenticated = !!authUserId
 
-  // Public routes that don't require authentication
-  const publicPaths = [
-    "/",
-    "/explore",
-    "/categories",
-    "/login",
-    "/register",
-    "/onboarding",
-  ]
-
-  // Check if path starts with any public path
-  const isPublicPath = publicPaths.some(
-    (path) => pathname === path || pathname.startsWith("/farm/") || pathname.startsWith(path + "/")
-  )
-
-  // Also allow API routes (they handle their own auth)
-  if (pathname.startsWith("/api/")) {
+  // Public routes - allow access
+  if (routeStartsWith(pathname, publicRoutes)) {
     return NextResponse.next()
   }
 
-  // Protected routes
-  const protectedPaths = ["/dashboard", "/admin"]
+  // Check if it's a protected route
+  const isProtectedRoute = routeStartsWith(pathname, protectedRoutes)
 
-  const isProtectedPath = protectedPaths.some((path) => pathname.startsWith(path))
-
-  // If accessing protected path without auth, redirect to login
-  if (isProtectedPath && !authUserId) {
+  if (isProtectedRoute && !isAuthenticated) {
+    // Redirect to login if not authenticated
     const loginUrl = new URL("/login", request.url)
     loginUrl.searchParams.set("redirect", pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  // If already logged in and trying to access login/register, redirect to dashboard
-  if (authUserId && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
-  }
+  // Admin routes - additional role check would require DB lookup
+  // For now, let the page-level auth handle it (middleware can't easily query DB)
+  // The admin pages already check for admin role server-side
 
   return NextResponse.next()
 }
 
 export const config = {
+  // Use more specific matcher to avoid edge runtime issues
+  // Only match the protected routes and their sub-paths
   matcher: [
     "/dashboard/:path*",
     "/admin/:path*",
-    "/login",
-    "/register",
   ],
 }
