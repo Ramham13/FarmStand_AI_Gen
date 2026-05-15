@@ -1,25 +1,22 @@
-# Test Report - 2026-05-15 17:09 UTC
+# Test Report - Friday, May 15th, 2026, 5:21 PM UTC
 
-## Last Commit: 0480f01 Deploy: test report and sprint updates
+## Last Commit: b9dc534 Switch from SQLite to PostgreSQL for Neon
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
-| TypeScript | PASS | No type errors |
-| Dev Server | PASS | Running on localhost:3000 |
-| Home | PASS | Loads correctly, responsive design |
-| Explore | PASS | 200 OK, 8 farms found |
-| Farm Profile | PASS | 200 OK, sunny-meadow-farm loads |
-
-## Mobile/Touch Tests
-- Viewport meta tag present: ✅
-- overflow-x-hidden on body: ✅ (prevents horizontal scroll)
-- touch-manipulation on interactive elements: ✅
-- Mobile-first responsive classes: ✅ (sm:, md:, lg: breakpoints)
-- Buttons with adequate padding (touch targets): ✅
+| TypeScript | FAIL | Type error in src/app/admin/reports/page.tsx:76 - `status` is `string` not assignable to `ReportStatus` |
+| Home | PASS | Dev server running, page loads with featured farms |
+| Explore | PASS | 8 farms found, category filters work |
+| Farm Profile | PASS | Sunny Meadow Farm loads with products |
 
 ## Bugs Found
-- None
+- [x] **TypeScript Error** - `src/app/admin/reports/page.tsx(76:15)`: Type mismatch - the `reports` array from database query returns `status` as `string` type but the `Report` type expects `ReportStatus` enum. Needs type cast or proper typing.
 
 ## Summary
-[PASS] - All tests pass. TypeScript compiles cleanly, dev server responds, all pages (home, explore, farm profiles) load correctly. Mobile/touch responsive design is properly implemented.
+FAIL - TypeScript compilation failed. The type error must be fixed before merging. Dev server works correctly and all tested pages (home, explore, farm profiles) load without crash. The error is in the admin reports page which is likely a new feature from the PostgreSQL migration.
+
+## Mobile/Touch Check (via HTML inspection)
+- Buttons have `min-h-[44px]` (44px minimum height) - compliant with touch targets
+- No horizontal scroll issues detected (`overflow-x-hidden` on body)
+- Category filter pills use `touch-manipulation` class for proper touch handling

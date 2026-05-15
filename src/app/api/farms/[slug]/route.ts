@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
+import { getCurrentUser } from '@/lib/auth-server'
 
 // Mock data for individual farms with products
 const mockFarms: Record<string, any> = {
@@ -115,9 +117,115 @@ const mockFarms: Record<string, any> = {
 // GET /api/farms/[slug] - retrieve a farm by its slug
 export async function GET(request: Request, { params }: { params: { slug: string } }) {
   const { slug } = params
+  
+  // First try to get from database
+  try {
+    const user = await getCurrentUser()
+    const isDemo = user?.id.startsWith('demo-') || user?.id.startsWith('user-')
+    
+    if (!isDemo) {
+      // Try database for real users
+      const dbFarm = await prisma.farm.findUnique({
+        where: { slug },
+      })
+      
+      if (dbFarm) {
+        return NextResponse.json({
+          id: dbFarm.id,
+          name: dbFarm.name,
+          slug: dbFarm.slug,
+          description: dbFarm.description,
+          location: dbFarm.location,
+          region: dbFarm.region,
+          emoji: dbFarm.emoji,
+          imageUrl: dbFarm.imageUrl,
+          phone: dbFarm.phone,
+          email: dbFarm.email,
+          website: dbFarm.website,
+          paymentLink: dbFarm.paymentLink,
+          status: dbFarm.status,
+          createdAt: dbFarm.createdAt,
+        })
+      }
+    }
+  } catch (e) {
+    // Fall through to mock data on error
+  }
+  
+  // Fall back to mock data
   const farm = mockFarms[slug]
   if (!farm) {
     return NextResponse.json({ error: 'Farm not found' }, { status: 404 })
   }
   return NextResponse.json(farm)
+}
+
+// PATCH /api/farms/[slug] - update a farm (only for the owner)
+export async function PATCH(request: Request, { params }: { params: { slug: string } }) {
+  try {
+    const user = await getCurrentUser()
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { slug } = params
+    const body = await request.json()
+    
+    // Build update data - only allow specific fields
+    const updateData: Record<string, any> = {}
+    const allowedFields = [
+      'name', 'description', 'location', 'region', 'emoji', 
+      'imageUrl', 'phone', 'email', 'website', 'paymentLink', 
+      'sellerAcknowledged', 'status', 'featured', 'priceRange'
+    ]
+    
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) {
+        updateData[field] = body[field]
+      }
+    }
+    
+    // If no valid fields to update, return error
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+    }
+    
+    // Check if this is a demo user
+    const isDemo = user.id.startsWith('demo-') || user.id.startsWith('user-')
+    
+    if (isDemo) {
+      // For demo users, just simulate success
+      return NextResponse.json({ 
+        message: 'Demo mode - changes simulated',
+        slug,
+        ...updateData
+      })
+    }
+    
+    // For real users, check ownership and update in database
+    const existingFarm = await prisma.farm.findUnique({
+      where: { slug },
+    })
+    
+    if (!existingFarm) {
+      return NextResponse.json({ error: 'Farm not found' }, { status: 404 })
+    }
+    
+    // Verify ownership
+    if (existingFarm.userId !== user.id) {
+      return NextResponse.json({ error: 'Forbidden - you do not own this farm' }, { status: 403 })
+    }
+    
+    // Update the farm
+    const updatedFarm = await prisma.farm.update({
+      where: { slug },
+      data: updateData,
+    })
+    
+    return NextResponse.json(updatedFarm)
+  } catch (error) {
+    console.error('Error updating farm:', error)
+    return NextResponse.json({ error: 'Failed to update farm' }, { status: 500 })
+  }
 }

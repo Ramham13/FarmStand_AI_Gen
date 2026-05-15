@@ -1,16 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAllFarms } from '@/lib/mock-data'
-
-// Type for products from mock data
-interface FarmProduct {
-  id: string
-  name: string
-  description?: string
-  category: string
-  price: number
-  unit: string
-  availability: string
-}
+import { prisma } from '@/lib/db'
 
 // GET /api/products - list all active products across all farms with search & filters
 export async function GET(request: Request) {
@@ -22,57 +11,84 @@ export async function GET(request: Request) {
   const minPrice = searchParams.get('minPrice')
   const maxPrice = searchParams.get('maxPrice')
   
-  const farms = getAllFarms()
+  // Build where clause for filtering
+  const where: Record<string, unknown> = {
+    isActive: true,
+    availability: { not: 'SOLD_OUT' },
+  }
   
-  // Flatten products from all farms and add farm info
-  let allProducts = farms.flatMap(farmData => 
-    (farmData.products || [])
-      .filter((p: FarmProduct) => p.availability !== 'SOLD_OUT')
-      .map((product: FarmProduct) => ({
-        ...product,
-        farmId: farmData.id,
-        farmName: farmData.name,
-        farmSlug: farmData.slug,
-        farmEmoji: farmData.emoji,
-        farmLocation: farmData.location,
-      }))
-  )
-  
-  // Apply filters
+  // Build OR search across product fields and joined farm fields
   if (query) {
-    allProducts = allProducts.filter(p => 
-      p.name.toLowerCase().includes(query) ||
-      p.description?.toLowerCase().includes(query) ||
-      p.category.toLowerCase().includes(query) ||
-      p.farmName.toLowerCase().includes(query)
-    )
+    where.OR = [
+      { name: { contains: query, mode: 'insensitive' } },
+      { description: { contains: query, mode: 'insensitive' } },
+      { category: { contains: query, mode: 'insensitive' } },
+      { farm: { name: { contains: query, mode: 'insensitive' } } },
+    ]
   }
   
   if (category) {
-    allProducts = allProducts.filter(p => p.category === category)
+    where.category = category
   }
   
   if (farm) {
-    allProducts = allProducts.filter(p => p.farmSlug === farm)
+    where.farm = { slug: farm }
   }
   
+  // Query products from database with farm relation
+  let products = await prisma.product.findMany({
+    where,
+    include: {
+      farm: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          emoji: true,
+          location: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  })
+  
+  // Apply price filters (can't do in DB query easily with float comparison)
   if (minPrice) {
     const min = parseFloat(minPrice)
     if (!isNaN(min)) {
-      allProducts = allProducts.filter(p => (p.price || 0) >= min)
+      products = products.filter(p => (p.price || 0) >= min)
     }
   }
   
   if (maxPrice) {
     const max = parseFloat(maxPrice)
     if (!isNaN(max)) {
-      allProducts = allProducts.filter(p => (p.price || 0) <= max)
+      products = products.filter(p => (p.price || 0) <= max)
     }
   }
   
+  // Transform to match expected response format
+  const allProducts = products.map(p => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    category: p.category,
+    price: p.price,
+    unit: p.unit,
+    availability: p.availability,
+    imageUrl: p.imageUrl,
+    farmId: p.farm.id,
+    farmName: p.farm.name,
+    farmSlug: p.farm.slug,
+    farmEmoji: p.farm.emoji,
+    farmLocation: p.farm.location,
+  }))
+  
   // Get unique categories and farms for filter options
-  const uniqueCategories = [...new Set(allProducts.map(p => p.category))]
-  const uniqueFarms = [...new Set(allProducts.map(p => p.farmSlug))]
+  const uniqueCategories = [...new Set(allProducts.map(p => p.category).filter(Boolean))]
+  const uniqueFarms = [...new Set(allProducts.map(p => p.farmSlug).filter(Boolean))]
   
   return NextResponse.json({
     products: allProducts,
