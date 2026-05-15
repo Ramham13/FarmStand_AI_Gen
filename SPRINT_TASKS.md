@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 14:42 UTC
+# Sprint Tasks - 2026-05-15 14:47 UTC
 
 ## Priority 1: Connect Profile Page to Real Authenticated User
 - [ ] Replace hardcoded `defaultUser` in `/profile/page.tsx` with server-side user data from cookie/auth
@@ -53,6 +53,7 @@
 - ✅ Demo mode for auth APIs to avoid DB errors
 - ✅ Mobile viewport CSS (overflow-x-hidden)
 - ✅ Touch targets (44px minimum with touch-manipulation class)
+- ✅ Admin dashboard with real DB stats
 
 ## Known Issues / Technical Debt
 - Profile page uses hardcoded user data (Priority 1)
@@ -71,7 +72,7 @@ src/app/
 ├── api/waitlist/    # Waitlist management (needs real DB - Priority 2,3)
 ├── api/orders/      # Order (reservation) updates (done)
 ├── dashboard/       # Farmer dashboard (protected)
-├── admin/           # Admin dashboard
+├── admin/           # Admin dashboard (real DB - done)
 ├── farm/[slug]/     # Public farm pages
 ├── explore/         # Farm discovery
 ├── categories/      # Category browsing
@@ -86,12 +87,15 @@ src/app/
 - Focus has been on bug fixes: auth cookie handling, hydration errors, login redirects
 - Middleware route protection was recently enabled
 - Test reports being updated regularly
+- Sprint tasks document updated after each commit
 
 ### Components Status
 - **Profile**: Hardcoded `defaultUser` - not connected to auth (Priority 1)
 - **Waitlist Page**: Completely mock data, no API integration (Priority 2)
 - **Waitlist API**: Only demo POST, GET returns empty array, no PATCH (Priority 2, 3)
 - **Products API**: Uses `getAllFarms()` mock data - not connected to Prisma (Priority 4)
+- **Admin Dashboard**: Uses real Prisma queries - DONE
+- **Orders API**: Uses real Prisma queries - DONE
 
 ### Data Layer
 - Prisma schema is well-designed with proper relations
