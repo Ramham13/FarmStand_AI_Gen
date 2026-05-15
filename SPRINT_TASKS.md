@@ -1,60 +1,58 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 7:12 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 7:17 PM UTC
 
-## Priority 1: Error Handling & Loading States
-- [ ] Add error boundaries (`error.tsx`) to prevent full-page crashes on key routes (explore, products, checkout, dashboard)
-- [ ] Add retry buttons on failed API calls (Explore, Products, Reservations)
-- [ ] Replace "Loading..." text with skeleton loaders on Explore and Products pages
-- [ ] Add toast notifications for server action errors
-- **Status**: NOT STARTED - Basic Suspense only
-- **Impact**: Poor UX when APIs fail or load slowly; full page crashes instead of graceful degradation
+## Priority 1: Database Performance (Indexes)
+- [ ] Add unique index on `Farm(slug)` for fast lookups
+- [ ] Add index on `Product(farmId)` for fetching products by farm
+- [ ] Add compound index on `Reservation(status, createdAt)` for dashboard queries
+- [ ] Add index on `Product(availability, isActive)` for public product queries
+- [ ] Add index on `Waitlist(productId, createdAt)` for waitlist ordering
+- **Status**: NOT STARTED - No indexes in prisma/schema.prisma
+- **Impact**: Poor query performance at scale; full table scans on common queries
 
-## Priority 2: Dashboard UX Improvements
-- [ ] Add helpful empty state CTAs:
-  - No products → "Add your first product" button
-  - No reservations → explanation text + link to products
-  - No waitlist → explanation text
-- [ ] Add quick stats cards on dashboard overview (total products, reservations, waitlist count)
-- [ ] Add "View on Site" button to preview public farm page from dashboard
-- **Status**: NEEDS VERIFICATION
-- **Impact**: New farmers confused about next steps after onboarding
+## Priority 2: SEO & Meta Tags
+- [ ] Add generateMetadata to home page (`/page.tsx`) - OpenGraph, Twitter cards
+- [ ] Add generateMetadata to farm profile (`/farm/[slug]/page.tsx`) - dynamic OG tags
+- [ ] Add generateMetadata to product page (`/farm/[slug]/product/[productId]/page.tsx`)
+- [ ] Add generateMetadata to explore page (`/explore/page.tsx`)
+- [ ] Create `robots.txt` and `sitemap.xml` route handlers
+- **Status**: NOT STARTED - No generateMetadata functions found
+- **Impact**: Missing SEO basics; poor social sharing previews; search engines can't crawl effectively
 
-## Priority 3: Test Suite Automation
-- [ ] Fix Playwright environment issues (missing libnspr4.so dependencies)
+## Priority 3: API Pagination
+- [ ] Implement pagination in `/api/farms/search` (limit/offset or cursor)
+- [ ] Implement pagination in `/api/farms/[slug]/listings`
+- [ ] Add page info to API responses (total count, hasNext, hasPrev)
+- [ ] Add pagination UI to Explore page (next/prev buttons or infinite scroll)
+- **Status**: NOT STARTED - All endpoints return full results
+- **Impact**: All products loaded at once; performance degrades with large datasets
+
+## Priority 4: Test Environment Fix
+- [ ] Fix Playwright system dependencies (libnspr4.so) or switch to alternative testing
 - [ ] Verify e2e tests actually run: `npx playwright test`
-- [ ] Add CI step to run tests on push/PR (`.github/workflows/test.yml`)
-- [ ] Add basic e2e tests for critical flows: homepage load, explore, farm page, reservation submit
-- **Status**: TESTS EXIST BUT DON'T RUN - test-mobile.spec.ts present but environment missing deps
+- [ ] Add basic e2e tests for critical flows: homepage, explore, farm page, reservation submit
+- [ ] Add CI step to run tests on push/PR
+- **Status**: TEST FILE EXISTS BUT DOESN'T RUN - test-mobile.spec.ts present but missing deps
 - **Impact**: No regression detection; manual testing required for every deploy
 
-## Priority 4: Performance & Database
-- [ ] Add database indexes for frequently queried fields:
-  - `farm(slug)` - unique index for lookups
-  - `product(farmId)` - for fetching products by farm
-  - `reservation(status, createdAt)` - for dashboard queries
-- [ ] Implement pagination for products API (return paginated results with limit/offset)
-- [ ] Add loading skeletons to Product Details and Farm Profile pages
-- **Status**: NOT STARTED - No indexes defined, no pagination
-- **Impact**: Poor query performance at scale; all products loaded at once
-
-## Priority 5: SEO & Meta Tags
-- [ ] Add proper meta tags for all public pages:
-  - Home page: OpenGraph tags, Twitter cards
-  - Farm page: Dynamic og:title, og:description, og:image
-  - Product page: Product-specific meta tags
-- [ ] Add `robots.txt` and `sitemap.xml` generation
-- **Status**: NOT STARTED
-- **Impact**: Missing SEO basics; poor social sharing previews
+## Priority 5: Mobile Polish (If Time)
+- [ ] Verify all touch targets meet 44px minimum
+- [ ] Add responsive hamburger menu for mobile nav
+- [ ] Test checkout flow on mobile viewport
+- [ ] Add skeleton loaders to more pages (Farm Profile, Product Details)
+- **Status**: PARTIAL - Some touch targets added (12 instances of min-h-[44px]), mobile meta tag present
+- **Impact**: Some mobile UX issues may remain undetected
 
 ---
 
 ## Completed (This Sprint)
+- ✅ Error boundaries on explore, products, dashboard/reservations routes
+- ✅ Retry buttons on failed API calls (Explore, Products)
+- ✅ Skeleton loaders on Explore and Products pages
 - ✅ Checkout page displays farm contact info (email, phone, location)
 - ✅ Checkout confirmation page shows farm contact details
-- ✅ Cart drawer wired to checkout page
-- ✅ Customer orders tracking page (`/orders`)
 - ✅ TypeScript compiles cleanly
 - ✅ Dev server runs correctly
-- ✅ Mobile viewport meta tag and touch-friendly buttons
+- ✅ Mobile viewport meta tag
 
 ## Completed (Prior Sprints)
 - ✅ Registration/onboarding flow
@@ -66,7 +64,6 @@
 - ✅ Admin reports page
 - ✅ Farm Settings connected to DB
 - ✅ Cart multi-farm UX
-- ✅ Mobile responsive base styling
 - ✅ PostgreSQL (Neon) migration from SQLite
 - ✅ Image upload API and UI component
 - ✅ Order status PATCH endpoint
@@ -74,12 +71,14 @@
 - ✅ Dynamic homepage with featured farms from DB
 - ✅ Order status email notifications
 - ✅ Quantity selection for reservations
+- ✅ Customer orders tracking page (`/orders`)
+- ✅ Touch-friendly buttons (min-h-[44px])
+- ✅ Body overflow-x-hidden for mobile
 
 ## Notes from Code Analysis
-- Checkout page (`/checkout/page.tsx`) fetches farm info via `/api/farms/[slug]` and displays email/phone/address - **COMPLETE**
-- Confirmation page (`/checkout/confirmation/page.tsx`) also fetches and displays farm contact - **COMPLETE**
-- No error boundaries exist - all routes use basic Suspense only
-- No database indexes in `prisma/schema.prisma`
-- Test file exists but Playwright fails due to missing system dependencies
-- No pagination on any API endpoint
-- No meta tags for SEO
+- No database indexes in `prisma/schema.prisma` - all queries are table scans
+- No `generateMetadata` anywhere in `src/app` - 0 SEO functions
+- No pagination on any API endpoint - returns all results
+- Test file `test-mobile.spec.ts` exists but Playwright missing system dependencies
+- Error boundaries added in commit 826c0e5 to explore, products, reservations
+- Skeleton loaders implemented via `src/components/ui/skeleton.tsx`
