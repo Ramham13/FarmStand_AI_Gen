@@ -1,4 +1,4 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 8:32 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 8:37 PM UTC
 
 ## Priority 1: SEO - Critical for Discovery
 - [ ] Add `generateMetadata` to farm profile (`/farm/[slug]/page.tsx`) - OG tags with farm name/image
@@ -69,3 +69,12 @@
 | Forms | ✅ Done | Uses sonner, needs error path verification |
 | Mobile | ✅ Done | Viewport, touch targets verified |
 | Performance | ⚠️ LCP | No priority on LCP images |
+
+---
+
+## Recent Git History (Last 5 Commits)
+- a488cfb - Update test report and task tracking
+- ea6d6c5 - Explore page search functionality and bug fixes
+- 32eb1db - Test results and updates 2026-05-15
+- 8224e7a - Update test report and results
+- c605e3c - Update test report and results
