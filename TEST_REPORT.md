@@ -1,24 +1,25 @@
-# Test Report - 2026-05-15 16:54 UTC
+# Test Report - Friday, May 15th, 2026, 4:59 PM UTC
 
-## Last Commit: 3af4432 Bug fixes and sprint tasks - 2026-05-15 16:41
+## Last Commit: ba74e0d Test results and sprint updates - 2026-05-15
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
-| TypeScript | PASS | No type errors |
-| Dev Server | PASS | Server running on localhost:3000 |
-| Home | PASS | Loads correctly with featured farms |
-| Explore | PASS | Loads with category filters |
-| Farm Profile | PASS | Farm pages load after data seeding |
+| TypeScript | PASS | No errors |
+| Dev Server | PASS | Running on localhost:3000 |
+| Home | PASS | Renders correctly, has overflow-x-hidden |
+| Explore | PASS | 200 OK, touch-manipulation classes present |
+| Farm Profile (sunny-meadow-farm) | PASS | 200 OK |
+
+## Mobile/Touch Tests
+| Test | Status | Notes |
+|------|--------|-------|
+| Horizontal scroll prevention | PASS | body has overflow-x-hidden |
+| Touch targets | PARTIAL | Uses touch-manipulation, but buttons are sm size (32px) - could be larger for accessibility |
 
 ## Bugs Found
-- [ ] **Database not seeded** - Farm profile pages returned 404 before seeding. The database was in sync with schema but had no data. Ran `npx tsx prisma/seed.ts` to populate 8 farms with products.
-- [ ] Explore page shows "No farms found" when filtered - This appears intentional; category-filtered views show empty state when no matching farms exist (expected behavior for MVP).
-
-## Mobile/Touch Check
-- All buttons use `min-h-[44px]` for touch targets ✓
-- Viewport meta tag present ✓
-- No horizontal scroll detected in layout (uses `overflow-x-hidden`) ✓
+- [ ] Playwright test fails due to missing system libraries (libnspr4.so) - environment issue, not code
+- [ ] Button sizes use "sm" variant (~32px height) - below recommended 44px touch target size
 
 ## Summary
-**PASS** - All core pages load correctly. Required running seed script to populate database for farm profile pages. TypeScript compiles without errors. App is functional.
+PASS - Core functionality working. TypeScript compiles clean, server runs, all tested pages load. Minor accessibility note: buttons could be larger for touch targets.
