@@ -1,22 +1,18 @@
-# Test Report - Friday, May 15th, 2026 - 1:04 PM UTC
+# Test Report - 2026-05-15 13:14 UTC
 
-## Last Commit: 9f379da Fix: Handle demo mode in dashboard to avoid DB errors
+## Last Commit: aef383e - Chore: Update test report and clean up middleware
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
 | TypeScript | PASS | No type errors |
-| Home | PASS | Loads correctly with featured farms |
-| Explore | PASS | Shows 6 farms with filtering |
-| Farm Profile | PASS | Sunny Meadow Farm loads with products |
+| Dev Server | PASS | Initial 500 error due to corrupted .next cache - resolved after restart |
+| Home | PASS | Loads correctly, featured farms visible |
+| Explore | PASS | 6 farms displayed, category filters work |
+| Farm Profiles | PASS | Sunny Meadow Farm loads with products |
 
 ## Bugs Found
-- None detected
-
-## Mobile/Touch Check
-- Viewport meta tag present: `width=device-width, initial-scale=1`
-- Touch-friendly buttons: Uses `min-h-[44px]` (44px minimum touch target)
-- No horizontal scroll detected in CSS: `overflow-x-hidden` on body
+- [ ] Dev server had stale/corrupted .next build cache causing "Cannot find module './8948.js'" error. Fixed by deleting .next and restarting dev server. Consider adding .next to .gitignore if not already.
 
 ## Summary
-PASS - All tests passed. TypeScript compiles cleanly, all pages load without crash. Demo mode fix appears to be working.
+PASS - All core pages load without crashes. TypeScript compiles cleanly. Need to occasionally clear .next cache after git changes.
