@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 14:22 UTC
+# Sprint Tasks - 2026-05-15 14:37 UTC
 
 ## Priority 1: Connect Profile Page to Real Authenticated User
 - [ ] Replace hardcoded `defaultUser` in `/profile/page.tsx` with server-side user data from cookie/auth
@@ -21,12 +21,11 @@
 - [ ] Add notification badge/color in customer row
 - **Impact**: No way to actually notify customers on waitlist
 
-## Priority 4: Verify Product Image Handling
-- [ ] Verify product creation form has image URL input field
-- [ ] Test that new products save imageUrl to database via `/api/products` POST
-- [ ] Test editing existing products via `/dashboard/products/[id]/edit`
-- [ ] Verify created products display images on public farm page
-- **Impact**: Product images may not persist or display correctly
+## Priority 4: Migrate Products API from Mock to Real Database
+- [ ] Replace `getAllFarms()` mock data calls in `/api/products` with Prisma query
+- [ ] Ensure Product model includes `imageUrl` field population
+- [ ] Connect `/api/products` POST to create new products in database
+- **Impact**: Products page uses stale mock data instead of live farm products
 
 ## Priority 5: Mobile Dashboard UX Testing
 - [ ] Test dashboard pages on mobile viewport (375px width)
@@ -57,7 +56,7 @@
 - Profile page uses hardcoded user data (Priority 1)
 - Waitlist uses mock data (Priority 2)
 - Waitlist API missing real DB operations (Priority 2, 3)
-- Product images need verification (Priority 4)
+- Products API uses mock data instead of Prisma (Priority 4)
 - Dashboard mobile UX needs testing (Priority 5)
 
 ## Project Structure
@@ -65,16 +64,41 @@
 src/app/
 ├── api/auth/        # Auth endpoints
 ├── api/farms/       # Farm CRUD
-├── api/products/    # Product CRUD
-├── api/reservations/# Reservation management
-├── api/waitlist/    # Waitlist management (needs real DB, PATCH)
-├── api/orders/      # Order (reservation) updates
+├── api/products/    # Product CRUD (still mock data - Priority 4)
+├── api/reservations/# Reservation management (done)
+├── api/waitlist/    # Waitlist management (needs real DB - Priority 2,3)
+├── api/orders/      # Order (reservation) updates (done)
 ├── dashboard/       # Farmer dashboard (protected)
 ├── admin/           # Admin dashboard
 ├── farm/[slug]/     # Public farm pages
 ├── explore/         # Farm discovery
 ├── categories/      # Category browsing
 ├── checkout/        # Checkout flow
-├── profile/         # User profile (needs real data)
+├── profile/         # User profile (needs real data - Priority 1)
 ├── login/register/onboarding  # Auth flows
 ```
+
+## Key Findings from Codebase Analysis
+
+### Git History (recent commits)
+- Focus has been on bug fixes: auth cookie handling, hydration errors, login redirects
+- Middleware route protection was recently enabled
+- Test reports being updated regularly
+
+### Components Status
+- **Profile**: Hardcoded `defaultUser` - not connected to auth (Priority 1)
+- **Waitlist Page**: Completely mock data, no API integration (Priority 2)
+- **Waitlist API**: Only demo POST, GET returns empty array, no PATCH (Priority 2, 3)
+- **Products API**: Uses `getAllFarms()` mock data - not connected to Prisma (Priority 4)
+
+### Data Layer
+- Prisma schema is well-designed with proper relations
+- Waitlist has `notifiedAt` field ready for Priority 3
+- Product has `imageUrl` field - needs verification it works
+
+### Test Status (from TEST_REPORT.md)
+- TypeScript: PASS
+- Dev Server: PASS
+- All core pages load: PASS
+- Mobile Viewport: SKIPPED (Playwright missing system deps)
+- Touch Targets: SKIPPED
