@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/db"
-import { verifyPassword } from "@/lib/auth"
 
 export async function POST(request: Request) {
   try {
@@ -11,49 +9,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email and password required" }, { status: 400 })
     }
 
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email },
-      include: {
-        farms: true,
-      },
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
-    }
-
-    // Verify password
-    const isValid = await verifyPassword(password, user.password)
-    if (!isValid) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
-    }
-
-    // Return user info (exclude password)
-    // Take the first farm if user has multiple
-    const userFarm = user.farms?.[0] || null
-    
-    // Create response with user data
+    // Demo mode - accept any login
     const response = NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        farm: userFarm ? {
-          id: userFarm.id,
-          name: userFarm.name,
-          slug: userFarm.slug,
-        } : null,
+        id: "demo-user-1",
+        email: email,
+        role: "FARMER",
+        farm: {
+          id: "demo-farm-1",
+          name: "Demo Farm",
+          slug: "demo-farm",
+        },
       },
     })
     
-    // Set auth cookie for server-side authentication
-    response.cookies.set("auth-user-id", user.id, {
+    // Set auth cookie
+    response.cookies.set("auth-user-id", "demo-user-1", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     })
     
