@@ -1,46 +1,41 @@
-# Sprint Tasks - 2026-05-15 13:12 UTC
+# Sprint Tasks - 2026-05-15 13:22 UTC
 
 ## Priority 1: Re-enable Route Protection Middleware (CRITICAL)
-- [ ] Enable middleware for protected routes (/dashboard, /admin)
+- [ ] Fix the EvalError that caused middleware to be disabled
   - Current: middleware.ts.disabled - all routes unprotected
-  - Need: Fix the EvalError issue that caused it to be disabled
+  - Need: Investigate and fix the eval issue, then re-enable
 - [ ] Verify unauthenticated users are redirected to /login
 - [ ] Ensure public routes (/, /explore, /login, /register, /onboarding) still work
-- **Impact**: Security vulnerability - unprotected admin/dashboard routes
+- **Impact**: Security vulnerability - admin/dashboard routes currently open to anyone
 
 ## Priority 2: Connect Profile Page to Authenticated User
-- [ ] Replace hardcoded `defaultUser` with real user data from session
-  - Currently: Uses static demo user object with hardcoded email "farmer@example.com"
-  - Need: Fetch user from database using session/cookie
-  - Consider adding `/api/auth/me` endpoint if needed
+- [ ] Replace hardcoded `defaultUser` in /profile/page.tsx with real user data
+  - Currently: Static demo user with email "farmer@example.com"
+  - Need: Fetch user from database using session/cookie auth
 - [ ] Connect password change form to existing `/api/auth/password` endpoint
 - [ ] Display real farm data from user's Farm record
-- **Impact**: Profile shows demo data, password change non-functional for real users
+- **Impact**: Profile shows demo data only, password change non-functional
 
 ## Priority 3: Connect Dashboard Waitlist to Real Data
 - [ ] Replace mock waitlist data with Prisma query
-  - Currently: Hardcoded `waitlists` array with sample customers in /dashboard/waitlist/page.tsx
-  - Need: Query Waitlist table filtered by farmer's products (via Product.farmId)
-- [ ] Add "Notify" button functionality with API endpoint
-  - Need: API endpoint to mark customer as notified (update `notifiedAt` field)
-- [ ] Display real customer emails and join dates from database
+  - Currently: Hardcoded `waitlists` array in /dashboard/waitlist/page.tsx
+  - Need: Query Waitlist table filtered by farmer's products
+- [ ] Add "Notify" button with API endpoint to update `notifiedAt` field
+- [ ] Display real customer emails and join dates
 - **Impact**: Farmers cannot manage actual waitlists - all data is mock
 
-## Priority 4: Mobile UX Verification & Fixes
-- [ ] Test responsive design on 375px viewport
-  - Check for horizontal scroll issues
-  - Verify touch targets are 44px+
-- [ ] Test cart drawer on mobile (drawer component)
-- [ ] Test checkout forms are mobile-friendly
-- [ ] Verify navbar collapses properly on mobile
-- **Impact**: ~40% of users access via mobile - poor UX loses customers
+## Priority 4: Fix Mobile Touch Targets
+- [ ] Increase category button height from h-8 (32px) to h-11 (44px)
+- [ ] Increase CTA button height from h-9 (36px) to h-11 (44px)
+- [ ] Verify all interactive elements meet 44px minimum
+- **Impact**: ~40% mobile users - current 32-36px targets are below accessibility standard
 
-## Priority 5: Verify Admin Dashboard Data Integration
-- [ ] Confirm admin stats queries are working correctly
-  - Currently: Uses real Prisma queries for farm/product counts
-  - Verify pending farms, suspended farms, flagged reports queries work
-- [ ] Add admin actions (suspend farm, remove product) if missing
-- **Impact**: Admin has visibility into platform usage
+## Priority 5: Verify/Complete Product CRUD for Farmers
+- [ ] Test adding new product via /dashboard/products/new
+- [ ] Test editing existing product via /dashboard/products/[id]
+- [ ] Verify product images can be added (URL field exists, check if upload needed)
+- [ ] Ensure created products appear on public farm page
+- **Impact**: Farmers cannot add/edit their own products (MVP gap)
 
 ---
 
@@ -62,11 +57,13 @@
 ---
 
 ## Known Issues / Technical Debt
-- Middleware was disabled due to EvalError during build (needs investigation)
-- Profile page uses `useState` with demo user instead of server data fetching
+- Middleware disabled (EvalError) - security risk
+- Profile page uses demo user instead of server data
 - Waitlist page completely mock - no Prisma queries
+- Mobile touch targets below 44px standard
 - No email notification system (placeholder UI only)
 - Product image upload not implemented (URL field only)
+- Playwright testing not running in environment
 
 ---
 
@@ -75,7 +72,6 @@
 - Payment integration (external links only currently)
 - Review/rating system
 - Farm favoriting
-- Product image upload to cloud storage
 - Multi-farmer accounts support
 - Advanced search/filtering
 - Analytics dashboard for farmers
