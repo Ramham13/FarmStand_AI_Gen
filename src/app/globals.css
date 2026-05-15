@@ -17,14 +17,27 @@
   * {
     @apply max-w-full;
     box-sizing: border-box;
+    overflow-wrap: break-word;
+  }
+
+  /* Ensure all containers don't overflow */
+  div, section, article, main, header, footer, nav, aside {
+    @apply max-w-full;
   }
 
   /* Touch-friendly tap targets (minimum 44px) */
   button, 
   a,
-  [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Links that are just text */
+  a:not([class*="button"]) {
+    @apply min-h-[44px] inline-flex items-center;
   }
 
   /* Allow horizontal scrolling only for specific needs */
@@ -45,4 +58,23 @@
     padding-left: 12px;
     padding-right: 12px;
   }
+
+  /* Ensure grids don't overflow on mobile */
+  .grid {
+    min-width: 0;
+  }
+}
+
+/* Hide scrollbar but allow scrolling for touch devices */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure cards and content blocks don't overflow */
+.card, .card-content, .card-header {
+  @apply max-w-full;
 }

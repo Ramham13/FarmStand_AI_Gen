@@ -244,7 +244,7 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-w-0">
             {filteredProducts.map((product) => {
               const config = availabilityConfig[product.availability] || { label: product.availability, variant: "outline" as const }
               const emoji = categoryEmoji[product.category] || "📦"

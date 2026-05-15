@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Search, MapPin, ArrowRight, Leaf, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -112,8 +113,34 @@ const categories = [
 ]
 
 export default function ExplorePage() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState("all")
+  const [initialized, setInitialized] = useState(false)
+
+  // Initialize state from URL params
+  useEffect(() => {
+    const q = searchParams.get("q")
+    const cat = searchParams.get("category")
+    
+    if (q) setSearch(q)
+    if (cat) setCategory(cat)
+    setInitialized(true)
+  }, [searchParams])
+
+  // Update URL when state changes (but not during initial load)
+  useEffect(() => {
+    if (!initialized) return
+    
+    const params = new URLSearchParams()
+    if (search) params.set("q", search)
+    if (category !== "all") params.set("category", category)
+    
+    const newUrl = params.toString() ? `?${params.toString()}` : "/explore"
+    router.replace(newUrl, { scroll: false })
+  }, [search, category, initialized, router])
 
   const filteredFarms = allFarms.filter((farm) => {
     const matchesSearch = search === "" || 
@@ -156,7 +183,7 @@ export default function ExplorePage() {
           </div>
           
           {/* Category Pills - Touch-friendly */}
-          <div className="flex gap-2 mt-3 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-2 mt-3 overflow-x-auto pb-2 -mx-3 px-3 scrollbar-hide">
             {categories.map((cat) => (
               <button
                 key={cat.value}
@@ -223,7 +250,7 @@ export default function ExplorePage() {
           <h2 className="text-lg font-bold mb-3">
             {category === "all" && !search ? "All Farms" : "Results"}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-w-0">
             {filteredFarms.map((farm) => (
               <Link key={farm.id} href={`/farm/${farm.slug}`}>
                 <Card className="h-full hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden">

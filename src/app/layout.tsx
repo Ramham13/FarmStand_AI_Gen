@@ -15,9 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-gray-50 font-sans overflow-x-hidden">
+      <body className="min-h-screen flex flex-col bg-gray-50 font-sans overflow-x-hidden antialiased">
         <Navbar />
-        <main className="flex-1 w-full">
+        <main className="flex-1 w-full min-w-0">
           {children}
         </main>
         <footer className="border-t bg-white py-8 px-3 md:px-4">
