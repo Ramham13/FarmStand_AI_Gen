@@ -1,48 +1,52 @@
-# Sprint Tasks - 2026-05-15 07:49 UTC
+# Sprint Tasks - 2026-05-15 07:59 UTC
 
-## Priority 1: Checkout Flow (Blocking - Customer Can't Buy)
-- [ ] **Fix checkout redirect**: Farm page (`/farm/[slug]`) doesn't handle `?checkout=true` param. Need to render checkout form when param present.
-- [ ] **Create checkout form UI**: Customer info (name, email, phone, message), order summary, submit creates reservation via POST `/api/reservations`.
-- [ ] **Add confirmation page**: After checkout, show order confirmation with details.
+## Priority 1: Checkout Flow (Critical - Customer Can't Buy)
+- [ ] **Add checkout param handling**: Farm page (`/farm/[slug]`) must check for `?checkout=true` and render checkout form when param present
+- [ ] **Build checkout form UI**: Customer info (name, email, phone), message field, order summary showing selected product, submit to `POST /api/reservations`
+- [ ] **Wire reservations to DB**: Replace demo mode in `src/app/api/reservations/route.ts` with actual Prisma create operation
+- [ ] **Add confirmation page**: After successful POST, redirect to `/checkout/confirmation` with order details
 
-## Priority 2: Onboarding Integration (Farm Creation Broken)
-- [ ] **Hook up onboarding form**: Currently static UI. Need API route (`POST /api/onboarding`) to create User + Farm + initial Products.
-- [ ] **Handle slug uniqueness**: Check if URL slug already exists, show error if taken.
-- [ ] **Redirect after completion**: Send user to dashboard after farm creation.
+## Priority 2: Onboarding API (Blocking Farm Creation)
+- [ ] **Create POST /api/onboarding**: API route to handle form submission from `/onboarding` page
+- [ ] **Implement user creation**: Hash password, create User record, create Farm with slug from farm name
+- [ ] **Handle slug uniqueness**: Check if slug exists, return 409 error if taken
+- [ ] **Add initial products**: Handle optional initial product data in onboarding
+- [ ] **Post-create redirect**: Send user to `/dashboard` after successful farm creation
 
-## Priority 3: Search API Integration (Data Inconsistency)
-- [ ] **Replace mock search**: Homepage search currently filters `searchableFarms[]` array in-page. Should call `/api/farms/search` for real DB results.
-- [ ] **Add search highlighting**: Highlight matching terms in results (optional polish).
+## Priority 3: Real Search (Data Integrity)
+- [ ] **Replace mock search on homepage**: Update homepage search to call `/api/farms/search?q=...` instead of filtering in-page array
+- [ ] **Fix search API**: Ensure `/api/farms/search` returns proper DB results with Prisma query
 
 ## Priority 4: Customer Order Tracking (Missing Feature)
-- [ ] **Order history page**: Customer-facing `/orders` page showing reservation history (fetch by email).
-- [ ] **Order status lookup**: Simple page to check status by order ID + email.
-- [ ] **Dashboard reservations view**: Farmers can see incoming reservations (partially exists - verify works end-to-end).
+- [ ] **Create /orders page**: Customer-facing page to view their reservation history (query by email)
+- [ ] **Add order lookup**: Simple form to check order status by order ID + email
+- [ ] **Dashboard reservations view**: Verify farmer can see incoming reservations with full details
 
 ## Priority 5: Auth Foundation (Technical Debt)
-- [ ] **Real auth system**: Replace demo login with proper session/JWT auth.
-- [ ] **Protect dashboard**: Currently open. Add auth check middleware.
-- [ ] **Customer login/register**: Allow customers to create accounts (currently only farmers can register).
+- [ ] **Real auth middleware**: Protect `/dashboard/*` routes with session check
+- [ ] **Customer registration**: Allow customers to create accounts (not just farmers)
+- [ ] **Session persistence**: Replace demo login with proper session cookies or JWT
 
 ---
 
-## Notes
-
-**Completed (recent commits):**
-- ✅ Mobile CSS fixes (touch targets, breakpoints)
+## Completed (Recent)
+- ✅ Mobile CSS fixes (touch targets, responsive breakpoints)
 - ✅ Category filtering (Explore/Categories pages)
 - ✅ All pages load (200 OK verification)
 - ✅ Cart drawer functionality
-- ✅ Farmer dashboard (reservations, products, waitlist)
+- ✅ Farmer dashboard (reservations, products, waitlist views)
 - ✅ Reservation/Waitlist forms (farmer side)
+- ✅ TypeScript compiles cleanly
 
-**Known Gaps:**
+## Known Gaps
 - No global products API (only farm-specific)
 - No categories API endpoint
-- Admin pages exist but untested (/admin/farms, /admin/reports)
+- Admin pages exist but untested
+- Dashboard `findFirst()` gets ANY farm, not the logged-in user's farm
+- No product availability toggle in dashboard UI
 
-**Suggested Additions (Lower Priority):**
-- Product availability toggle in dashboard
-- Farm verification/approval workflow
-- Email notifications for new reservations
-- Analytics dashboard for farmers
+## Not in Scope
+- Native payment processing
+- Email notifications
+- Farm verification workflow
+- Analytics dashboard
