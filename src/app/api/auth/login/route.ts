@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/db"
 
 function simpleHash(str: string): string {
   let hash = 0
@@ -11,56 +10,27 @@ function simpleHash(str: string): string {
   return Math.abs(hash).toString(36)
 }
 
+// Demo mode - no database
 export async function POST(request: Request) {
-  try {
-    const body = await request.json()
-    const { email, password } = body
+  const body = await request.json()
+  const { email, password } = body
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password required" },
-        { status: 400 }
-      )
-    }
+  if (!email || !password) {
+    return NextResponse.json({ error: "Email and password required" }, { status: 400 })
+  }
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { email },
-    })
-
-    // Get user's farm if exists
-    const farm = user ? await prisma.farm.findUnique({ where: { userId: user.id } }) : null
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      )
-    }
-
-    // Check password
-    const hashedPassword = simpleHash(password)
-    if (user.password !== hashedPassword) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      )
-    }
-
+  // Demo credentials
+  if (email === "test@farm.com" && password === "test123") {
     return NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        farm: farm,
+        id: "user-1",
+        email: "test@farm.com",
+        role: "FARMER",
+        farm: { id: "farm-1", name: "Sunny Meadow Farm", slug: "sunny-meadow-farm" },
       },
     })
-  } catch (error) {
-    console.error("Error logging in:", error)
-    return NextResponse.json(
-      { error: "Failed to log in" },
-      { status: 500 }
-    )
   }
+
+  return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
 }

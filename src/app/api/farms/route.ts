@@ -1,46 +1,39 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
 
-// GET /api/farms - list all farms (basic fields only)
+// Mock data for demo - replace with database
+const mockFarms = [
+  {
+    id: 'farm-1',
+    name: 'Sunny Meadow Farm',
+    slug: 'sunny-meadow-farm',
+    description: 'Family-owned farm with fresh eggs and vegetables.',
+    location: 'Rural Valley, CA',
+    phone: '(555) 123-4567',
+    email: 'sunny@farm.com',
+    website: null,
+    status: 'ACTIVE',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'farm-2',
+    name: 'Green Acres Farm',
+    slug: 'green-acres',
+    description: 'Sustainable farm with herbs and greens.',
+    location: 'Portland, OR',
+    phone: '(555) 987-6543',
+    email: 'info@greenacres.farm',
+    website: null,
+    status: 'ACTIVE',
+    createdAt: new Date().toISOString(),
+  },
+]
+
+// GET /api/farms - list all farms
 export async function GET() {
-  const farms = await prisma.farm.findMany({
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      description: true,
-      location: true,
-      phone: true,
-      email: true,
-      website: true,
-      status: true,
-      createdAt: true,
-    },
-  })
-  return NextResponse.json(farms)
+  return NextResponse.json(mockFarms)
 }
 
-// POST /api/farms - create a new farm (minimal fields)
+// POST /api/farms - create a new farm
 export async function POST(req: Request) {
-  try {
-    const data = await req.json()
-    const { name, slug, description, location, phone, email, website } = data
-    const farm = await prisma.farm.create({
-      data: {
-        name,
-        slug,
-        description,
-        location,
-        phone,
-        email,
-        website,
-        status: 'ACTIVE',
-        userId: data.userId,
-      },
-    })
-    return NextResponse.json(farm, { status: 201 })
-  } catch (error) {
-    console.error('Error creating farm:', error)
-    return NextResponse.json({ error: 'Failed to create farm' }, { status: 400 })
-  }
+  return NextResponse.json({ message: 'Demo mode - DB not connected' }, { status: 200 })
 }
