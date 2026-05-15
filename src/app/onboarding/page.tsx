@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,20 +13,32 @@ export default function OnboardingPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  
-  // Get stored user data
-  const [userData] = useState(() => {
-    const stored = localStorage.getItem("user")
-    return stored ? JSON.parse(stored) : {}
-  })
+  const [mounted, setMounted] = useState(false)
   
   // Form state
-  const [farmName, setFarmName] = useState(userData.farm?.name || "")
-  const [slug, setSlug] = useState(userData.farm?.slug || "")
-  const [location, setLocation] = useState(userData.farm?.location || "")
-  const [description, setDescription] = useState(userData.farm?.description || "")
-  const [phone, setPhone] = useState(userData.farm?.phone || "")
-  const [emoji, setEmoji] = useState(userData.farm?.emoji || "🏡")
+  const [farmName, setFarmName] = useState("")
+  const [slug, setSlug] = useState("")
+  const [location, setLocation] = useState("")
+  const [description, setDescription] = useState("")
+  const [phone, setPhone] = useState("")
+  const [emoji, setEmoji] = useState("🏡")
+
+  // Initialize from localStorage after mount
+  useEffect(() => {
+    setMounted(true)
+    const stored = localStorage.getItem("user")
+    if (stored) {
+      const userData = JSON.parse(stored)
+      if (userData.farm) {
+        setFarmName(userData.farm.name || "")
+        setSlug(userData.farm.slug || "")
+        setLocation(userData.farm.location || "")
+        setDescription(userData.farm.description || "")
+        setPhone(userData.farm.phone || "")
+        setEmoji(userData.farm.emoji || "🏡")
+      }
+    }
+  }, [])
 
   const generateSlug = (name: string) => {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
@@ -38,11 +50,14 @@ export default function OnboardingPage() {
     setError("")
     
     try {
+      // Get stored user data
+      const stored = localStorage.getItem("user")
+      const userData = stored ? JSON.parse(stored) : {}
+      
       // Update user data in localStorage
       const updatedUser = {
         ...userData,
         farm: { 
-          ...userData.farm,
           name: farmName, 
           slug, 
           location, 
@@ -59,6 +74,11 @@ export default function OnboardingPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return null
   }
 
   return (
