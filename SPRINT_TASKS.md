@@ -1,80 +1,75 @@
-# Sprint Tasks - 2026-05-15 13:27 UTC
+# Sprint Tasks - 2026-05-15 13:37 UTC
 
-## Priority 1: Re-enable Route Protection Middleware (CRITICAL)
-- [ ] Fix the EvalError that caused middleware to be disabled
-  - Current: middleware.ts.disabled - all routes unprotected
-  - Need: Rename to middleware.ts, fix any issues, re-enable
-  - The middleware logic looks correct - should work once enabled
-- [ ] Verify unauthenticated users are redirected to /login
-- [ ] Ensure public routes (/, /explore, /login, /register, /onboarding) still work
-- **Impact**: Security vulnerability - admin/dashboard routes currently open to anyone
+## Priority 1: Re-enable Route Protection Middleware (CRITICAL - Security)
+- [ ] Rename `src/middleware.ts.disabled` → `src/middleware.ts` to re-enable auth protection
+- [ ] Verify middleware compiles without errors
+- [ ] Test: unauthenticated users accessing /dashboard should redirect to /login
+- [ ] Confirm public routes (/, /explore, /login, /register, /onboarding) still accessible
+- **Impact**: Security vulnerability - dashboard/admin routes currently open to anyone
 
-## Priority 2: Connect Profile Page to Authenticated User
-- [ ] Replace hardcoded `defaultUser` in /profile/page.tsx with real user data
-  - Currently: Static demo user with email "farmer@example.com"
-  - Need: Fetch user from database using session/cookie auth
-- [ ] Connect password change form to existing `/api/auth/password` endpoint
-- [ ] Display real farm data from user's Farm record
-- **Impact**: Profile shows demo data only, password change non-functional
+## Priority 2: Connect Profile Page to Real Authenticated User
+- [ ] Replace hardcoded `defaultUser` in `/profile/page.tsx` with server-side user data from cookie
+- [ ] Connect password change form to `/api/auth/password` endpoint
+- [ ] Display actual farm name from user's Farm record
+- **Impact**: Profile page shows demo user "farmer@example.com" instead of real user data
 
-## Priority 3: Connect Dashboard Waitlist to Real Data
-- [ ] Replace mock waitlist data with Prisma query
-  - Currently: Hardcoded `waitlists` array in /dashboard/waitlist/page.tsx
-  - Need: Query Waitlist table filtered by farmer's products
-- [ ] Add "Notify" button with API endpoint to update `notifiedAt` field
-- [ ] Display real customer emails and join dates
-- **Impact**: Farmers cannot manage actual waitlists - all data is mock
+## Priority 3: Connect Dashboard Waitlist to Real Database Data
+- [ ] Replace hardcoded mock `waitlists` array with Prisma query filtered by farmer
+- [ ] Add "Notify" button to trigger `/api/waitlist` PATCH for `notifiedAt` timestamp
+- [ ] Display real customer emails and join dates from database
+- **Impact**: Farmers cannot manage actual waitlists - UI is completely mock data
 
-## Priority 4: Verify/Complete Product CRUD for Farmers
-- [ ] Test adding new product via /dashboard/products/new
-- [ ] Test editing existing product via /dashboard/products/[id]
-- [ ] Verify product images can be added (URL field exists, check if upload needed)
-- [ ] Ensure created products appear on public farm page
-- **Impact**: Farmers cannot add/edit their own products (MVP gap)
+## Priority 4: Verify/Complete Product Image Handling
+- [ ] Add image URL input field to product form (if missing)
+- [ ] Verify new products save imageUrl to database via `/api/products` POST
+- [ ] Test editing existing products via `/dashboard/products/[id]/edit`
+- [ ] Verify created products display images on public farm page
+- **Impact**: Product images may not persist or display correctly
 
-## Priority 5: Mobile Touch Target Verification
-- [ ] Verify current button heights meet 44px minimum standard
-- [ ] Check TEST_REPORT.md notes - may already be addressed
-- **Impact**: Accessibility for mobile users
+## Priority 5: Add "No Payments" Disclaimer to Key Pages
+- [ ] Add platform disclaimer ("Transactions are directly with the farmer") to farm profile page
+- [ ] Add to checkout flow (if missing)
+- [ ] Verify on landing page
+- **Impact**: Per SPEC.md - platform must disclaim native payments
 
 ---
 
 ## Completed (from prior sprints)
-- ✅ Global Products API with search & filters
-- ✅ Global Products Browse UI (/products page)
-- ✅ Farm page search functionality
-- ✅ Dashboard reservations page with real data
-- ✅ Dashboard orders listing with status updates
-- ✅ Order PATCH endpoint (status: CONFIRMED, COMPLETED, CANCELLED)
-- ✅ Status badges (PENDING, CONFIRMED, COMPLETED, CANCELLED)
-- ✅ Cart functionality and checkout forms
-- ✅ Registration/onboarding flow
-- ✅ Category filtering on explore
-- ✅ Farm settings page
-- ✅ Checkout confirmation page
-- ✅ Password change API endpoint exists
 - ✅ TypeScript compiles cleanly
-- ✅ Dev server responds, pages load without crash
-- ✅ Mobile viewport meta and responsive breakpoints
-
----
+- ✅ Dev server responds, core pages load
+- ✅ Global Products API with search & filters
+- ✅ Dashboard reservations with real data
+- ✅ Dashboard orders listing with status updates
+- ✅ Order status PATCH endpoint
+- ✅ Registration/onboarding flow
+- ✅ Mobile responsive classes and touch-friendly styling
+- ✅ Checkout confirmation page
+- ✅ Category filtering on explore
+- ✅ Farm page search
+- ✅ Landing page with featured farms
 
 ## Known Issues / Technical Debt
-- Middleware disabled - security risk
-- Profile page uses demo user instead of server data
-- Waitlist page completely mock - no Prisma queries
-- Mobile touch targets may need verification
-- No email notification system (placeholder UI only)
-- Product image upload not implemented (URL field only)
-- Playwright testing not running in environment
+- Middleware disabled - security risk (Priority 1 - still open)
+- Profile page uses hardcoded user data
+- Waitlist uses mock data
+- Product images need verification
+- Missing payment disclaimers (Priority 5)
 
----
-
-## Backlog (Future Sprints)
-- Email notifications system
-- Payment integration (external links only currently)
-- Review/rating system
-- Farm favoriting
-- Multi-farmer accounts support
-- Advanced search/filtering
-- Analytics dashboard for farmers
+## Project Structure Summary
+```
+src/app/
+├── api/auth/        # Auth endpoints
+├── api/farms/       # Farm CRUD
+├── api/products/    # Product CRUD
+├── api/reservations/# Reservation management
+├── api/waitlist/    # Waitlist management
+├── api/orders/      # Order (reservation) updates
+├── dashboard/      # Farmer dashboard (protected)
+├── admin/          # Admin dashboard
+├── farm/[slug]/    # Public farm pages
+├── explore/        # Farm discovery
+├── categories/     # Category browsing
+├── checkout/      # Checkout flow
+├── profile/       # User profile (needs real data)
+├── login/register/onboarding  # Auth flows
+```
