@@ -3,7 +3,21 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply overflow-x-hidden;
+  }
+  
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-50 text-gray-900 overflow-x-hidden;
+  }
+
+  /* Prevent horizontal overflow on all elements */
+  * {
+    @apply max-w-full;
+  }
+
+  /* Allow horizontal scrolling only for specific needs */
+  .allow-overflow {
+    @apply overflow-auto;
   }
 }
