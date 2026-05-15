@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { Navbar } from "@/components/layout/navbar"
 import { Toaster } from "@/components/ui/sonner"
+import { Providers } from "@/components/providers"
 
 export const metadata: Metadata = {
   title: "Virtual Farm Stand - Local Farms, Fresh Products",
@@ -17,10 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-gray-50 font-sans overflow-x-hidden antialiased">
-        <Navbar />
-        <main className="flex-1 w-full min-w-0">
-          {children}
-        </main>
+        <Providers>
+          <Navbar />
+          <main className="flex-1 w-full min-w-0">
+            {children}
+          </main>
         <footer className="border-t bg-white py-8 px-3 md:px-4">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
@@ -65,7 +67,8 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
-        <Toaster />
+          <Toaster />
+        </Providers>
       </body>
     </html>
   )

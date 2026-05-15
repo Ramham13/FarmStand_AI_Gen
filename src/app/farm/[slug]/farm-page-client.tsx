@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ReservationForm } from "@/components/farm/reservation-form"
 import { WaitlistForm } from "@/components/farm/waitlist-form"
+import { AddToCartButton } from "@/components/cart/add-to-cart-button"
 import { Search, ArrowUpDown, Package, FolderOpen, Sparkles, MessageSquare } from "lucide-react"
 
 const availabilityConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -312,8 +313,18 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                     
                     {product.availability === "AVAILABLE" ? (
                       <div className="space-y-2">
+                        <AddToCartButton
+                          productId={product.id}
+                          productName={product.name}
+                          farmId={farm.id}
+                          farmName={farm.name}
+                          farmSlug={farm.slug}
+                          price={product.price || 0}
+                          unit={product.unit || "item"}
+                          imageUrl={undefined}
+                        />
                         <ReservationForm productId={product.id} productName={product.name} />
-                        <p className="text-xs text-gray-400 text-center">Click to reserve</p>
+                        <p className="text-xs text-gray-400 text-center">Reserve for pickup</p>
                       </div>
                     ) : (
                       <WaitlistForm productId={product.id} productName={product.name} />
