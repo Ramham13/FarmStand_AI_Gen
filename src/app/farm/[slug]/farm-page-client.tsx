@@ -6,13 +6,30 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ReservationForm } from "@/components/farm/reservation-form"
 import { WaitlistForm } from "@/components/farm/waitlist-form"
-import { Search, ArrowUpDown } from "lucide-react"
+import { Search, ArrowUpDown, Package, FolderOpen, Sparkles, MessageSquare } from "lucide-react"
 
 const availabilityConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   AVAILABLE: { label: "Available", variant: "default" },
   RESERVED: { label: "Reserved", variant: "secondary" },
   SOLD_OUT: { label: "Sold Out", variant: "destructive" },
   SEASONAL: { label: "Seasonal", variant: "outline" },
+}
+
+const categoryGradients: Record<string, string> = {
+  PRODUCE: "from-green-100 to-green-200",
+  EGGS: "from-amber-100 to-amber-200",
+  DAIRY: "from-blue-100 to-blue-200",
+  MEAT: "from-red-100 to-red-200",
+  POULTRY: "from-orange-100 to-orange-200",
+  LIVE_ANIMALS: "from-yellow-100 to-yellow-200",
+  PLANTS: "from-emerald-100 to-emerald-200",
+  SEEDS: "from-amber-50 to-amber-100",
+  COMPOST: "from-stone-200 to-stone-300",
+  MANURE: "from-amber-200 to-amber-300",
+  HAY: "from-lime-100 to-lime-200",
+  COTTAGE_FOOD: "from-pink-100 to-pink-200",
+  CRAFTS: "from-purple-100 to-purple-200",
+  OTHER: "from-gray-100 to-gray-200",
 }
 
 const categoryLabels: Record<string, string> = {
@@ -136,19 +153,33 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
             <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto">
               {farm.website && (
                 <a href={farm.website} target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none">
-                  <Button variant="outline" className="bg-white text-green-800 border-green-200 hover:bg-green-50 w-full text-sm h-10">
+                  <Button variant="outline" className="bg-white text-green-800 border-green-200 hover:bg-green-50 w-full text-sm h-11 min-h-[44px]">
                     🌐 Website
                   </Button>
                 </a>
               )}
               {farm.paymentLink && (
                 <a href={farm.paymentLink} target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none">
-                  <Button className="bg-amber-500 hover:bg-amber-600 text-black w-full text-sm h-10">
+                  <Button className="bg-amber-500 hover:bg-amber-600 text-black w-full text-sm h-11 min-h-[44px]">
                     💰 Pay
                   </Button>
                 </a>
               )}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats Section */}
+      <div className="px-3 py-4 md:px-4 md:py-5 bg-white border-b">
+        <div className="flex flex-wrap gap-3">
+          <div className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-lg">
+            <Package className="h-4 w-4 text-green-600" />
+            <span className="text-sm font-medium">{farm.products.length} Products</span>
+          </div>
+          <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg">
+            <FolderOpen className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-medium">{uniqueCategories.length} Categories</span>
           </div>
         </div>
       </div>
@@ -164,7 +195,7 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="text-sm border rounded-md px-2 py-1.5 bg-white"
+              className="text-base border rounded-lg px-3 py-2 h-11 min-h-[44px] bg-white"
             >
               <option value="name">Name A-Z</option>
               <option value="price-low">Price: Low to High</option>
@@ -183,7 +214,7 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full pl-10 pr-4 h-11 min-h-[44px] text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
           
@@ -192,7 +223,7 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
             <button
               type="button"
               onClick={() => setCategory("all")}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all min-h-[44px] flex items-center ${
                 category === "all"
                   ? "bg-green-600 text-white"
                   : "bg-white text-gray-600 hover:bg-gray-100 border"
@@ -205,7 +236,7 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                 key={cat}
                 type="button"
                 onClick={() => setCategory(cat)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
+                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all min-h-[44px] flex items-center gap-1 ${
                   category === cat
                     ? "bg-green-600 text-white"
                     : "bg-white text-gray-600 hover:bg-gray-100 border"
@@ -222,7 +253,7 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            className="w-full text-sm border rounded-lg px-3 py-2.5 bg-white"
+            className="w-full text-base border rounded-lg px-3 h-11 min-h-[44px] bg-white"
           >
             <option value="name">Sort: Name A-Z</option>
             <option value="price-low">Sort: Price Low to High</option>
@@ -237,7 +268,7 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
               <button
                 type="button"
                 onClick={() => { setSearch(""); setCategory("all") }}
-                className="mt-2 text-green-600 hover:underline text-sm"
+                className="mt-2 text-green-600 hover:underline text-base min-h-[44px] px-3 py-1.5"
               >
                 Clear filters
               </button>
@@ -248,10 +279,17 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
             {filteredProducts.map((product) => {
               const config = availabilityConfig[product.availability] || { label: product.availability, variant: "outline" as const }
               const emoji = categoryEmoji[product.category] || "📦"
+              const gradient = categoryGradients[product.category] || "from-gray-100 to-gray-200"
+              const isFeatured = (product.price || 0) >= 15 // Consider premium products as featured
               return (
-                <Card key={product.id} className="overflow-hidden">
-                  <div className="h-28 sm:h-32 bg-green-50 flex items-center justify-center text-4xl">
-                    {emoji}
+                <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                  <div className={`h-28 sm:h-32 bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
+                    <span className="text-4xl filter drop-shadow-sm">{emoji}</span>
+                    {isFeatured && (
+                      <Badge className="absolute top-2 right-2 bg-amber-500 hover:bg-amber-600 text-white border-0 gap-1">
+                        <Sparkles className="h-3 w-3" /> Featured
+                      </Badge>
+                    )}
                   </div>
                   <CardHeader className="p-3 pb-0">
                     <div className="flex justify-between items-start gap-2">
@@ -273,7 +311,10 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                     )}
                     
                     {product.availability === "AVAILABLE" ? (
-                      <ReservationForm productId={product.id} productName={product.name} />
+                      <div className="space-y-2">
+                        <ReservationForm productId={product.id} productName={product.name} />
+                        <p className="text-xs text-gray-400 text-center">Click to reserve</p>
+                      </div>
                     ) : (
                       <WaitlistForm productId={product.id} productName={product.name} />
                     )}
@@ -284,6 +325,41 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
           </div>
         )}
       </div>
+
+      {/* Contact for Custom Orders - Mobile Optimized */}
+      {(farm.phone || farm.email) && (
+        <div className="px-3 py-5 md:px-4 border-t">
+          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 md:p-5">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
+                <MessageSquare className="h-5 w-5 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-base mb-1">Contact for Custom Orders</h3>
+                <p className="text-sm text-gray-600 mb-3">
+                  Need something specific? Reach out directly for custom orders, bulk purchases, or special requests.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {farm.phone && (
+                    <a href={`tel:${farm.phone}`}>
+                      <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-100 h-11 min-h-[44px]">
+                        📞 Call
+                      </Button>
+                    </a>
+                  )}
+                  {farm.email && (
+                    <a href={`mailto:${farm.email}?subject=Custom Order Inquiry`}>
+                      <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-100 h-11 min-h-[44px]">
+                        ✉️ Email
+                      </Button>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Contact Info - Mobile Optimized */}
       {(farm.phone || farm.email) && (

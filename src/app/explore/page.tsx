@@ -22,88 +22,112 @@ const allFarms = [
     name: "Sunny Meadow Farm",
     slug: "sunny-meadow-farm",
     location: "Rural Valley, CA",
+    region: "West",
     description: "Family-owned farm specializing in fresh eggs and vegetables.",
     products: ["Fresh Eggs", "Heirloom Tomatoes"],
     emoji: "🐔",
     category: "EGGS",
     featured: true,
+    priceRange: "$",
+    availability: "in_stock",
   },
   {
     id: "farm-2", 
     name: "Green Acres Farm",
     slug: "green-acres",
     location: "Portland, OR",
+    region: "West",
     description: "Sustainable farm growing heirloom vegetables and herbs.",
     products: ["Fresh Herb Bundle", "Mixed Greens"],
     emoji: "🌿",
     category: "PRODUCE",
     featured: true,
+    priceRange: "$$",
+    availability: "in_stock",
   },
   {
     id: "farm-3",
     name: "Valley View Dairy",
     slug: "valley-view-dairy",
     location: "Madison, WI",
+    region: "Midwest",
     description: "Small-batch artisan cheese and raw milk from grass-fed cows.",
     products: ["Aged Cheddar", "Fresh Mozzarella"],
     emoji: "🥛",
     category: "DAIRY",
     featured: false,
+    priceRange: "$$$",
+    availability: "seasonal",
   },
   {
     id: "farm-4",
     name: "Mountain Poultry",
     slug: "mountain-poultry",
     location: "Asheville, NC",
+    region: "Southeast",
     description: "Heritage breed chickens and ducks, pasture-raised.",
     products: ["Duck Eggs", "Chicken Eggs"],
     emoji: "🦆",
     category: "POULTRY",
     featured: false,
+    priceRange: "$$",
+    availability: "sold_out",
   },
   {
     id: "farm-5",
     name: "Heritage Homestead",
     slug: "heritage-homestead",
     location: "Austin, TX",
+    region: "South",
     description: "Heirloom vegetables and heritage breed pigs.",
     products: ["Heirloom Tomatoes", "Pork Chops"],
     emoji: "🐷",
     category: "MEAT",
     featured: false,
+    priceRange: "$$",
+    availability: "in_stock",
   },
   {
     id: "farm-6",
     name: "Sunrise Orchard",
     slug: "sunrise-orchard",
     location: "Ashland, OR",
+    region: "West",
     description: "Organic apples, pears, and berries.",
     products: ["Apples", "Pears"],
     emoji: "🍎",
     category: "PRODUCE",
     featured: false,
+    priceRange: "$",
+    availability: "seasonal",
   },
   {
     id: "farm-7",
     name: "Blooming Gardens",
     slug: "blooming-gardens",
     location: "Denver, CO",
+    region: "West",
     description: "Beautiful container gardens, succulents, and herb starts.",
     products: ["Herb Starts", "Succulents", "Petunias"],
     emoji: "🌺",
     category: "PLANTS",
     featured: false,
+    priceRange: "$$",
+    availability: "in_stock",
   },
   {
     id: "farm-8",
     name: "Grandma's Kitchen",
     slug: "grandmas-kitchen",
     location: "Burlington, VT",
+    region: "Northeast",
     description: "Homemade baked goods and preserves from family recipes.",
     products: ["Blueberry Jam", "Chocolate Chip Cookies", "Bread"],
     emoji: "🧁",
     category: "COTTAGE_FOOD",
     featured: false,
+    priceRange: "$",
+    availability: "in_stock",
   },
 ]
 
@@ -118,12 +142,42 @@ const categories = [
   { value: "COTTAGE_FOOD", label: "Cottage Food", emoji: "🍪" },
 ]
 
+// Regions for location filter
+const regions = [
+  { value: "all", label: "All Regions" },
+  { value: "West", label: "West" },
+  { value: "Midwest", label: "Midwest" },
+  { value: "Northeast", label: "Northeast" },
+  { value: "Southeast", label: "Southeast" },
+  { value: "South", label: "South" },
+]
+
+// Price ranges
+const priceRanges = [
+  { value: "all", label: "All Prices" },
+  { value: "$", label: "$ (Budget)" },
+  { value: "$$", label: "$$ (Moderate)" },
+  { value: "$$$", label: "$$$ (Premium)" },
+]
+
+// Availability options
+const availabilityOptions = [
+  { value: "all", label: "All Availability" },
+  { value: "in_stock", label: "In Stock" },
+  { value: "seasonal", label: "Seasonal" },
+  { value: "sold_out", label: "Sold Out" },
+]
+
 type SortOption = "featured" | "name-asc" | "location"
+type AvailabilityType = "all" | "in_stock" | "seasonal" | "sold_out"
 
 export default function ExplorePage() {
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState("all")
   const [sortBy, setSortBy] = useState<SortOption>("featured")
+  const [region, setRegion] = useState("all")
+  const [priceRange, setPriceRange] = useState("all")
+  const [availability, setAvailability] = useState<AvailabilityType>("all")
 
   // Filter and sort farms
   const filteredFarms = useMemo(() => {
@@ -144,6 +198,21 @@ export default function ExplorePage() {
       farms = farms.filter((farm) => farm.category === category)
     }
     
+    // Filter by region
+    if (region !== "all") {
+      farms = farms.filter((farm) => farm.region === region)
+    }
+    
+    // Filter by price range
+    if (priceRange !== "all") {
+      farms = farms.filter((farm) => farm.priceRange === priceRange)
+    }
+    
+    // Filter by availability
+    if (availability !== "all") {
+      farms = farms.filter((farm) => farm.availability === availability)
+    }
+    
     // Sort farms
     farms.sort((a, b) => {
       switch (sortBy) {
@@ -162,13 +231,21 @@ export default function ExplorePage() {
     })
     
     return farms
-  }, [search, category, sortBy])
+  }, [search, category, sortBy, region, priceRange, availability])
 
   const featuredFarms = useMemo(() => 
     allFarms.filter(f => f.featured).sort((a, b) => a.name.localeCompare(b.name)),
   [])
 
-  const activeFiltersCount = (search ? 1 : 0) + (category !== "all" ? 1 : 0)
+  const activeFiltersCount = (search ? 1 : 0) + (category !== "all" ? 1 : 0) + (region !== "all" ? 1 : 0) + (priceRange !== "all" ? 1 : 0) + (availability !== "all" ? 1 : 0)
+
+  const clearAllFilters = () => {
+    setSearch("")
+    setCategory("all")
+    setRegion("all")
+    setPriceRange("all")
+    setAvailability("all")
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -192,15 +269,66 @@ export default function ExplorePage() {
 
         {/* Search & Filters */}
         <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
-          {/* Search Input */}
-          <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input 
-              placeholder="Search farms, products, or locations..." 
-              className="pl-10 h-12 text-base w-full bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          {/* Prominent Search Bar */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl -m-px"></div>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-green-600" />
+              <Input 
+                placeholder="Search farms, products, or locations..." 
+                className="pl-12 h-14 text-lg w-full bg-white border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-100 rounded-xl transition-all shadow-sm"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          {/* Advanced Filters Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            {/* Region Filter */}
+            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+              <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
+              <Select value={region} onValueChange={setRegion}>
+                <SelectTrigger className="border-0 bg-transparent h-9 focus:ring-0 shadow-none">
+                  <SelectValue placeholder="Region" />
+                </SelectTrigger>
+                <SelectContent>
+                  {regions.map((r) => (
+                    <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Price Range Filter */}
+            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-gray-500 flex-shrink-0 font-medium">$</span>
+              <Select value={priceRange} onValueChange={setPriceRange}>
+                <SelectTrigger className="border-0 bg-transparent h-9 focus:ring-0 shadow-none">
+                  <SelectValue placeholder="Price" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priceRanges.map((p) => (
+                    <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Availability Filter */}
+            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-gray-500 flex-shrink-0">📦</span>
+              <Select value={availability} onValueChange={(value) => setAvailability(value as AvailabilityType)}>
+                <SelectTrigger className="border-0 bg-transparent h-9 focus:ring-0 shadow-none">
+                  <SelectValue placeholder="Availability" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availabilityOptions.map((a) => (
+                    <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           
           {/* Category Pills */}
@@ -223,13 +351,13 @@ export default function ExplorePage() {
           </div>
           
           {/* Sort & Active Filters Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-100">
             {/* Sort Dropdown */}
             <div className="flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4 text-gray-500" />
               <span className="text-sm text-gray-600">Sort by:</span>
               <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-                <SelectTrigger className="w-[160px] h-9 bg-gray-50 border-gray-200">
+                <SelectTrigger className="w-[160px] h-11 min-h-[44px] bg-gray-50 border-gray-200">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -246,11 +374,11 @@ export default function ExplorePage() {
                 <span className="font-semibold text-gray-900">{filteredFarms.length}</span> {filteredFarms.length === 1 ? 'farm' : 'farms'} found
               </span>
               {activeFiltersCount > 0 && (
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   {search && (
                     <button 
                       onClick={() => setSearch("")} 
-                      className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-100 transition-colors"
+                      className="text-sm bg-blue-50 text-blue-700 px-3 py-2 min-h-[44px] rounded-full hover:bg-blue-100 transition-colors flex items-center"
                     >
                       "{search}" ×
                     </button>
@@ -258,14 +386,38 @@ export default function ExplorePage() {
                   {category !== "all" && (
                     <button 
                       onClick={() => setCategory("all")} 
-                      className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full hover:bg-green-100 transition-colors flex items-center gap-1"
+                      className="text-sm bg-green-50 text-green-700 px-3 py-2 min-h-[44px] rounded-full hover:bg-green-100 transition-colors flex items-center gap-1"
                     >
                       {categories.find(c => c.value === category)?.emoji} {categories.find(c => c.value === category)?.label} ×
                     </button>
                   )}
+                  {region !== "all" && (
+                    <button 
+                      onClick={() => setRegion("all")} 
+                      className="text-sm bg-blue-50 text-blue-700 px-3 py-2 min-h-[44px] rounded-full hover:bg-blue-100 transition-colors flex items-center gap-1"
+                    >
+                      📍 {regions.find(r => r.value === region)?.label} ×
+                    </button>
+                  )}
+                  {priceRange !== "all" && (
+                    <button 
+                      onClick={() => setPriceRange("all")} 
+                      className="text-sm bg-amber-50 text-amber-700 px-3 py-2 min-h-[44px] rounded-full hover:bg-amber-100 transition-colors flex items-center gap-1"
+                    >
+                      $ {priceRanges.find(p => p.value === priceRange)?.label.replace(/.*\(/, "(").replace(/\)/, "")} ×
+                    </button>
+                  )}
+                  {availability !== "all" && (
+                    <button 
+                      onClick={() => setAvailability("all")} 
+                      className="text-sm bg-purple-50 text-purple-700 px-3 py-2 min-h-[44px] rounded-full hover:bg-purple-100 transition-colors flex items-center gap-1"
+                    >
+                      📦 {availabilityOptions.find(a => a.value === availability)?.label} ×
+                    </button>
+                  )}
                   <button 
-                    onClick={() => { setSearch(""); setCategory("all") }} 
-                    className="text-xs text-gray-500 hover:text-gray-700 underline"
+                    onClick={clearAllFilters} 
+                    className="text-sm text-gray-500 hover:text-gray-700 underline min-h-[44px] px-2 py-2"
                   >
                     Clear all
                   </button>
@@ -276,7 +428,7 @@ export default function ExplorePage() {
         </div>
 
         {/* Featured Section */}
-        {category === "all" && !search && (
+        {category === "all" && !search && region === "all" && priceRange === "all" && availability === "all" && (
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <span className="text-2xl">⭐</span> Featured Farms
@@ -314,7 +466,7 @@ export default function ExplorePage() {
         {/* All Farms Grid */}
         <div>
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            {category === "all" && !search ? (
+            {category === "all" && !search && region === "all" && priceRange === "all" && availability === "all" ? (
               <>🌾 All Farms</>
             ) : (
               <>🔍 Search Results</>
@@ -371,7 +523,17 @@ export default function ExplorePage() {
                     
                     {/* View Button */}
                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                      <Badge className="bg-green-600 text-xs font-medium">Available</Badge>
+                      <Badge 
+                        className={`text-xs font-medium ${
+                          farm.availability === "in_stock" 
+                            ? "bg-green-100 text-green-800" 
+                            : farm.availability === "seasonal"
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {farm.availability === "in_stock" ? "✓ In Stock" : farm.availability === "seasonal" ? "🌸 Seasonal" : "✗ Sold Out"}
+                      </Badge>
                       <span className="text-green-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                         View farm 
                         <ArrowRight className="h-3.5 w-3.5" />
@@ -397,7 +559,7 @@ export default function ExplorePage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button 
                 variant="outline" 
-                onClick={() => { setSearch(""); setCategory("all") }}
+                onClick={clearAllFilters}
                 className="border-gray-300"
               >
                 Clear all filters

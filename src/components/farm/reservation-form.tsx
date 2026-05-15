@@ -56,7 +56,9 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full">Reserve</Button>
+        <Button className="w-full bg-green-600 hover:bg-green-700 font-medium">
+          Reserve Now
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

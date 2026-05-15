@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner"
 export const metadata: Metadata = {
   title: "Virtual Farm Stand - Local Farms, Fresh Products",
   description: "Discover local farms, fresh produce, and artisan goods. Connect directly with farmers in your area.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
 }
 
 export default function RootLayout({
