@@ -16,6 +16,7 @@ interface Product {
   price: number
   unit: string
   availability: string
+  imageUrl?: string
   farmId: string
   farmName: string
   farmSlug: string
@@ -254,12 +255,22 @@ export function ProductsClient({
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
               <Card key={product.id} className="hover:shadow-md transition-shadow overflow-hidden">
-                {/* Product Image Placeholder */}
-                <div className="h-32 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
-                  <span className="text-4xl">
-                    {categoryLabels[product.category]?.split(" ")[0] || "📦"}
-                  </span>
-                </div>
+                {/* Product Image */}
+                {product.imageUrl ? (
+                  <div className="relative h-32 w-full">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-32 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+                    <span className="text-4xl">
+                      {categoryLabels[product.category]?.split(" ")[0] || "📦"}
+                    </span>
+                  </div>
+                )}
                 
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">

@@ -56,6 +56,7 @@ export const getFarms = cache(async (filters?: FarmFilters) => {
     location: farm.location || "",
     description: farm.description || "",
     emoji: farm.emoji || "🌾",
+    imageUrl: farm.imageUrl || undefined,
     categories: [...new Set(farm.products.map((p) => p.category))],
     featured: farm.featured,
     priceRange: farm.priceRange,
@@ -102,6 +103,7 @@ export const getFarmBySlug = cache(async (slug: string) => {
       price: p.price || 0,
       unit: p.unit || "item",
       availability: p.availability,
+      imageUrl: p.imageUrl || undefined,
     })),
   }
 })

@@ -85,6 +85,7 @@ interface FarmPageClientProps {
     paymentLink?: string
     status: string
     emoji: string
+    imageUrl?: string
     products: Array<{
       id: string
       name: string
@@ -93,6 +94,7 @@ interface FarmPageClientProps {
       price?: number
       unit?: string
       availability: string
+      imageUrl?: string
     }>
   }
 }
@@ -125,6 +127,15 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
     <div className="min-h-screen">
       {/* Farm Header - Mobile Optimized */}
       <div className="bg-gradient-to-r from-green-700 to-green-800 text-white">
+        {farm.imageUrl && (
+          <div className="relative h-32 sm:h-48 md:h-56 w-full overflow-hidden">
+            <img 
+              src={farm.imageUrl} 
+              alt={farm.name} 
+              className="w-full h-full object-cover opacity-40"
+            />
+          </div>
+        )}
         <div className="px-3 py-6 md:px-4 md:py-10">
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-start">
             {/* Farm Icon */}
@@ -285,8 +296,16 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
               return (
                 <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow">
                   <div className={`h-28 sm:h-32 bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
-                    <span className="text-4xl filter drop-shadow-sm">{emoji}</span>
-                    {isFeatured && (
+                    {product.imageUrl ? (
+                      <img 
+                        src={product.imageUrl} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-4xl filter drop-shadow-sm">{emoji}</span>
+                    )}
+                    {isFeatured && !product.imageUrl && (
                       <Badge className="absolute top-2 right-2 bg-amber-500 hover:bg-amber-600 text-white border-0 gap-1">
                         <Sparkles className="h-3 w-3" /> Featured
                       </Badge>

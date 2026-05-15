@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { useState } from "react";
 
 export default function NewProductPage() {
   return (
@@ -57,16 +59,11 @@ export default function NewProductPage() {
                 </div>
               </div>
 
-              {/* Image URL */}
-              <div className="space-y-2">
-                <Label htmlFor="imageUrl">Product Image URL</Label>
-                <Input 
-                  id="imageUrl" 
-                  type="url"
-                  placeholder="https://example.com/images/product.jpg" 
-                />
-                <p className="text-xs text-gray-500">Enter a URL to an image of your product</p>
-              </div>
+              {/* Product Image */}
+              <ImageUpload
+                label="Product Image"
+                onChange={(url) => console.log("Image URL:", url)}
+              />
 
               {/* Description */}
               <div className="space-y-2">

@@ -7,8 +7,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { getCurrentUser } from "@/lib/auth-server";
+import { getProductById } from "@/lib/products";
+import { redirect } from "next/navigation";
+import { updateProductAction, deleteProductAction } from "@/app/actions";
 
-export default function EditProductPage() {
+interface EditProductPageProps {
+  params: { id: string }
+}
+
+export default async function EditProductPage({ params }: EditProductPageProps) {
+  const user = await getCurrentUser()
+  
+  if (!user || !user.farm) {
+    redirect("/login")
+  }
+  
+  const product = await getProductById(params.id)
+  
+  if (!product || product.farm.id !== user.farm.id) {
+    redirect("/dashboard/products")
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
@@ -26,17 +47,17 @@ export default function EditProductPage() {
 
         <Card>
           <CardContent className="pt-6">
-            <form className="space-y-6">
+            <form action={updateProductAction.bind(null, params.id)} className="space-y-6">
               {/* Product Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Product Name *</Label>
-                <Input id="name" defaultValue="Farm Fresh Eggs" required />
+                <Input id="name" name="name" defaultValue={product.name} required />
               </div>
 
               {/* Category */}
               <div className="space-y-2">
                 <Label htmlFor="category">Category *</Label>
-                <Select defaultValue="EGGS">
+                <Select name="category" defaultValue={product.category} required>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -57,20 +78,39 @@ export default function EditProductPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="price">Price</Label>
-                  <Input id="price" type="number" step="0.01" defaultValue="6.00" />
+                  <Input 
+                    id="price" 
+                    name="price" 
+                    type="number" 
+                    step="0.01" 
+                    defaultValue={product.price?.toString() || ""} 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="unit">Unit</Label>
-                  <Input id="unit" defaultValue="dozen" />
+                  <Input id="unit" name="unit" defaultValue={product.unit || ""} />
                 </div>
               </div>
+
+              {/* Product Image */}
+              <ImageUpload
+                label="Product Image"
+                value={product.imageUrl || ""}
+                onChange={(url) => {
+                  // Store in hidden input for form submission
+                  const input = document.getElementById("imageUrl") as HTMLInputElement
+                  if (input) input.value = url
+                }}
+              />
+              <input type="hidden" id="imageUrl" name="imageUrl" value={product.imageUrl || ""} />
 
               {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea 
                   id="description" 
-                  defaultValue="Free-range eggs from happy hens. Fed organic feed and allowed to roam."
+                  name="description"
+                  defaultValue={product.description || ""}
                   rows={4}
                 />
               </div>
@@ -78,7 +118,7 @@ export default function EditProductPage() {
               {/* Availability */}
               <div className="space-y-2">
                 <Label htmlFor="availability">Availability</Label>
-                <Select defaultValue="AVAILABLE">
+                <Select name="availability" defaultValue={product.availability || "AVAILABLE"}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -93,7 +133,11 @@ export default function EditProductPage() {
 
               {/* Active Toggle */}
               <div className="flex items-center space-x-2">
-                <Checkbox id="isActive" defaultChecked />
+                <Checkbox 
+                  id="isActive" 
+                  name="isActive" 
+                  defaultChecked={product.isActive ?? true} 
+                />
                 <Label htmlFor="isActive">Show on public page</Label>
               </div>
 
@@ -102,13 +146,31 @@ export default function EditProductPage() {
                 <Button type="submit" className="bg-green-600 hover:bg-green-700">
                   Save Changes
                 </Button>
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-                <Button type="button" variant="destructive" className="ml-auto">
-                  Delete Product
+                <Button type="button" variant="outline" asChild>
+                  <Link href="/dashboard/products">Cancel</Link>
                 </Button>
               </div>
+            </form>
+
+            {/* Delete Form */}
+            <form 
+              action={async () => {
+                "use server"
+                await deleteProductAction(params.id)
+              }}
+              className="mt-6 pt-6 border-t"
+            >
+              <Button 
+                type="submit" 
+                variant="destructive"
+                onClick={(e) => {
+                  if (!confirm("Are you sure you want to delete this product?")) {
+                    e.preventDefault()
+                  }
+                }}
+              >
+                Delete Product
+              </Button>
             </form>
           </CardContent>
         </Card>

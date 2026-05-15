@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 interface FarmData {
   id: string
@@ -19,6 +20,7 @@ interface FarmData {
   email: string | null
   website: string | null
   paymentLink: string | null
+  imageUrl: string | null
   status: string
 }
 
@@ -32,6 +34,7 @@ const defaultFarmData: FarmData = {
   email: '',
   website: '',
   paymentLink: '',
+  imageUrl: '',
   status: 'ACTIVE',
 }
 
@@ -61,6 +64,7 @@ export default function FarmSettingsPage() {
                 email: farm.email || '',
                 website: farm.website || '',
                 paymentLink: farm.paymentLink || '',
+                imageUrl: farm.imageUrl || '',
                 status: farm.status || 'ACTIVE',
               })
               setHasFarm(true)
@@ -111,6 +115,7 @@ export default function FarmSettingsPage() {
           email: formData.email,
           website: formData.website,
           paymentLink: formData.paymentLink,
+          imageUrl: formData.imageUrl,
           status: formData.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
         }),
       })
@@ -199,6 +204,13 @@ export default function FarmSettingsPage() {
                   value={formData.description || ''} 
                   onChange={handleChange}
                   rows={4}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Farm Cover Image</Label>
+                <ImageUpload
+                  value={formData.imageUrl || ''}
+                  onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
                 />
               </div>
             </CardContent>

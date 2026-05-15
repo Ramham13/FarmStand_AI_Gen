@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowRight } from "lucide-react"
+import { ImageUpload } from "@/components/ui/image-upload"
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -22,6 +23,7 @@ export default function OnboardingPage() {
   const [description, setDescription] = useState("")
   const [phone, setPhone] = useState("")
   const [emoji, setEmoji] = useState("🏡")
+  const [imageUrl, setImageUrl] = useState("")
 
   // Initialize from localStorage after mount
   useEffect(() => {
@@ -63,7 +65,8 @@ export default function OnboardingPage() {
           location, 
           description, 
           phone, 
-          emoji 
+          emoji,
+          imageUrl
         }
       }
       localStorage.setItem("user", JSON.stringify(updatedUser))
@@ -165,6 +168,13 @@ export default function OnboardingPage() {
                   />
                 </div>
               </div>
+
+              {/* Farm Cover Image */}
+              <ImageUpload
+                label="Farm Cover Image"
+                value={imageUrl}
+                onChange={(url) => setImageUrl(url)}
+              />
 
               <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700">
                 {loading ? "Setting up..." : "Complete Setup"}

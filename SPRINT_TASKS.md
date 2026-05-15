@@ -1,43 +1,41 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 5:27 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 5:37 PM UTC
 
-## Priority 1: Product Image Upload
-- [ ] Add file upload input to `/dashboard/products/new` page
-- [ ] Add file upload to `/dashboard/products/[id]/edit` page
-- [ ] Connect upload to existing `/api/upload` endpoint or implement cloud storage
-- [ ] Display uploaded product images on public farm pages and product detail
-- **Status**: Schema supports imageUrl but only accepts manual URL strings — no upload UI exists
-- **Impact**: Products lack visual appeal, customers can't see what they're reserving
+## Priority 1: Product Image Upload to Edit Page
+- [ ] Add ImageUpload component to `/dashboard/products/[id]/edit` page
+- [ ] Ensure uploaded images save to product record and display on public pages
+- [ ] Test image upload flow end-to-end (upload → DB → display)
+- **Status**: Component exists, new product page wired, edit page pending
+- **Impact**: Farmers can't update existing product images
 
-## Priority 2: Farm Profile Image Upload
-- [ ] Add image upload to onboarding flow (`/onboarding`)
-- [ ] Add image upload to dashboard farm settings (`/dashboard/settings`)
-- [ ] Store images locally in `/public/uploads` or use cloud storage
-- [ ] Display farm cover images on public farm pages (`/farm/[slug]`)
-- **Status**: No farm image upload capability exists
-- **Impact**: Farm profiles look incomplete without visuals
+## Priority 2: Public Pages Image Display
+- [ ] Add product image display to `/products` page (products-client.tsx)
+- [ ] Add farm/product images to `/explore` page (explore-client.tsx)
+- [ ] Ensure image display handles missing images gracefully (fallback placeholder)
+- **Status**: API/upload UI ready, but public pages don't render images
+- **Impact**: Customers see no visuals on products and explore pages
 
 ## Priority 3: Waitlist Notification System
-- [ ] Create email notification when farmer marks product "AVAILABLE"
-- [ ] Process waitlist in FIFO order
-- [ ] Add "Notified" timestamp to waitlist entries
-- [ ] Add UI to dashboard waitlist page showing notification status
-- **Status**: Waitlist exists in DB but no notification system triggers
-- **Impact**: Customers never know when products they wanted become available
+- [ ] Create API endpoint to trigger waitlist notifications
+- [ ] When farmer marks product "AVAILABLE" via dashboard, notify waitlist in FIFO order
+- [ ] Update `notifiedAt` timestamp in DB
+- [ ] Add UI indicator on dashboard waitlist page showing "Notified" status
+- **Status**: Waitlist schema has `notifiedAt`, no notification logic
+- **Impact**: Customers never know products they wanted are available
 
-## Priority 4: Mobile Navigation Improvements
-- [ ] Review navbar responsiveness - hamburger menu for mobile
-- [ ] Ensure cart drawer works smoothly on mobile (touch-friendly)
-- [ ] Test farm product grid on mobile viewports (2 columns is minimum)
-- [ ] Add proper mobile meta viewport if missing
-- **Status**: Touch targets OK (44px), but overall mobile UX could be improved
-- **Impact**: Some navigation patterns may be awkward on phone-sized screens
+## Priority 4: Email Notification System
+- [ ] Add email provider (Resend, SendGrid, or nodemailer with SMTP)
+- [ ] Send order confirmation email to customer on checkout
+- [ ] Send "New Order Received" notification to farmer
+- [ ] Add notification settings to dashboard (email on/off toggle)
+- **Status**: No email system exists
+- **Impact**: Farmers miss orders, customers unsure reservation went through
 
-## Priority 5: Checkout Flow Enhancement
-- [ ] Test payment link flow - ensure external payment URLs work correctly
-- [ ] Add order confirmation email to customers
-- [ ] Add "Order Received" notification to farmers (dashboard)
-- **Status**: Checkout creates reservation but no email notifications
-- **Impact**: Farmers miss orders, customers unsure their reservation went through
+## Priority 5: Mobile Navigation & Polish
+- [ ] Verify navbar hamburger menu works on mobile
+- [ ] Ensure cart drawer is touch-friendly (44px+ targets)
+- [ ] Check explore/product grid is 2-column minimum on mobile
+- **Status**: Touch targets OK but mobile UX could be tightened
+- **Impact**: Mobile experience feels awkward on small screens
 
 ---
 
@@ -52,7 +50,7 @@
 - ✅ Registration/onboarding flow
 - ✅ Checkout confirmation page (per-product)
 - ✅ Explore & Categories pages connected to real DB
-- ✅ Farm public page connected to real DB
+- ✅ Farm public page connected to real DB (includes imageUrl display)
 - ✅ Waitlist dashboard connected to real DB (API + UI)
 - ✅ Admin reports page shows real data from DB
 - ✅ Admin Reports action buttons (Resolve/Dismiss) now work
@@ -62,3 +60,6 @@
 - ✅ Server Action Export Error fixed
 - ✅ Middleware route protection enabled (security)
 - ✅ PostgreSQL migration complete (Neon)
+- ✅ Image upload API and UI component created
+- ✅ New product page image upload wired
+- ✅ Farm settings page image upload wired

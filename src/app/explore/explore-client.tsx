@@ -9,6 +9,7 @@ interface Farm {
   description: string
   location: string
   emoji: string
+  imageUrl?: string
   categories: string[]
 }
 
@@ -43,6 +44,20 @@ export function ExploreClient({ farms, selectedCategory }: ExploreClientProps) {
             href={`/farm/${farm.slug}`}
             className="group block bg-white rounded-xl border border-gray-200 hover:border-green-300 hover:shadow-md transition-all duration-200 overflow-hidden touch-manipulation"
           >
+            {farm.imageUrl ? (
+              <div className="relative h-32 sm:h-40 w-full">
+                <img 
+                  src={farm.imageUrl} 
+                  alt={farm.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              </div>
+            ) : (
+              <div className="h-32 sm:h-40 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+                <span className="text-5xl sm:text-6xl">{farm.emoji}</span>
+              </div>
+            )}
             <div className="p-4 sm:p-5">
               <div className="flex items-start gap-3 sm:gap-4">
                 <span className="text-3xl sm:text-4xl flex-shrink-0" role="img" aria-label={farm.name}>
