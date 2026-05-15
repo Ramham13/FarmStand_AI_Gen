@@ -3,19 +3,45 @@
 import { prisma } from "@/lib/db"
 import { cache } from "react"
 
-export const getFarms = cache(async () => {
+export type FarmFilters = {
+  category?: string
+  region?: string
+  priceRange?: string
+}
+
+export const getFarms = cache(async (filters?: FarmFilters) => {
+  const where: any = { status: "ACTIVE" }
+
+  // Filter by region
+  if (filters?.region) {
+    where.region = filters.region
+  }
+
+  // Filter by price range
+  if (filters?.priceRange) {
+    where.priceRange = filters.priceRange
+  }
+
   const farms = await prisma.farm.findMany({
-    where: { status: "ACTIVE" },
+    where,
     include: {
       products: {
         where: { isActive: true },
-        select: { name: true, availability: true },
+        select: { name: true, availability: true, category: true },
       },
     },
     orderBy: { name: "asc" },
   })
 
-  return farms.map((farm) => ({
+  // Filter by category (requires checking products)
+  let filteredFarms = farms
+  if (filters?.category) {
+    filteredFarms = farms.filter((farm) =>
+      farm.products.some((p) => p.category === filters.category)
+    )
+  }
+
+  return filteredFarms.map((farm) => ({
     id: farm.id,
     name: farm.name,
     slug: farm.slug,

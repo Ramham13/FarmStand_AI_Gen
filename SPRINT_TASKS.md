@@ -1,33 +1,21 @@
-# Sprint Tasks - 2026-05-15 06:00 UTC
+# Sprint Tasks - 2026-05-15 07:10 UTC
 
-## Priority 1 - Core Features Missing
+## Priority 1 (Critical - Blocks)
+- [ ] Rebuild Explore page (`/explore`) - critical public browsing page, folder exists but is empty
+- [ ] Create Categories page (`/categories`) - linked in navbar but doesn't exist
 
-- [ ] **Checkout Flow** - Implement actual checkout/payment flow. Cart drawer exists but no way to complete a purchase. Need order creation, confirmation page, and status tracking.
+## Priority 2 (High - User-Facing)
+- [ ] Verify Explore/Categories routing works - test navigation from homepage and navbar
+- [ ] Test reservation → order flow: customer places reservation → appears in farmer's orders dashboard
 
-- [ ] **Order Management for Farmers** - Farmers need to see customer reservations, accept/reject them, and manage order status. Create `/dashboard/orders` page.
+## Priority 3 (Medium - Core Features)
+- [ ] Complete Orders API integration - verify `GET /api/orders` and `POST /api/orders` work end-to-end with dashboard
+- [ ] Review and commit uncommitted changes:
+  - `src/app/dashboard/products/page.tsx`
+  - `src/lib/farms.ts` and `src/lib/products.ts`
+  - `components.json`
 
-- [ ] **Waitlist Notification System** - When a waitlisted product becomes available, farmers need ability to notify customers. Build notification trigger + email/display logic.
-
-## Priority 2 - UX Improvements
-
-- [ ] **Advanced Product Filtering** - Explore page needs filtering by category, price range, region, availability. Currently basic only.
-
-- [ ] **Product Image Upload** - Farmers can't add images to products. Add image upload to product creation/edit (could use URL for MVP).
-
-- [ ] **Farm Profile Completeness** - Many farms lack images, descriptions, contact info. Improve onboarding to encourage complete profiles.
-
-## Priority 3 - Mobile & Polish
-
-- [ ] **Mobile Cart Experience** - Review cart drawer on mobile: touch targets, scrolling, checkout button visibility.
-
-- [ ] **Empty States** - Add helpful empty states across the app (no products, no reservations, no farms in search).
-
-- [ ] **Loading Skeletons** - Replace Suspense fallbacks with proper skeleton loaders for better perceived performance.
-
-## Priority 4 - Technical Debt
-
-- [ ] **Authentication Hardening** - Add password reset flow, proper session handling, role-based access control beyond basic check.
-
-- [ ] **API Error Handling** - Review API routes for consistent error responses and better error messages to users.
-
-- [ ] **Database Indexes** - Add indexes on frequently queried fields (farm slug, product category, reservation status).
+## Priority 4 (Lower - Cleanup)
+- [ ] Clean up empty folders (`src/app/explore/` is empty)
+- [ ] Mobile UX polish: verify responsiveness on dashboard, cart drawer, farm profiles
+- [ ] Test cart flow end-to-end (add item → cart drawer → checkout/reservation)

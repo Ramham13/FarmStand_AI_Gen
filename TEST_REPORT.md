@@ -1,27 +1,19 @@
-# Test Report - 2026-05-15 05:58 UTC
+# Test Report - 2026-05-15 07:12 UTC
 
-## Last Commit: 583adcc - Add cart functionality, search API, Suspense fixes
+## Last Commit: 8c39d99 Update test report, add mobile test, update dependencies
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
 | TypeScript | PASS | No type errors |
-| Home | PASS | Page loads, renders correctly |
-| Explore | PASS | Page loads, 8 farms displayed |
-| Farm Profile | PASS | Sunny Meadow Farm loads with 3 products |
-| Dev Server | PASS | Server responding on localhost:3000 |
-
-## Mobile/Touch Tests
-| Test | Status | Notes |
-|------|--------|-------|
-| Mobile viewport (375px) | SKIP | Playwright unavailable (missing system libs) |
-| No horizontal scroll | SKIP | Playwright unavailable |
-| Touch-friendly buttons | PASS* | Buttons use min-h-[44px] = 44px tap targets |
-
-*Verified via HTML inspection - all interactive elements have min-h-[40-44px] per accessibility guidelines.
+| Home | PASS | Full page loads with hero, featured farms, how it works sections |
+| Explore | FAIL | Route directory exists but page.tsx missing - returns 404 |
+| Farm Profile | PASS | /farm/sunny-meadow-farm loads with products |
+| Dev Server | PASS | Had to clear .next cache to fix module error, now running |
 
 ## Bugs Found
-- [ ] None
+- [ ] /explore route returns 404 - directory `src/app/explore/` exists but is empty (no page.tsx)
+- [ ] Initial dev server had "Cannot find module './948.js'" error - needed `.next` cache clear
 
 ## Summary
-PASS - All core tests pass. TypeScript compiles clean, dev server responds, all three pages (home, explore, farm profile) load correctly. Mobile touch targets are compliant with accessibility standards (44px minimum). Playwright testing skipped due to missing system dependencies (libnspr4.so).
+FAIL - Explore page missing implementation. TypeScript passes and core pages work, but /explore needs a page.tsx file to render.
