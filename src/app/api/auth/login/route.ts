@@ -23,11 +23,13 @@ export async function POST(request: Request) {
       )
     }
 
-    // Find user with farm
+    // Find user
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { farm: true } as any,
     })
+
+    // Get user's farm if exists
+    const farm = user ? await prisma.farm.findUnique({ where: { userId: user.id } }) : null
 
     if (!user) {
       return NextResponse.json(
@@ -51,7 +53,7 @@ export async function POST(request: Request) {
         id: user.id,
         email: user.email,
         role: user.role,
-        farm: user.farm,
+        farm: farm,
       },
     })
   } catch (error) {
