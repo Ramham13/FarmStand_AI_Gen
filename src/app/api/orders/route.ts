@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
+import { sendOrderConfirmation, sendFarmerOrderNotification, sendOrderStatusUpdate } from "@/lib/email"
 
 // GET /api/orders - List all orders (reservations with order status)
 export async function GET() {
@@ -33,7 +34,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { productId, customerName, customerEmail, customerPhone, message } = body
+    const { productId, customerName, customerEmail, customerPhone, message, quantity = 1 } = body
 
     if (!productId || !customerName || !customerEmail) {
       return NextResponse.json(
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
         customerEmail,
         customerPhone: customerPhone || null,
         message: message || null,
+        quantity,
         status: "PENDING",
       },
       include: {
@@ -69,6 +71,39 @@ export async function POST(request: Request) {
         },
       },
     })
+
+    // Send order confirmation to customer
+    await sendOrderConfirmation({
+      customerEmail: order.customerEmail,
+      customerName: order.customerName,
+      orderId: order.id,
+      productName: order.product.name,
+      quantity: order.quantity,
+      totalPrice: (order.product.price || 0) * order.quantity,
+      farmName: order.product.farm.name,
+      farmLocation: order.product.farm.location || '',
+    })
+
+    // Send new order notification to farmer
+    if (order.product.farm.userId) {
+      const farmer = await prisma.user.findUnique({
+        where: { id: order.product.farm.userId },
+      })
+      
+      if (farmer?.email) {
+        await sendFarmerOrderNotification({
+          farmerEmail: farmer.email,
+          farmerName: order.product.farm.name,
+          orderId: order.id,
+          productName: order.product.name,
+          quantity: order.quantity,
+          totalPrice: (order.product.price || 0) * order.quantity,
+          customerName: order.customerName,
+          customerEmail: order.customerEmail,
+          customerPhone: order.customerPhone || undefined,
+        })
+      }
+    }
 
     return NextResponse.json(order, { status: 201 })
   } catch (error) {
@@ -110,6 +145,23 @@ export async function PATCH(request: Request) {
         },
       },
     })
+
+    // Send status update email to customer (only for CONFIRMED, CANCELLED, COMPLETED)
+    if (status === "CONFIRMED" || status === "CANCELLED" || status === "COMPLETED") {
+      const quantity = order.quantity || 1
+      const totalPrice = (order.product.price || 0) * quantity
+      
+      await sendOrderStatusUpdate({
+        customerEmail: order.customerEmail,
+        customerName: order.customerName,
+        orderId: order.id,
+        productName: order.product.name,
+        quantity,
+        totalPrice,
+        status: status as "CONFIRMED" | "CANCELLED" | "COMPLETED",
+        farmName: order.product.farm.name,
+      })
+    }
 
     return NextResponse.json(order)
   } catch (error) {

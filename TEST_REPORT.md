@@ -1,17 +1,22 @@
-# Test Report - 2026-05-15T17:49:00Z
+# Test Report - 2026-05-15 18:09 UTC
 
-## Last Commit: e425868 Sprint: Add image upload API and UI component
+## Last Commit: f754dd2 Sprint: Fix TypeScript imports and update test report
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
-| TypeScript | PASS | Fixed import error in actions.ts (revalidatePath needs to be from next/cache, redirect from next/navigation) |
-| Home | PASS | Page loads correctly, displays featured farms |
-| Explore | PASS | Page loads, shows 8 farms with category filters |
-| Farm Profile (sunny-meadow-farm) | PASS | Farm details and products load correctly |
+| TypeScript | PASS | No type errors |
+| Home (/) | PASS | Loads correctly, all content renders |
+| Explore (/explore) | PASS | Loads correctly |
+| Farm Profile (/farm/*) | FAIL | Returns 404 - database not seeded |
 
 ## Bugs Found
-- [x] **FIXED**: TypeScript error in `src/app/actions.ts` - `revalidatePath` was incorrectly imported from `next/navigation`. Should be imported from `next/cache`. Fixed by separating imports: `redirect` from `next/navigation` and `revalidatePath` from `next/cache`.
+- [x] **Farm profiles return 404** - The homepage links to `/farm/sunny-meadow-farm`, `/farm/green-acres`, etc., but these return 404 because the farms don't exist in the database. The `getFarmBySlug` function queries Prisma for farms with status "ACTIVE" but no seed data has been loaded.
 
 ## Summary
-PASS - All tests pass. Fixed a TypeScript import issue that was introduced in the latest commit (image upload feature). The dev server is running and all pages (home, explore, farm profiles) load correctly. No mobile/touch testing performed via Playwright (not available in this environment).
+PARTIAL PASS - TypeScript and core pages work, but farm profiles are broken due to missing seed data. The explore page shows links to farms that don't load.
+
+## Action Items
+- Run `npx prisma db push` to create tables
+- Run `npx tsx prisma/seed.ts` to seed demo farms (seed.ts exists with matching data)
+- Or add fallback mock data for development

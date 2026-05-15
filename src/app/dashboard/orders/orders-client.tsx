@@ -13,9 +13,11 @@ interface Order {
   customerEmail: string
   customerPhone?: string
   message?: string
+  quantity: number
   createdAt: string
   product?: {
     name: string
+    price?: number
     farm?: {
       name: string
       location: string
@@ -108,7 +110,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                   <p className="font-medium text-gray-700">
                     {order.product?.farm?.name || "Unknown Farm"}
                   </p>
-                  <p className="text-xs">{order.product?.farm?.location}</p>
+                  <p className="text-xs">{order.product?.farm?.location || "-"} • Qty: {order.quantity || 1}</p>
                 </div>
 
                 {/* Status Actions */}

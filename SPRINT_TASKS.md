@@ -1,48 +1,49 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 5:37 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 6:07 PM UTC
 
-## Priority 1: Product Image Upload to Edit Page
-- [ ] Add ImageUpload component to `/dashboard/products/[id]/edit` page
-- [ ] Ensure uploaded images save to product record and display on public pages
-- [ ] Test image upload flow end-to-end (upload → DB → display)
-- **Status**: Component exists, new product page wired, edit page pending
-- **Impact**: Farmers can't update existing product images
+## Priority 1: Order Status Change Notifications
+- [ ] Add email notification to customer when farmer confirms/declines/cancels an order
+- [ ] Create `sendOrderStatusUpdate()` function in email.ts
+- [ ] Wire up PATCH /api/orders to trigger status update email
+- **Status**: Missing - customers currently don't know when their order status changes
+- **Impact**: Poor customer experience - no feedback on reservation requests
 
-## Priority 2: Public Pages Image Display
-- [ ] Add product image display to `/products` page (products-client.tsx)
-- [ ] Add farm/product images to `/explore` page (explore-client.tsx)
-- [ ] Ensure image display handles missing images gracefully (fallback placeholder)
-- **Status**: API/upload UI ready, but public pages don't render images
-- **Impact**: Customers see no visuals on products and explore pages
+## Priority 2: Quantity Selection for Reservations
+- [ ] Add quantity selector to reservation form on farm page
+- [ ] Update orders API to accept and store quantity
+- [ ] Display quantity in dashboard orders list
+- [ ] Show quantity in farmer order notifications
+- **Status**: Currently hardcoded to 1
+- **Impact**: Customers can't order multiple of the same product
 
-## Priority 3: Waitlist Notification System
-- [ ] Create API endpoint to trigger waitlist notifications
-- [ ] When farmer marks product "AVAILABLE" via dashboard, notify waitlist in FIFO order
-- [ ] Update `notifiedAt` timestamp in DB
-- [ ] Add UI indicator on dashboard waitlist page showing "Notified" status
-- **Status**: Waitlist schema has `notifiedAt`, no notification logic
-- **Impact**: Customers never know products they wanted are available
+## Priority 3: Automated Test Suite in CI/CD
+- [ ] Set up GitHub Actions workflow to run Playwright tests
+- [ ] Add mobile viewport test to CI
+- [ ] Add TypeScript compilation check to CI
+- [ ] Add ESLint check to CI
+- **Status**: Tests exist in test-mobile.spec.ts but not automated
+- **Impact**: No regression detection between deploys
 
-## Priority 4: Email Notification System
-- [ ] Add email provider (Resend, SendGrid, or nodemailer with SMTP)
-- [ ] Send order confirmation email to customer on checkout
-- [ ] Send "New Order Received" notification to farmer
-- [ ] Add notification settings to dashboard (email on/off toggle)
-- **Status**: No email system exists
-- **Impact**: Farmers miss orders, customers unsure reservation went through
+## Priority 4: Performance & Database Optimization
+- [ ] Add database indexes for frequently queried fields (farmId, productId, status)
+- [ ] Add loading skeletons to Explore and Products pages
+- [ ] Implement pagination for products API (currently returns all)
+- **Status**: Basic implementation works but could be slow at scale
+- **Impact**: Poor performance with large datasets
 
-## Priority 5: Mobile Navigation & Polish
-- [ ] Verify navbar hamburger menu works on mobile
-- [ ] Ensure cart drawer is touch-friendly (44px+ targets)
-- [ ] Check explore/product grid is 2-column minimum on mobile
-- **Status**: Touch targets OK but mobile UX could be tightened
-- **Impact**: Mobile experience feels awkward on small screens
+## Priority 5: UX Polish - Empty States & Error Handling
+- [ ] Improve empty state on dashboard with helpful CTAs
+- [ ] Add better error boundaries for failed page loads
+- [ ] Add retry buttons on failed API calls in dashboard
+- [ ] Verify loading spinners display correctly during data fetches
+- **Status**: Basic error handling exists
+- **Impact**: Users may be confused when something fails
 
 ---
 
 ## Completed (Prior Sprints)
-- ✅ Database seeded with 8 farms and products
 - ✅ TypeScript compiles cleanly
-- ✅ Dev server responds, core pages load
+- ✅ Dev server runs and pages load correctly
+- ✅ Database seeded with 8 farms and products
 - ✅ Global Products API with search & filters uses real DB
 - ✅ Dashboard reservations with real data
 - ✅ Dashboard orders listing with status updates
@@ -52,6 +53,7 @@
 - ✅ Explore & Categories pages connected to real DB
 - ✅ Farm public page connected to real DB (includes imageUrl display)
 - ✅ Waitlist dashboard connected to real DB (API + UI)
+- ✅ Waitlist notification system (API + email + Notify button)
 - ✅ Admin reports page shows real data from DB
 - ✅ Admin Reports action buttons (Resolve/Dismiss) now work
 - ✅ Farm Settings now connected to database (read/write)
@@ -62,4 +64,8 @@
 - ✅ PostgreSQL migration complete (Neon)
 - ✅ Image upload API and UI component created
 - ✅ New product page image upload wired
+- ✅ Edit product page image upload wired
 - ✅ Farm settings page image upload wired
+- ✅ Public pages display product images (explore, products, farm profile)
+- ✅ Global "no native payments" disclaimer in footer
+- ✅ Order confirmation emails (customer + farmer)

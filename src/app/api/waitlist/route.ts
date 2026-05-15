@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/db"
 import { getCurrentUser } from "@/lib/auth-server"
+import { sendWaitlistNotification } from "@/lib/email"
 
 // GET /api/waitlist - get waitlists for farmer's products
 export async function GET() {
@@ -141,14 +142,40 @@ export async function PATCH(request: Request) {
     }
 
     if (action === "notify") {
-      const entry = await prisma.waitlist.update({
+      // Get the waitlist entry with product and farm info
+      const entry = await prisma.waitlist.findUnique({
+        where: { id: waitlistId },
+        include: {
+          product: {
+            include: {
+              farm: true,
+            },
+          },
+        },
+      })
+
+      if (!entry) {
+        return NextResponse.json({ error: "Waitlist entry not found" }, { status: 404 })
+      }
+
+      // Update notifiedAt timestamp
+      const updated = await prisma.waitlist.update({
         where: { id: waitlistId },
         data: { notifiedAt: new Date() },
       })
 
+      // Send email notification
+      await sendWaitlistNotification({
+        customerEmail: entry.customerEmail,
+        customerName: entry.customerName,
+        productName: entry.product.name,
+        farmName: entry.product.farm.name,
+        farmEmail: entry.product.farm.email || "",
+      })
+
       return NextResponse.json({
-        id: entry.id,
-        notifiedAt: entry.notifiedAt?.toISOString() || null,
+        id: updated.id,
+        notifiedAt: updated.notifiedAt?.toISOString() || null,
       })
     }
 

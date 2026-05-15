@@ -26,6 +26,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
     customerEmail: "",
     customerPhone: "",
     message: "",
+    quantity: 1,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +34,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
     setLoading(true)
     
     try {
-      const res = await fetch("/api/reservations", {
+      const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, productId }),
@@ -42,7 +43,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
       if (res.ok) {
         toast.success("Request sent! The farmer will contact you soon.")
         setOpen(false)
-        setFormData({ customerName: "", customerEmail: "", customerPhone: "", message: "" })
+        setFormData({ customerName: "", customerEmail: "", customerPhone: "", message: "", quantity: 1 })
       } else {
         toast.error("Failed to send request. Please try again.")
       }
@@ -89,6 +90,26 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               value={formData.customerPhone}
               onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
             />
+          </div>
+          <div>
+            <label className="text-sm font-medium block mb-2">Quantity</label>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, quantity: Math.max(1, formData.quantity - 1) })}
+                className="w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100"
+              >
+                −
+              </button>
+              <span className="text-xl font-semibold w-8 text-center">{formData.quantity}</span>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, quantity: Math.min(10, formData.quantity + 1) })}
+                className="w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100"
+              >
+                +
+              </button>
+            </div>
           </div>
           <div>
             <Textarea
