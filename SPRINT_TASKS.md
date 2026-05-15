@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 15:42 UTC
+# Sprint Tasks - 2026-05-15 15:47 UTC
 
 ## Priority 1: Connect Dashboard Waitlist to Real Database
 - [ ] Replace hardcoded mock `waitlists` array in `/dashboard/waitlist/page.tsx` with fetch to `/api/waitlist`
@@ -83,10 +83,12 @@ src/app/
 │   ├── orders/         ✅ Real DB (reservations)
 │   ├── products/       ✅ Real DB
 │   ├── reservations/   ✅ Real DB
-│   └── waitlist/       ⚠️ Mock data (Priority 1)
+│   ├── waitlist/       ⚠️ Mock data (Priority 1)
+│   └── settings/       ✅ Settings page
 ├── explore/            ⚠️ Mock data (Priority 3)
 ├── categories/         ⚠️ Mock data (Priority 3)
 ├── farm/[slug]/        ⚠️ Mock data (Priority 4)
+├── admin/              ✅ Real DB queries
 └── profile/            ✅ Uses /api/auth/me
 ```
 
@@ -114,10 +116,3 @@ src/app/
 - Admin dashboard: Real Prisma queries ✅
 - Dashboard products/orders/reservations: Real DB ✅
 - Mobile-friendly: Touch targets, viewport, overflow handling ✅
-
-## Test Coverage Status
-- TypeScript: ✅ Compiles cleanly
-- Dev server: ✅ Responding
-- Pages load: ✅ No crashes
-- Mobile: ✅ Touch targets, viewport meta, no horizontal scroll
-- Playwright: ⚠️ Skipped (missing system library in environment)
