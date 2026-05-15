@@ -1,64 +1,60 @@
-# Sprint Tasks - 2026-05-15 11:29 UTC
+# Sprint Tasks - 2026-05-15 11:38 UTC
 
-## Priority 1: Build Failure - ESLint Error (BLOCKER)
-- [x] Fix ESLint error in `/src/app/dashboard/page.tsx` line 11
-- `let userId` is never reassigned - should be `const`
-- **Impact**: Build fails, can't deploy
-- **Status**: ✅ Fixed - changed to `const`
-
-## Priority 2: Login API - Missing Prisma Relation
-- [x] Fix `/src/app/api/auth/login/route.ts` - attempts `include: { farm: true }` but User model has NO farm relation
-- User model in Prisma schema lacks `farms` relation (Farm has `userId`, but User doesn't have relation back)
-- Either: Add `farms Farm[]` relation to User model + migration, OR query farm separately by userId
-- **Impact**: Login returns farm as null always, breaks farmer dashboard
-- **Status**: ✅ Fixed - Added farms relation to User model, updated login API to use farms[]
-
-## Priority 3: Dashboard Security - Data Leakage (CRITICAL)
+## Priority 1: Dashboard Security - Data Leakage (CRITICAL - UNFIXED)
 - [ ] Fix `/src/app/dashboard/page.tsx` - `findFirst()` returns RANDOM farm to ANY visitor
 - No user filtering - any visitor sees whoever is in DB first
 - Must filter by logged-in user's ID (localStorage is client-only, RSC doesn't have access)
+- Need: Proper session/cookie-based auth OR middleware that passes user context
 - **Impact**: Any visitor can view all farmer data
 
-## Priority 4: Checkout Confirmation - Order ID Broken
-- [x] Fix `/src/app/checkout/confirmation/page.tsx` - async IIFE doesn't block RSC render
-- The `(async () => { ... })()` pattern resolves AFTER component renders
-- `orderId` is always "unknown" - confirmation shows no order details
-- Need proper `await searchParams` pattern (already typed as Promise) and wire checkout-form to pass orderId
-- **Impact**: Customers can't see order details after checkout
-- **Status**: ✅ Fixed - Made page async and properly await searchParams
-
-## Priority 5: Route Protection Middleware
+## Priority 2: Route Protection Middleware (UNFIXED)
 - [ ] Create `src/middleware.ts` for Next.js route protection
 - Protect `/dashboard/*` and `/admin/*` routes
 - Redirect unauthenticated users to `/login`
 - Keep public: `/`, `/explore`, `/categories`, `/farm/*`, `/login`, `/register`
 - **Impact**: Unprotected routes expose farmer data
 
+## Priority 3: Admin Authentication Check
+- [ ] Add auth check to `/admin/*` pages
+- Currently admin pages are fully public with no access control
+- Need: Verify user has admin role before rendering
+- **Impact**: Anyone can access platform moderation tools
+
+## Priority 4: Client-Side Auth Security Gaps
+- [ ] Currently auth uses localStorage only (no HTTP-only cookies)
+- `getUser()` in auth-client.ts returns null on server-side
+- Dashboard RSC can't verify user identity securely
+- Need: Proper session cookie + server-side validation OR middleware-based auth
+- **Impact**: No real security - tokens stored in easily accessible localStorage
+
+## Priority 5: TypeScript/Type Safety Cleanup
+- [ ] Verify all TypeScript errors are resolved
+- Test report mentions type inference issue in login route (may need to verify)
+- Run `npm run build` to confirm clean compile
+- **Impact**: Prevents production deployment issues
+
 ---
 
-## Completed (from prior sprints)
-- ✅ Prisma schema + migrations
-- ✅ Cart functionality (drawer, add-to-cart button)
+## Already Fixed (from prior sprints)
+- ✅ ESLint error - `let userId` → `const`
+- ✅ Prisma User-Farm relation added
+- ✅ Checkout confirmation page properly awaits searchParams
 - ✅ Category filtering on Explore/Categories pages
+- ✅ Cart functionality (drawer, add-to-cart)
 - ✅ Search API with Prisma queries
 - ✅ Reservations API (POST/GET)
 - ✅ Waitlist form API
-- ✅ Farmer dashboard UI structure
 - ✅ Mobile CSS responsive breakpoints
 - ✅ Farm pages wired to database
-- ✅ Checkout UI components
-- ✅ Register page exists
-- ✅ Login page exists
-- ✅ Admin pages structure
 - ✅ Platform disclaimers
 
-## Known Gaps (Backlog)
+---
+
+## Known Gaps (Backlog - Not Priority This Sprint)
 - No global products API (only farm-specific via /api/farms/[slug]/listings)
-- Admin pages exist but untested (/admin/farms, /admin/reports)
-- No email notifications
-- No user profile management
+- No email notifications (placeholder UI only)
+- No user profile management page
 - No search UI on individual farm pages
 - Onboarding flow verification needed
-- Client-only auth (localStorage) - no HTTP-only cookies
-- No admin authentication check
 - Order management flow not fully implemented (no Order model, just Reservations)
+- Admin pages exist but lack real database data (hardcoded stats)
