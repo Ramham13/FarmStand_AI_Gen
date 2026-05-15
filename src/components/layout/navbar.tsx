@@ -30,7 +30,7 @@ export function Navbar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`px-3 py-2 text-sm font-medium transition-colors hover:text-green-700 ${
+              className={`px-3 py-2.5 text-sm font-medium transition-colors hover:text-green-700 ${
                 pathname === item.href ? "text-green-700" : "text-gray-600"
               }`}
             >
@@ -52,7 +52,7 @@ export function Navbar() {
         {/* Mobile Menu Button */}
         <button 
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="sm:hidden p-2"
+          className="sm:hidden p-2.5"
           aria-label="Menu"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
