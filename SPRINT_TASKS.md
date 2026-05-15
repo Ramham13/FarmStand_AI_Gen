@@ -1,4 +1,4 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 7:42 PM UTC
+# Sprint Tasks - Friday, May 15th, 2026 - 7:52 PM UTC
 
 ## Priority 1: SEO & Discovery (High Visibility)
 - [ ] Add `generateMetadata` to home page (`/page.tsx`) - dynamic OG tags, Twitter cards
@@ -84,3 +84,11 @@
 - Cart persistence via localStorage works
 - Error boundaries in place for major routes
 - Mobile optimizations in place (viewport, scroll, touch targets)
+- All tests passing (TypeScript, pages, mobile)
+
+## Future Considerations (Out of Scope for Now)
+- Rate limiting on public APIs
+- Auth session refresh mechanism
+- Real email delivery (currently placeholder)
+- Payment link URL validation
+- Search debouncing on Explore page
