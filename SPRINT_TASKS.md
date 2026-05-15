@@ -1,6 +1,6 @@
-# Sprint Tasks - 2026-05-15 08:09 UTC
+# Sprint Tasks - 2026-05-15 08:14 UTC
 
-## Priority 1: Checkout Flow (Critical - Customer Can't Buy)
+## Priority 1: Checkout Flow (Critical - Customer Can't Reserve)
 - [ ] **Add checkout param handling**: Farm page (`/farm/[slug]`) must check for `?checkout=true` param and render checkout form when present
 - [ ] **Build checkout form UI**: Customer info (name, email, phone), message field, order summary showing selected product, submit to `POST /api/reservations`
 - [ ] **Wire reservations to DB**: Replace demo mode in `src/app/api/reservations/route.ts` with actual Prisma create operation
@@ -13,7 +13,7 @@
 - [ ] **Add initial products**: Handle optional initial product data in onboarding
 - [ ] **Post-create redirect**: Send user to `/dashboard` after successful farm creation
 
-## Priority 3: Real Search & Farm Data (Data Integrity)
+## Priority 3: Real Data - Public Pages (Data Integrity)
 - [ ] **Replace mock data on public farm pages**: Update `/farm/[slug]/page.tsx` to fetch real farm data from Prisma instead of hardcoded mockFarms object
 - [ ] **Fix search API**: Ensure `/api/farms/search` returns proper DB results with Prisma query
 - [ ] **Replace mock search on homepage**: Update homepage search to call `/api/farms/search?q=...` instead of filtering in-page mock array
