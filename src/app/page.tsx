@@ -209,6 +209,15 @@ export default function Home() {
                   </Link>
                 </Button>
               ))}
+              <Button
+                asChild
+                variant="outline"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0 hover:shadow-md transition-all text-sm font-medium"
+              >
+                <Link href="/categories">
+                  View All →
+                </Link>
+              </Button>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">

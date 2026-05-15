@@ -9,6 +9,7 @@ import { useState } from "react"
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Explore" },
+  { href: "/categories", label: "Categories" },
 ]
 
 export function Navbar() {
