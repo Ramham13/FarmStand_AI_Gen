@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { ExploreClient } from "./explore-client"
 import { getFarms, categories } from "@/lib/farms"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export const metadata = {
   title: "Explore Farms - Virtual Farm Stand",
@@ -64,7 +65,33 @@ export default async function ExplorePage({
 
       {/* Farm Listings */}
       <section className="max-w-6xl mx-auto px-3 py-6 sm:py-8">
-        <Suspense fallback={<div className="text-center py-12 text-gray-500">Loading farms...</div>}>
+        <Suspense fallback={
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <Skeleton className="h-32 sm:h-40 w-full" />
+                <div className="p-4 sm:p-5 space-y-3">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <div className="flex gap-2 mt-3">
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                  </div>
+                </div>
+                <div className="border-t px-4 sm:px-5 py-3">
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        }>
           <ExploreClient farms={farms} selectedCategory={category} />
         </Suspense>
       </section>

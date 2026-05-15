@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Filter, X, Package } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Search, Filter, X, Package, AlertTriangle } from "lucide-react"
+import { toast } from "sonner"
 
 interface Product {
   id: string
@@ -55,6 +57,7 @@ export function ProductsClient({
   const [products, setProducts] = useState<Product[]>([])
   const [filters, setFilters] = useState<Filters>({ categories: [], farms: [] })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   
   const [query, setQuery] = useState(initialQuery)
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
@@ -75,14 +78,20 @@ export function ProductsClient({
 
   const fetchProducts = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
       const params = buildFilterUrl()
       const res = await fetch(`/api/products?${params}`)
+      if (!res.ok) {
+        throw new Error(`Failed to fetch products: ${res.status}`)
+      }
       const data = await res.json()
       setProducts(data.products || [])
       setFilters(data.filters || { categories: [], farms: [] })
-    } catch (error) {
-      console.error("Failed to fetch products:", error)
+    } catch (err) {
+      console.error("Failed to fetch products:", err)
+      setError("Failed to load products. Please try again.")
+      toast.error("Failed to load products. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -222,15 +231,26 @@ export function ProductsClient({
           </p>
         </div>
 
-        {/* Loading State */}
-        {loading ? (
+        {/* Error State */}
+        {error ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <AlertTriangle className="mx-auto h-12 w-12 text-amber-500 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
+              <p className="text-gray-500 max-w-sm mx-auto mb-4">{error}</p>
+              <Button onClick={fetchProducts} className="bg-green-600 hover:bg-green-700">
+                Try Again
+              </Button>
+            </CardContent>
+          </Card>
+        ) : loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i} className="animate-pulse">
+              <Card key={i}>
                 <CardContent className="p-4">
-                  <div className="h-32 bg-gray-200 rounded mb-3" />
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  <Skeleton className="h-32 w-full rounded mb-3" />
+                  <Skeleton className="h-5 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-1/2" />
                 </CardContent>
               </Card>
             ))}
