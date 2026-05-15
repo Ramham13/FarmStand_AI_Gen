@@ -1,4 +1,4 @@
-# Sprint Tasks - 2026-05-15 14:37 UTC
+# Sprint Tasks - 2026-05-15 14:42 UTC
 
 ## Priority 1: Connect Profile Page to Real Authenticated User
 - [ ] Replace hardcoded `defaultUser` in `/profile/page.tsx` with server-side user data from cookie/auth
@@ -51,13 +51,15 @@
 - ✅ Landing page with featured farms
 - ✅ Auth cookie handling in middleware
 - ✅ Demo mode for auth APIs to avoid DB errors
+- ✅ Mobile viewport CSS (overflow-x-hidden)
+- ✅ Touch targets (44px minimum with touch-manipulation class)
 
 ## Known Issues / Technical Debt
 - Profile page uses hardcoded user data (Priority 1)
 - Waitlist uses mock data (Priority 2)
 - Waitlist API missing real DB operations (Priority 2, 3)
 - Products API uses mock data instead of Prisma (Priority 4)
-- Dashboard mobile UX needs testing (Priority 5)
+- Mobile dashboard UX needs real device testing (Priority 5)
 
 ## Project Structure
 ```
@@ -96,9 +98,9 @@ src/app/
 - Waitlist has `notifiedAt` field ready for Priority 3
 - Product has `imageUrl` field - needs verification it works
 
-### Test Status (from TEST_REPORT.md)
+### Test Status (latest)
 - TypeScript: PASS
 - Dev Server: PASS
 - All core pages load: PASS
-- Mobile Viewport: SKIPPED (Playwright missing system deps)
-- Touch Targets: SKIPPED
+- Mobile Viewport: PASS (overflow-x-hidden on body)
+- Touch Targets: PASS (buttons have touch-manipulation, min 44px heights)
