@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ReservationForm } from "@/components/farm/reservation-form"
 import { WaitlistForm } from "@/components/farm/waitlist-form"
 import { AddToCartButton } from "@/components/cart/add-to-cart-button"
-import { Search, ArrowUpDown, Package, FolderOpen, Sparkles, MessageSquare } from "lucide-react"
+import { Search, ArrowUpDown, Package, FolderOpen, Sparkles, MessageSquare, Clock } from "lucide-react"
 
 const availabilityConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   AVAILABLE: { label: "Available", variant: "default" },
@@ -96,6 +96,7 @@ interface FarmPageClientProps {
       unit?: string
       availability: string
       imageUrl?: string
+      waitlistCount?: number
     }>
   }
 }
@@ -320,7 +321,15 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                         <CardTitle className="text-base truncate">{product.name}</CardTitle>
                         <CardDescription className="text-xs">{categoryLabels[product.category]}</CardDescription>
                       </div>
-                      <Badge variant={config.variant} className="text-xs flex-shrink-0">{config.label}</Badge>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge variant={config.variant} className="text-xs flex-shrink-0">{config.label}</Badge>
+                        {(product.waitlistCount || 0) > 0 && product.availability === "SOLD_OUT" && (
+                          <span className="text-xs text-gray-500 flex items-center gap-0.5">
+                            <Clock className="h-3 w-3" />
+                            {product.waitlistCount}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="p-3 pt-2">
@@ -357,7 +366,16 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                         <p className="text-xs text-gray-400 text-center">Reserve for pickup</p>
                       </div>
                     ) : (
-                      <WaitlistForm productId={product.id} productName={product.name} />
+                      <>
+                        <WaitlistForm productId={product.id} productName={product.name} />
+                        {(product.waitlistCount || 0) > 0 && (
+                          <p className="text-xs text-center text-gray-500 mt-1">
+                            {(product.waitlistCount || 0) === 1 
+                              ? "1 person waiting" 
+                              : `${product.waitlistCount} people waiting`}
+                          </p>
+                        )}
+                      </>
                     )}
                   </CardContent>
                 </Card>

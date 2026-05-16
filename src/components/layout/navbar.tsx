@@ -1,9 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Menu, X, ShoppingBag } from "lucide-react"
+import { Menu, X, ShoppingBag, Search } from "lucide-react"
 import { useState } from "react"
 import { useCart } from "@/lib/cart-context"
 import { CartDrawer } from "@/components/cart/cart-drawer"
@@ -16,8 +16,18 @@ const navItems = [
 
 export function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
   const { totalItems, setIsCartOpen } = useCart()
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/explore?q=${encodeURIComponent(searchQuery.trim())}`)
+      setSearchQuery("")
+    }
+  }
 
   return (
     <header className="border-b bg-white sticky top-0 z-50">
@@ -29,7 +39,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden sm:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -43,8 +53,23 @@ export function Navbar() {
           ))}
         </nav>
 
+        {/* Global Search - Desktop */}
+        <form onSubmit={handleSearch} className="hidden md:flex items-center">
+          <div className="relative">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search farms..."
+              className="w-32 lg:w-48 pl-8 pr-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-green-500 focus:border-green-500 bg-gray-50"
+              aria-label="Search farms"
+            />
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          </div>
+        </form>
+
         {/* Desktop Buttons */}
-        <div className="hidden sm:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2">
           <Link
             href="/cart"
             className="relative p-2 hover:bg-gray-100 rounded-full touch-manipulation"
@@ -91,6 +116,20 @@ export function Navbar() {
         {/* Mobile Menu */}
         {mobileOpen && (
           <div className="absolute top-14 left-0 right-0 bg-white border-b shadow-lg p-4 sm:hidden z-50">
+            {/* Mobile Search */}
+            <form onSubmit={(e) => { handleSearch(e); setMobileOpen(false) }} className="mb-3">
+              <div className="relative">
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search farms, products..."
+                  className="w-full pl-9 pr-3 py-2.5 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 touch-manipulation"
+                  aria-label="Search farms"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
+            </form>
             <nav className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <Link

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
+import { sendOrderConfirmation, sendFarmerOrderNotification } from "@/lib/email"
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +33,36 @@ export async function POST(request: Request) {
         status: "PENDING",
       },
     })
+
+    // Send confirmation emails
+    const totalPrice = Number(product.price) * quantity
+    
+    // Send confirmation to customer
+    await sendOrderConfirmation({
+      customerEmail,
+      customerName,
+      orderId: reservation.id,
+      productName: product.name,
+      quantity,
+      totalPrice,
+      farmName: product.farm.name,
+      farmLocation: product.farm.location || "their location",
+    })
+
+    // Send notification to farmer
+    if (product.farm.email) {
+      await sendFarmerOrderNotification({
+        farmerEmail: product.farm.email,
+        farmerName: product.farm.name,
+        orderId: reservation.id,
+        productName: product.name,
+        quantity,
+        totalPrice,
+        customerName,
+        customerEmail,
+        customerPhone: customerPhone || undefined,
+      })
+    }
 
     return NextResponse.json({
       id: reservation.id,

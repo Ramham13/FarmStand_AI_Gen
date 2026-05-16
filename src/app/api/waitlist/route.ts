@@ -135,7 +135,75 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const body = await request.json()
-    const { waitlistId, action } = body
+    const { waitlistId, productId, action } = body
+
+    // Handle "notify-next" action - notify the first person in queue who hasn't been notified
+    if (action === "notify-next" && productId) {
+      const user = await getCurrentUser()
+      
+      if (!user) {
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+      }
+
+      // Get farm for this user
+      const farm = await prisma.farm.findUnique({
+        where: { userId: user.id },
+      })
+
+      if (!farm) {
+        return NextResponse.json({ error: "Farm not found" }, { status: 404 })
+      }
+
+      // Verify product belongs to this farm
+      const product = await prisma.product.findFirst({
+        where: { id: productId, farmId: farm.id },
+      })
+
+      if (!product) {
+        return NextResponse.json({ error: "Product not found" }, { status: 404 })
+      }
+
+      // Find the first person in queue who hasn't been notified
+      const nextInQueue = await prisma.waitlist.findFirst({
+        where: { 
+          productId,
+          notifiedAt: null,
+        },
+        orderBy: { createdAt: "asc" },
+        include: {
+          product: {
+            include: {
+              farm: true,
+            },
+          },
+        },
+      })
+
+      if (!nextInQueue) {
+        return NextResponse.json({ error: "No one left to notify" }, { status: 404 })
+      }
+
+      // Update notifiedAt timestamp
+      const updated = await prisma.waitlist.update({
+        where: { id: nextInQueue.id },
+        data: { notifiedAt: new Date() },
+      })
+
+      // Send email notification
+      await sendWaitlistNotification({
+        customerEmail: nextInQueue.customerEmail,
+        customerName: nextInQueue.customerName,
+        productName: nextInQueue.product.name,
+        farmName: nextInQueue.product.farm.name,
+        farmEmail: nextInQueue.product.farm.email || "",
+      })
+
+      return NextResponse.json({
+        id: updated.id,
+        customerName: nextInQueue.customerName,
+        notifiedAt: updated.notifiedAt?.toISOString() || null,
+      })
+    }
 
     if (!waitlistId) {
       return NextResponse.json({ error: "Waitlist ID required" }, { status: 400 })

@@ -19,6 +19,17 @@ export async function GET(request: NextRequest) {
           { name: { contains: query } },
           { description: { contains: query } },
           { location: { contains: query } },
+          // Also search in products
+          {
+            products: {
+              some: {
+                OR: [
+                  { name: { contains: query } },
+                  { description: { contains: query } },
+                ],
+              },
+            },
+          },
         ],
       }),
       ...(category && category !== "all" && {
@@ -44,6 +55,9 @@ export async function GET(request: NextRequest) {
               price: true,
               unit: true,
               availability: true,
+              _count: {
+                select: { waitlist: true },
+              },
             },
           },
         },

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
+import { sendOrderConfirmation, sendFarmerOrderNotification } from "@/lib/email"
 
 interface CheckoutItem {
   productId: string
@@ -62,6 +63,42 @@ export async function POST(request: Request) {
     )
 
     const farm = products[0].farm
+
+    // Calculate total price
+    let totalPrice = 0
+    for (const item of items) {
+      const product = products.find(p => p.id === item.productId)
+      if (product) {
+        totalPrice += Number(product.price) * item.quantity
+      }
+    }
+
+    // Send confirmation to customer
+    await sendOrderConfirmation({
+      customerEmail,
+      customerName,
+      orderId: reservations[0].id,
+      productName: products.map(p => p.name).join(", "),
+      quantity: items.reduce((sum, item) => sum + item.quantity, 0),
+      totalPrice,
+      farmName: farm.name,
+      farmLocation: farm.location || "their location",
+    })
+
+    // Send notification to farmer
+    if (farm.email) {
+      await sendFarmerOrderNotification({
+        farmerEmail: farm.email,
+        farmerName: farm.name,
+        orderId: reservations[0].id,
+        productName: products.map(p => p.name).join(", "),
+        quantity: items.reduce((sum, item) => sum + item.quantity, 0),
+        totalPrice,
+        customerName,
+        customerEmail,
+        customerPhone: customerPhone || undefined,
+      })
+    }
 
     return NextResponse.json({
       orderId: reservations[0].id,

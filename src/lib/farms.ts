@@ -74,6 +74,11 @@ export const getFarmBySlug = cache(async (slug: string) => {
       products: {
         where: { isActive: true },
         orderBy: { name: "asc" },
+        include: {
+          _count: {
+            select: { waitlist: true },
+          },
+        },
       },
     },
   })
@@ -105,6 +110,7 @@ export const getFarmBySlug = cache(async (slug: string) => {
       unit: p.unit || "item",
       availability: p.availability,
       imageUrl: p.imageUrl || undefined,
+      waitlistCount: p._count.waitlist,
     })),
   }
 })

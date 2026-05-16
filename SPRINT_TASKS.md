@@ -1,39 +1,60 @@
-# Sprint Tasks - Saturday, May 16th, 2026 - 12:07 AM UTC
+# Sprint Tasks - Saturday, May 16th, 2026 - 12:20 AM UTC
 
-## Priority 1: User Dashboard Order History
-- [x] **Add "My Orders" to user dashboard** (`/profile`):
-  - ✅ Currently `/orders` requires email lookup each visit
-  - ✅ Persist authenticated user's order history in dashboard
-  - ✅ Show PENDING/CONFIRMED/DECLINED status with visual indicators
-  - ✅ Include quick actions (view farm, contact farm)
+## Priority 1: Waitlist UX - Customer Facing
+- [ ] **Complete waitlist form on product pages**:
+  - Verify waitlist form shows when product is unavailable (UNAVAILABLE status)
+  - Add waitlist position/queue number display for customers who joined
+  - Show waitlist count on product cards in farm listings
 
-## Priority 2: Admin Farm Moderation Actions
-- [x] **Implement farm status update API**:
-  - ✅ Admin can suspend/activate farms (`/api/admin/farms/[id]/status`)
-  - ✅ Admin can remove farms (set status to REMOVED)
-  - ✅ Frontend: wire up Ban button in admin/farms page to call API
-  - ⏳ Verify suspended farms don't appear in public listings
+- [ ] **Add "Notify Next" bulk action in farmer dashboard**:
+  - Button to notify next person in queue when product becomes available
+  - Track notifiedAt timestamp in waitlist table
 
-## Priority 3: Waitlist UX Polish
-- [ ] **Improve waitlist management**:
-  - Verify waitlist form shows on unavailable products
-  - Add "Notified" status when customer is notified via waitlist
-  - Add "Notify Next" button in farmer dashboard waitlist
-  - Show waitlist position/queue number to customers
+## Priority 2: Session & Auth Improvements
+- [ ] **Implement proper authentication**:
+  - Current login is demo-only (generates fake user IDs)
+  - Wire up real user authentication with database lookup
+  - Add "Remember Me" toggle (extend cookie maxAge)
+  - Implement session refresh mechanism for active users
+  - Ensure logout fully clears session cookies
 
-## Priority 4: Session & Auth Improvements
-- [ ] **Fix auth session persistence**:
-  - Check JWT token expiration settings
-  - Verify "Remember Me" functionality works
-  - Add session refresh on active use
-  - Test logout fully clears session
+## Priority 3: Empty States & Error Handling
+- [ ] **Add empty states to dashboard sections**:
+  - No products: "You haven't added any products yet"
+  - No reservations: "No reservations yet"
+  - No orders: "No orders to display"
+  - Use illustrated empty states with call-to-action
+- [ ] **Improve API error handling**:
+  - Add user-friendly error messages (not just "Failed to fetch")
+  - Show retry buttons on errors
+  - Handle network failures gracefully with toast notifications
+- [ ] **Prevent duplicate submissions**:
+  - Add debounce to reservation form submit
+  - Disable button while submitting
+  - Show loading state during API calls
 
-## Priority 5: Edge Case Handling
-- [ ] **Improve error states and edge cases**:
-  - Empty states for dashboard sections (no products, no reservations)
-  - Better error messages when API calls fail
-  - Handle deleted products in reservations/orders gracefully
-  - Prevent duplicate reservation submissions
+## Priority 4: Discovery & Search Gaps
+- [ ] **Add global search feature**:
+  - Search farms and products from header
+  - Search within individual farm pages
+- [ ] **Add category filter to farm product listings**:
+  - Filter products by category on /farm/[slug] page
+- [ ] **Wire up email notifications**:
+  - Email library exists (src/lib/email.ts) but not called
+  - Send confirmation emails on reservation create
+  - Send waitlist notifications when product becomes available
+
+## Priority 5: Edge Cases & Mobile Polish
+- [ ] **Handle deleted/missing products gracefully**:
+  - Reservations referencing deleted products should show "Product unavailable"
+  - Orders should handle missing product data gracefully
+- [ ] **Verify suspended farms are filtered**:
+  - Ensure SUSPENDED/REMOVED farms don't appear in /explore and /categories
+  - Ensure suspended farms still accessible to their owners
+- [ ] **Mobile polish**:
+  - Ensure touch targets are 44px+ everywhere
+  - Test checkout flow on mobile
+  - Add skeleton loading states for all async content
 
 ---
 
@@ -49,8 +70,12 @@
 - ✅ Reservations API and dashboard page (confirm/decline)
 - ✅ Customer orders tracking page (`/orders`)
 - ✅ Admin farms page with search and status badges
+- ✅ Farm status update API (`/api/admin/farms/[id]/status`)
 - ✅ Payment link display on farm pages
 - ✅ Categories and explore pages with search
+- ✅ Waitlist dashboard: shows position, notified status, notify button
+- ✅ User order history in profile (`/api/orders/me`)
+- ✅ Admin farm moderation (Ban/Activate actions)
 
 ---
 
@@ -64,10 +89,15 @@
 | Mobile Nav | ✅ | Hamburger menu, 44px targets |
 | OG Tags | ✅ | Added to product/farm pages |
 | Dashboard Data | ✅ | Prisma queries wired |
-| Order Tracking | ⚠️ | Works but email lookup only |
-| Admin Actions | ⚠️ | UI exists, API incomplete |
-| Waitlist | ⚠️ | Basic, needs polish |
-| Auth Sessions | ⚠️ | May need expiration tuning |
+| Order Tracking | ✅ | Works with email lookup |
+| Admin Farm Status | ✅ | API + frontend wired |
+| Auth System | ⚠️ | Demo mode only - needs real users |
+| Empty States | ❌ | Missing in dashboard sections |
+| Error Handling | ⚠️ | Basic - needs improvement |
+| Global Search | ❌ | Not implemented |
+| Email Notifications | ❌ | Library exists but not wired |
+| Farm Category Filter | ❌ | Missing on farm page |
+| Duplicate Prevention | ❌ | Not implemented |
 
 ---
 
