@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, MoreHorizontal, Eye, Pencil, Ban } from "lucide-react";
+import { Search, Eye, Pencil } from "lucide-react";
 import { getCurrentUser, isAdmin } from "@/lib/auth-server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { FarmActionButton } from "./farm-action-button";
 
 export default async function AdminFarmsPage() {
   // Server-side authentication and admin role check
@@ -91,17 +92,17 @@ export default async function AdminFarmsPage() {
                       <td className="py-4 text-gray-600">{createdAtFormatted}</td>
                       <td className="py-4">
                         <div className="flex gap-1">
-                          <Button size="sm" variant="ghost">
-                            <Eye className="h-4 w-4" />
+                          <Button size="sm" variant="ghost" asChild>
+                            <a href={`/farm/${farm.slug}`} target="_blank">
+                              <Eye className="h-4 w-4" />
+                            </a>
                           </Button>
-                          <Button size="sm" variant="ghost">
-                            <Pencil className="h-4 w-4" />
+                          <Button size="sm" variant="ghost" asChild>
+                            <a href={`/dashboard/settings`} target="_blank">
+                              <Pencil className="h-4 w-4" />
+                            </a>
                           </Button>
-                          {farm.status === "ACTIVE" && (
-                            <Button size="sm" variant="ghost" className="text-red-600">
-                              <Ban className="h-4 w-4" />
-                            </Button>
-                          )}
+                          <FarmActionButton farmId={farm.id} currentStatus={farm.status} />
                         </div>
                       </td>
                     </tr>

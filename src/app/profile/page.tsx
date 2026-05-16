@@ -1,11 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { MapPin, ExternalLink, Phone } from "lucide-react"
 
 interface UserInfo {
   id: string
@@ -19,6 +22,33 @@ interface UserInfo {
   }
 }
 
+interface Order {
+  id: string
+  productName: string
+  productCategory: string
+  productPrice: number
+  productUnit: string
+  quantity: number
+  status: string
+  message: string | null
+  createdAt: string
+  updatedAt: string
+  farm: {
+    name: string
+    slug: string
+    emoji: string
+    location: string
+    phone: string | null
+  }
+}
+
+const statusConfig: Record<string, { label: string; color: string }> = {
+  PENDING: { label: "Pending", color: "bg-yellow-100 text-yellow-800" },
+  CONFIRMED: { label: "Confirmed", color: "bg-green-100 text-green-800" },
+  DECLINED: { label: "Declined", color: "bg-red-100 text-red-800" },
+  CANCELLED: { label: "Cancelled", color: "bg-gray-100 text-gray-800" },
+}
+
 export default function ProfilePage() {
   const [user, setUser] = useState<UserInfo | null>(null)
   const [loading, setLoading] = useState(true)
@@ -29,6 +59,8 @@ export default function ProfilePage() {
   })
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [orders, setOrders] = useState<Order[]>([])
+  const [ordersLoading, setOrdersLoading] = useState(false)
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -39,6 +71,17 @@ export default function ProfilePage() {
       .then(data => {
         setUser(data)
         setLoading(false)
+        // Fetch orders for authenticated user
+        if (data?.email) {
+          setOrdersLoading(true)
+          fetch("/api/orders/me")
+            .then(res => res.ok ? res.json() : { orders: [] })
+            .then(data => {
+              setOrders(data.orders || [])
+              setOrdersLoading(false)
+            })
+            .catch(() => setOrdersLoading(false))
+        }
       })
       .catch(() => {
         setLoading(false)
@@ -248,6 +291,69 @@ export default function ProfilePage() {
                     {isChangingPassword ? "Updating..." : "Update Password"}
                   </Button>
                 </form>
+              </CardContent>
+            </Card>
+
+            {/* My Orders */}
+            <Card>
+              <CardHeader>
+                <CardTitle>My Orders</CardTitle>
+                <CardDescription>Your recent reservations and orders</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {ordersLoading ? (
+                  <div className="animate-pulse space-y-3">
+                    <div className="h-20 bg-gray-100 rounded"></div>
+                    <div className="h-20 bg-gray-100 rounded"></div>
+                  </div>
+                ) : orders.length === 0 ? (
+                  <div className="text-center py-6">
+                    <p className="text-gray-500">No orders yet</p>
+                    <Button asChild className="mt-4 bg-green-600 hover:bg-green-700">
+                      <Link href="/explore">Explore Farms</Link>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-80 overflow-y-auto">
+                    {orders.slice(0, 5).map(order => {
+                      const status = statusConfig[order.status] || { label: order.status, color: "bg-gray-100" }
+                      const total = (order.productPrice || 0) * order.quantity
+                      return (
+                        <div key={order.id} className="flex items-start justify-between p-3 border rounded-lg">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl">{order.farm.emoji}</span>
+                              <p className="font-medium text-gray-900 truncate">{order.productName}</p>
+                            </div>
+                            <p className="text-sm text-gray-500 truncate">
+                              {order.farm.name} · {order.productPrice?.toFixed(2)}/{order.productUnit} × {order.quantity}
+                            </p>
+                            <p className="text-sm font-semibold text-green-700">
+                              ${total.toFixed(2)}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-end gap-2 ml-2">
+                            <Badge className={status.color}>{status.label}</Badge>
+                            <div className="flex gap-1">
+                              {order.farm.phone && (
+                                <Button size="sm" variant="ghost" asChild>
+                                  <a href={`tel:${order.farm.phone}`}>
+                                    <Phone className="h-3 w-3" />
+                                  </a>
+                                </Button>
+                              )}
+                              <Button size="sm" variant="ghost" asChild>
+                                <Link href={`/farm/${order.farm.slug}`}>
+                                  <ExternalLink className="h-3 w-3" />
+                                </Link>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

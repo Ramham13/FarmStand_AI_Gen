@@ -1,66 +1,56 @@
-# Sprint Tasks - Friday, May 15th, 2026 - 11:48 PM UTC
+# Sprint Tasks - Saturday, May 16th, 2026 - 12:07 AM UTC
 
-## Priority 1: Fix Critical Build Issues ⚠️
-- [x] **Reinstall node_modules**: Run `rm -rf node_modules && npm install`
-- [x] **Add @types/node**: Run `npm install --save-dev @types/node`
-- [x] **Verify tsconfig.json** includes "node" in types field
-- [x] **Verify build succeeds** before proceeding to features
+## Priority 1: User Dashboard Order History
+- [ ] **Add "My Orders" to user dashboard** (`/profile`):
+  - Currently `/orders` requires email lookup each visit
+  - Persist authenticated user's order history in dashboard
+  - Show PENDING/CONFIRMED/DECLINED status with visual indicators
+  - Include quick actions (view farm, contact farm)
 
-## Priority 2: Product Availability States
-- [x] **Implement product availability UI states**:
-  - Schema has `availability` and `isActive` fields but not displayed
-  - Show "Sold Out" / "Unavailable" badges on product cards
-  - Disable add-to-cart button for unavailable products
-  - Wire product list queries to filter by `isActive` and check availability
+## Priority 2: Admin Farm Moderation Actions
+- [ ] **Implement farm status update API**:
+  - Admin can suspend/activate farms (`/api/admin/farms/[id]/status`)
+  - Admin can remove farms (set status to REMOVED)
+  - Frontend: wire up Ban button in admin/farms page to call API
+  - Verify suspended farms don't appear in public listings
 
-## Priority 3: Mobile Navigation Polish
-- [x] **Fix mobile navbar and touch targets**:
-  - Add hamburger menu for mobile nav
-  - Verify all interactive elements are 44px+ touch targets
-  - Ensure cart drawer works properly on mobile
-  - Check checkout forms don't trigger iOS zoom (16px min font)
+## Priority 3: Waitlist UX Polish
+- [ ] **Improve waitlist management**:
+  - Verify waitlist form shows on unavailable products
+  - Add "Notified" status when customer is notified via waitlist
+  - Add "Notify Next" button in farmer dashboard waitlist
+  - Show waitlist position/queue number to customers
 
-## Priority 4: Order History Enhancement
-- [ ] **Improve customer order tracking**:
-  - The `/orders` page exists but is basic (email lookup only)
-  - Add order history display after successful checkout
-  - Consider adding a "My Orders" section in user dashboard
-  - Show order status (PENDING/CONFIRMED/DECLINED) with visual indicators
+## Priority 4: Session & Auth Improvements
+- [ ] **Fix auth session persistence**:
+  - Check JWT token expiration settings
+  - Verify "Remember Me" functionality works
+  - Add session refresh on active use
+  - Test logout fully clears session
 
-## Priority 5: SEO & Social Meta Tags
-- [x] **Add Open Graph meta tags for social sharing**:
-  - Add OG tags to product detail pages (image, title, description)
-  - Add OG tags to farm profile pages
-  - Consider adding JSON-LD structured data for farms/products
+## Priority 5: Edge Case Handling
+- [ ] **Improve error states and edge cases**:
+  - Empty states for dashboard sections (no products, no reservations)
+  - Better error messages when API calls fail
+  - Handle deleted products in reservations/orders gracefully
+  - Prevent duplicate reservation submissions
 
 ---
 
 ## Completed (Previous Sprints)
 
-- ✅ Cart page (`/cart`) with full functionality
-- ✅ Dashboard wired to real database data (products, reservations, waitlist counts)
-- ✅ Checkout API persists reservations to database
-- ✅ Order confirmation page
-- ✅ Build error fixed: metadata in layout.tsx
-- ✅ Image config in next.config.mjs
-- ✅ Loading states: dashboard, explore, products, farm pages
-- ✅ Mobile viewport, horizontal scroll prevention, 44px touch targets
-- ✅ Error boundaries on explore, products, dashboard routes
-- ✅ Retry buttons on failed API calls
-- ✅ Skeleton loaders in Explore and Products
-- ✅ Checkout form with farm contact info
-- ✅ Cart localStorage persistence
-- ✅ Empty cart state with CTA to browse farms
-- ✅ Registration/onboarding flow
-- ✅ Explore & Categories pages with filters
-- ✅ Farm profile & product detail pages with SEO metadata
-- ✅ Admin reports page
-- ✅ Image upload API
-- ✅ CI/CD workflow setup
-- ✅ PostgreSQL (Neon) migration
-- ✅ Search API wired to Explore page
-- ✅ Pagination in `/api/farms/search`
-- ✅ SEO: robots.txt and sitemap.xml
+- ✅ Build issues: node_modules reinstall, @types/node added
+- ✅ Product availability UI: badges, disabled add-to-cart for unavailable
+- ✅ Mobile navigation: hamburger menu, touch targets 44px+
+- ✅ Open Graph meta tags for social sharing
+- ✅ Cart page with localStorage persistence
+- ✅ Dashboard wired to Prisma database
+- ✅ Checkout confirmation page
+- ✅ Reservations API and dashboard page (confirm/decline)
+- ✅ Customer orders tracking page (`/orders`)
+- ✅ Admin farms page with search and status badges
+- ✅ Payment link display on farm pages
+- ✅ Categories and explore pages with search
 
 ---
 
@@ -68,15 +58,16 @@
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Build | ❌ | BROKEN - node_modules corrupted, missing @types/node |
-| Cart Page | ✅ | Added in latest sprint |
-| Dashboard Data | ✅ | Wired to Prisma queries |
-| Checkout Persistence | ✅ | Creates reservation records |
-| Product Availability | ⚠️ | Schema exists but UI missing |
-| Mobile Nav | ⚠️ | Needs hamburger menu |
-| Order History | ⚠️ | Basic - needs enhancement |
-| Waitlist UX | ⚠️ | Needs polish |
-| OG Tags | ❌ | Missing for social sharing |
+| Build | ✅ | Passing - TypeScript clean |
+| Cart | ✅ | Full localStorage persistence |
+| Product Availability | ✅ | Badges + disabled buttons |
+| Mobile Nav | ✅ | Hamburger menu, 44px targets |
+| OG Tags | ✅ | Added to product/farm pages |
+| Dashboard Data | ✅ | Prisma queries wired |
+| Order Tracking | ⚠️ | Works but email lookup only |
+| Admin Actions | ⚠️ | UI exists, API incomplete |
+| Waitlist | ⚠️ | Basic, needs polish |
+| Auth Sessions | ⚠️ | May need expiration tuning |
 
 ---
 
