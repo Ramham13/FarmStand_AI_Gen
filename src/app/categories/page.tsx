@@ -5,6 +5,19 @@ import { prisma } from "@/lib/db"
 export const metadata = {
   title: "Categories - Virtual Farm Stand",
   description: "Browse farms by category. Find fresh produce, eggs, dairy, meat, poultry, and plants from local farms.",
+  openGraph: {
+    title: "Browse Categories - Virtual Farm Stand",
+    description: "Browse farms by category. Find fresh produce, eggs, dairy, meat, poultry, and plants from local farms.",
+    type: "website",
+    url: "/categories",
+    siteName: "Virtual Farm Stand",
+    images: [{
+      url: "https://virtualfarmstand.com/og-categories.png",
+      width: 1200,
+      height: 630,
+      alt: "Browse Farm Categories",
+    }],
+  },
 }
 
 async function getFarmsByCategory() {

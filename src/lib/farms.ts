@@ -92,6 +92,7 @@ export const getFarmBySlug = cache(async (slug: string) => {
     paymentLink: farm.paymentLink || undefined,
     status: farm.status,
     emoji: farm.emoji || "🌾",
+    imageUrl: farm.imageUrl || undefined,
     // Get unique categories from products
     categories: [...new Set(farm.products.map((p) => p.category))],
     // Return full product objects for the farm page

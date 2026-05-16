@@ -29,6 +29,17 @@ export async function generateMetadata({
       type: "website",
       url: `/farm/${slug}`,
       siteName: "Virtual Farm Stand",
+      images: farm.imageUrl ? [{
+        url: farm.imageUrl,
+        width: 1200,
+        height: 630,
+        alt: farm.name,
+      }] : [{
+        url: "https://virtualfarmstand.com/og-farm-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Virtual Farm Stand",
+      }],
     },
     twitter: {
       card: "summary_large_image",

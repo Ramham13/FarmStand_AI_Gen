@@ -17,6 +17,7 @@ interface ProductDetailSectionProps {
     price?: number;
     unit?: string;
     availability: string;
+    imageUrl?: string;
   };
   waitlistCount?: number;
   farm: {

@@ -11,6 +11,14 @@ export const metadata = {
     title: "Explore Local Farms - Virtual Farm Stand",
     description: "Discover local farms, fresh produce, eggs, dairy, and artisan goods.",
     type: "website",
+    url: "/explore",
+    siteName: "Virtual Farm Stand",
+    images: [{
+      url: "https://virtualfarmstand.com/og-explore.png",
+      width: 1200,
+      height: 630,
+      alt: "Explore Local Farms",
+    }],
   },
 }
 

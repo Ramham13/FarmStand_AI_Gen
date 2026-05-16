@@ -48,6 +48,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "website",
       url: `/farm/${slug}/product/${productId}`,
       siteName: "Virtual Farm Stand",
+      images: product.imageUrl ? [{
+        url: product.imageUrl,
+        width: 1200,
+        height: 630,
+        alt: product.name,
+      }] : farm.imageUrl ? [{
+        url: farm.imageUrl,
+        width: 1200,
+        height: 630,
+        alt: `${product.name} from ${farm.name}`,
+      }] : [{
+        url: "https://virtualfarmstand.com/og-product-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Virtual Farm Stand",
+      }],
     },
     twitter: {
       card: "summary_large_image",
@@ -96,6 +112,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         price: product.price ?? undefined,
         unit: product.unit ?? undefined,
         availability: product.availability ?? undefined,
+        imageUrl: product.imageUrl ?? undefined,
       }}
       waitlistCount={waitlistCount}
       farm={{
