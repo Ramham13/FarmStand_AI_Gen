@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, ShoppingBag, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { WaitlistForm } from "@/components/farm/waitlist-form";
 
 interface ProductDetailSectionProps {
   slug: string;
@@ -17,6 +18,7 @@ interface ProductDetailSectionProps {
     unit?: string;
     availability: string;
   };
+  waitlistCount?: number;
   farm: {
     id: string;
     name: string;
@@ -24,7 +26,7 @@ interface ProductDetailSectionProps {
   };
 }
 
-export function ProductDetailSection({ slug, product, farm }: ProductDetailSectionProps) {
+export function ProductDetailSection({ slug, product, waitlistCount = 0, farm }: ProductDetailSectionProps) {
   const availabilityLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
     AVAILABLE: { label: "Available", variant: "default" },
     LIMITED: { label: "Limited Availability", variant: "secondary" },
@@ -89,13 +91,12 @@ export function ProductDetailSection({ slug, product, farm }: ProductDetailSecti
               </>
             ) : product.availability === "SOLD_OUT" ? (
               <>
-                <Button size="lg" variant="outline">
-                  <Clock className="mr-2 h-5 w-5" />
-                  Join Waitlist
-                </Button>
-                <p className="text-center text-sm text-gray-500">
-                  Get notified when this product is available again
-                </p>
+                <WaitlistForm productId={product.id} productName={product.name} />
+                {waitlistCount > 0 && (
+                  <p className="text-center text-sm text-gray-500">
+                    {waitlistCount} waiting{waitlistCount !== 1 ? 's' : ''} for this product
+                  </p>
+                )}
               </>
             ) : (
               <Button size="lg" variant="outline" disabled>

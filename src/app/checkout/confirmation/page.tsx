@@ -105,6 +105,11 @@ export default async function ConfirmationPage({
 
         {/* Actions */}
         <div className="flex flex-col gap-3">
+          <Link href="/orders" className="w-full">
+            <Button variant="outline" className="w-full h-12 border-green-600 text-green-700 hover:bg-green-50">
+              Track Your Order
+            </Button>
+          </Link>
           <Link href="/" className="w-full">
             <Button className="w-full h-12 bg-green-600 hover:bg-green-700">
               <ArrowRight className="w-5 h-5 mr-2" />

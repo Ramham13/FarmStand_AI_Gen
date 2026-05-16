@@ -80,6 +80,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  // Get waitlist count for this product
+  const waitlistCount = await prisma.waitlist.count({
+    where: { productId },
+  });
+
   return (
     <ProductDetailSection
       slug={slug}
@@ -92,6 +97,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         unit: product.unit ?? undefined,
         availability: product.availability ?? undefined,
       }}
+      waitlistCount={waitlistCount}
       farm={{
         id: farm.id,
         name: farm.name,
