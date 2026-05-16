@@ -1,20 +1,20 @@
 # Sprint Tasks - Friday, May 15th, 2026 - 11:48 PM UTC
 
 ## Priority 1: Fix Critical Build Issues ⚠️
-- [ ] **Reinstall node_modules**: Run `rm -rf node_modules && npm install`
-- [ ] **Add @types/node**: Run `npm install --save-dev @types/node`
-- [ ] **Verify tsconfig.json** includes "node" in types field
-- [ ] **Verify build succeeds** before proceeding to features
+- [x] **Reinstall node_modules**: Run `rm -rf node_modules && npm install`
+- [x] **Add @types/node**: Run `npm install --save-dev @types/node`
+- [x] **Verify tsconfig.json** includes "node" in types field
+- [x] **Verify build succeeds** before proceeding to features
 
 ## Priority 2: Product Availability States
-- [ ] **Implement product availability UI states**:
+- [x] **Implement product availability UI states**:
   - Schema has `availability` and `isActive` fields but not displayed
   - Show "Sold Out" / "Unavailable" badges on product cards
   - Disable add-to-cart button for unavailable products
   - Wire product list queries to filter by `isActive` and check availability
 
 ## Priority 3: Mobile Navigation Polish
-- [ ] **Fix mobile navbar and touch targets**:
+- [x] **Fix mobile navbar and touch targets**:
   - Add hamburger menu for mobile nav
   - Verify all interactive elements are 44px+ touch targets
   - Ensure cart drawer works properly on mobile
@@ -28,7 +28,7 @@
   - Show order status (PENDING/CONFIRMED/DECLINED) with visual indicators
 
 ## Priority 5: SEO & Social Meta Tags
-- [ ] **Add Open Graph meta tags for social sharing**:
+- [x] **Add Open Graph meta tags for social sharing**:
   - Add OG tags to product detail pages (image, title, description)
   - Add OG tags to farm profile pages
   - Consider adding JSON-LD structured data for farms/products
