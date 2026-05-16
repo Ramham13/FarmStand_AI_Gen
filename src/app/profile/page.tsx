@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
-import { MapPin, ExternalLink, Phone } from "lucide-react"
+import { MapPin, ExternalLink, Phone, Mail } from "lucide-react"
 
 interface UserInfo {
   id: string
@@ -61,6 +62,12 @@ export default function ProfilePage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [orders, setOrders] = useState<Order[]>([])
   const [ordersLoading, setOrdersLoading] = useState(false)
+  const [emailPrefs, setEmailPrefs] = useState({
+    orderUpdates: true,
+    marketing: false,
+    waitlist: true,
+  })
+  const [prefsLoaded, setPrefsLoaded] = useState(false)
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -86,7 +93,23 @@ export default function ProfilePage() {
       .catch(() => {
         setLoading(false)
       })
+
+    // Load email preferences from localStorage
+    const savedPrefs = localStorage.getItem("emailPreferences")
+    if (savedPrefs) {
+      try {
+        setEmailPrefs(JSON.parse(savedPrefs))
+      } catch {}
+    }
+    setPrefsLoaded(true)
   }, [])
+
+  const handleEmailPrefChange = (key: keyof typeof emailPrefs, checked: boolean) => {
+    const newPrefs = { ...emailPrefs, [key]: checked }
+    setEmailPrefs(newPrefs)
+    localStorage.setItem("emailPreferences", JSON.stringify(newPrefs))
+    toast.success("Email preferences saved")
+  }
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "Unknown"
@@ -166,9 +189,30 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 w-32 bg-gray-200 rounded"></div>
-            <div className="h-40 bg-gray-200 rounded"></div>
+          <div className="mx-auto max-w-2xl space-y-6">
+            {/* Header skeleton */}
+            <div className="space-y-2">
+              <div className="h-8 w-48 bg-gray-200 rounded"></div>
+              <div className="h-5 w-64 bg-gray-200 rounded"></div>
+            </div>
+            {/* Account card skeleton */}
+            <div className="bg-white rounded-lg border p-6 space-y-4">
+              <div className="h-6 w-40 bg-gray-200 rounded"></div>
+              <div className="space-y-3">
+                <div className="h-5 w-full bg-gray-200 rounded"></div>
+                <div className="h-5 w-3/4 bg-gray-200 rounded"></div>
+                <div className="h-5 w-1/2 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+            {/* Password card skeleton */}
+            <div className="bg-white rounded-lg border p-6 space-y-4">
+              <div className="h-6 w-40 bg-gray-200 rounded"></div>
+              <div className="space-y-3">
+                <div className="h-10 w-full bg-gray-200 rounded"></div>
+                <div className="h-10 w-full bg-gray-200 rounded"></div>
+                <div className="h-10 w-32 bg-gray-200 rounded"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -354,6 +398,52 @@ export default function ProfilePage() {
                     })}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+
+            {/* Email Preferences */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Mail className="w-5 h-5" />
+                  Email Notifications
+                </CardTitle>
+                <CardDescription>Choose what emails you want to receive</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="orderUpdates"
+                    checked={emailPrefs.orderUpdates}
+                    onCheckedChange={(checked) => handleEmailPrefChange("orderUpdates", checked as boolean)}
+                  />
+                  <Label htmlFor="orderUpdates" className="font-normal cursor-pointer">
+                    <span className="font-medium">Order Updates</span>
+                    <span className="text-gray-500 text-sm ml-2">— Reservation confirmations and status changes</span>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="waitlist"
+                    checked={emailPrefs.waitlist}
+                    onCheckedChange={(checked) => handleEmailPrefChange("waitlist", checked as boolean)}
+                  />
+                  <Label htmlFor="waitlist" className="font-normal cursor-pointer">
+                    <span className="font-medium">Waitlist Notifications</span>
+                    <span className="text-gray-500 text-sm ml-2">— When products become available</span>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="marketing"
+                    checked={emailPrefs.marketing}
+                    onCheckedChange={(checked) => handleEmailPrefChange("marketing", checked as boolean)}
+                  />
+                  <Label htmlFor="marketing" className="font-normal cursor-pointer">
+                    <span className="font-medium">News & Updates</span>
+                    <span className="text-gray-500 text-sm ml-2">— New farms, features, and promotions</span>
+                  </Label>
+                </div>
               </CardContent>
             </Card>
 
