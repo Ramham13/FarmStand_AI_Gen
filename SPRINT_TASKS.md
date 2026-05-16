@@ -1,6 +1,6 @@
-# Sprint Tasks - Saturday, May 16th, 2026 - 12:27 AM UTC
+# Sprint Tasks - Saturday, May 16th, 2026 - 12:40 AM UTC
 
-## Priority 1: Authentication System
+## Priority 1: Authentication System (Still Demo Mode)
 - [ ] **Implement real user authentication**:
   - Current login generates fake user IDs (demo only)
   - Wire up database user lookup for login
@@ -23,17 +23,24 @@
   - Disable button while submitting
   - Show loading state during API calls
 
-## Priority 3: Global Search
-- [ ] **Implement global search in header**:
-  - Search farms and products from header search bar
-  - Search within individual farm pages
-  - Add keyboard shortcuts (/ to focus search)
-
-## Priority 4: Email Notifications
-- [ ] **Wire up email library (src/lib/email.ts)**:
+## Priority 3: Email Notifications (Library Exists, Not Wired)
+- [ ] **Wire up email library (src/lib/email.ts exists - 14KB)**:
   - Send confirmation emails on reservation create
   - Send waitlist notifications when product becomes available
   - Add email preferences to user profile
+- [ ] **Verify email delivery works**:
+  - Add email verification flow for new registrations
+  - Test email sends in development (use Ethereal/Log)
+
+## Priority 4: Global Search (Just Added - Verify It Works)
+- [ ] **Verify global search implementation**:
+  - Test search farms and products from header search bar
+  - Search within individual farm pages
+  - Add keyboard shortcuts (/ to focus search)
+- [ ] **Polish search UX**:
+  - Debounce search input
+  - Show loading state while searching
+  - Handle "no results" gracefully
 
 ## Priority 5: Mobile Polish & Edge Cases
 - [ ] **Handle deleted/missing products gracefully**:
@@ -60,12 +67,16 @@
 - ✅ Reservations API and dashboard page (confirm/decline)
 - ✅ Customer orders tracking page (/orders)
 - ✅ Admin farms page with search and status badges
-- ✅ Farm status update API (/api/admin/farms/[id]/status)
+- ✅ Admin farm status update API (/api/admin/farms/[id]/status)
 - ✅ Payment link display on farm pages
 - ✅ Categories and explore pages with search
 - ✅ Waitlist dashboard: position, notified status, notify button
 - ✅ User order history in profile (/api/orders/me)
 - ✅ Admin farm moderation (Ban/Activate actions)
+- ✅ Global search (just added - verify in this sprint)
+- ✅ Email library added (src/lib/email.ts - wire up in this sprint)
+- ✅ Keyboard shortcut (/) to focus search input
+- ✅ Mobile touch targets (44px+) on cart and reservation forms
 
 ---
 
@@ -81,11 +92,12 @@
 | Dashboard Data | ✅ | Prisma queries wired |
 | Order Tracking | ✅ | Works with email lookup |
 | Admin Farm Status | ✅ | API + frontend wired |
+| Global Search | ✅ | Just added (verify works) |
+| Keyboard Shortcuts | ✅ | / focuses search |
 | Auth System | ⚠️ | Demo mode only - needs real users |
 | Empty States | ❌ | Missing in dashboard sections |
 | Error Handling | ⚠️ | Basic - needs improvement |
-| Global Search | ❌ | Not implemented |
-| Email Notifications | ❌ | Library exists but not wired |
+| Email Notifications | ⚠️ | Library exists but not wired |
 | Duplicate Prevention | ❌ | Not implemented |
 
 ---
@@ -97,3 +109,14 @@
 - **Styling**: Tailwind CSS + shadcn/ui
 - **Database**: PostgreSQL (Neon)
 - **ORM**: Prisma
+
+## Recent Git Activity
+
+```
+9e60c5f Sprint: Improve mobile touch targets (44px+) on cart quantity and reservation form buttons
+a25246b Sprint: Add keyboard shortcut (/) to focus search input
+79bc292 Update test report
+97d7a63 Sprint: Add global search + wire up email notifications
+27a939e Sprint: Update task list - mark completed items
+35e14bb Sprint: Add user order history to profile + admin farm moderation
+```
