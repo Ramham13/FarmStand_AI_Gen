@@ -19,10 +19,28 @@ async function OrdersContent() {
     error = "Failed to load orders"
   }
 
-  const pendingCount = orders.filter((o: any) => o.status === "PENDING").length
-  const confirmedCount = orders.filter((o: any) => o.status === "CONFIRMED").length
-  const completedCount = orders.filter((o: any) => o.status === "COMPLETED").length
-  const cancelledCount = orders.filter((o: any) => o.status === "CANCELLED").length
+  // Transform API response to match client interface
+  const transformedOrders = orders.map((order: any) => ({
+    id: order.id,
+    status: order.status,
+    customerName: order.customerName,
+    customerEmail: order.customerEmail,
+    customerPhone: order.customerPhone,
+    message: order.message,
+    quantity: order.quantity,
+    createdAt: order.createdAt,
+    productName: order.productName,
+    productCategory: order.productCategory,
+    productPrice: order.productPrice,
+    productUnit: order.productUnit,
+    productAvailable: order.productAvailable,
+    farm: order.farm,
+  }))
+
+  const pendingCount = transformedOrders.filter((o: any) => o.status === "PENDING").length
+  const confirmedCount = transformedOrders.filter((o: any) => o.status === "CONFIRMED").length
+  const completedCount = transformedOrders.filter((o: any) => o.status === "COMPLETED").length
+  const cancelledCount = transformedOrders.filter((o: any) => o.status === "CANCELLED").length
 
   if (error) {
     return (
@@ -50,7 +68,7 @@ async function OrdersContent() {
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{orders.length}</div>
+            <div className="text-2xl font-bold">{transformedOrders.length}</div>
             <p className="text-sm text-gray-500">Total Orders</p>
           </CardContent>
         </Card>
@@ -75,7 +93,7 @@ async function OrdersContent() {
       </div>
 
       {/* Orders List */}
-      {orders.length === 0 ? (
+      {transformedOrders.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <Package className="mx-auto h-12 w-12 text-gray-300 mb-4" />
@@ -86,7 +104,7 @@ async function OrdersContent() {
           </CardContent>
         </Card>
       ) : (
-        <OrdersClient orders={orders} />
+        <OrdersClient orders={transformedOrders} />
       )}
     </div>
   )

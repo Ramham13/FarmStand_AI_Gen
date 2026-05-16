@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CheckCircle, XCircle, MoreHorizontal, AlertTriangle, Package } from "lucide-react"
 import { toast } from "sonner"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface Reservation {
   id: string
@@ -84,15 +85,16 @@ export function ReservationsClient({ initialReservations }: ReservationsClientPr
 
       {/* Error State */}
       {error && (
-        <Card className="mb-6 border-amber-200 bg-amber-50">
-          <CardContent className="py-4 flex items-center gap-4">
-            <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
-            <p className="text-amber-800 flex-1">{error}</p>
-            <Button onClick={fetchReservations} size="sm" className="bg-green-600 hover:bg-green-700 shrink-0">
+        <Alert variant="destructive" className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Unable to load reservations</AlertTitle>
+          <AlertDescription>
+            {error}
+            <Button onClick={fetchReservations} size="sm" className="mt-3 bg-green-600 hover:bg-green-700">
               Try Again
             </Button>
-          </CardContent>
-        </Card>
+          </AlertDescription>
+        </Alert>
       )}
 
       {/* Stats */}

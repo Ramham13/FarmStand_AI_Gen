@@ -1,82 +1,74 @@
-# Sprint Tasks - Saturday, May 16th, 2026 - 12:40 AM UTC
+# Sprint Tasks - Saturday, May 16th, 2026 - 12:48 AM UTC
 
-## Priority 1: Authentication System (Still Demo Mode)
-- [ ] **Implement real user authentication**:
-  - Current login generates fake user IDs (demo only)
-  - Wire up database user lookup for login
-  - Add "Remember Me" toggle (extend cookie maxAge)
-  - Implement session refresh for active users
+## Priority 1: Real Authentication System
+- [ ] **Wire up database user authentication**:
+  - Login currently generates fake user IDs (demo only)
+  - Implement database user lookup for login
+  - Add proper session/cookie handling
+  - Implement "Remember Me" toggle
   - Ensure logout fully clears session cookies
 
-## Priority 2: Empty States & Error Handling
+## Priority 2: Empty States & Dashboard UX
 - [ ] **Add empty states to dashboard sections**:
   - No products: "You haven't added any products yet"
   - No reservations: "No reservations yet"
   - No orders: "No orders to display"
   - Use illustrated empty states with CTA buttons
-- [ ] **Improve API error handling**:
-  - Add user-friendly error messages (not just "Failed to fetch")
-  - Show retry buttons on errors
-  - Handle network failures with toast notifications
+- [ ] **Improve error handling**:
+  - Replace generic "Failed to fetch" with user-friendly messages
+  - Add retry buttons on API failures
+  - Show toast notifications for network errors
+
+## Priority 3: Email Notifications
+- [ ] **Wire up email library (src/lib/email.ts exists - 14KB)**:
+  - Send reservation confirmation emails
+  - Send waitlist notifications when product available
+  - Add email preferences to user profile
+- [ ] **Test email delivery**:
+  - Verify email sends in development
+  - Handle failures gracefully
+
+## Priority 4: Form Submit Protection & Edge Cases
 - [ ] **Prevent duplicate submissions**:
   - Add debounce to reservation form submit
   - Disable button while submitting
   - Show loading state during API calls
+- [ ] **Handle deleted/missing products**:
+  - Reservations referencing deleted products show "Product unavailable"
+  - Orders handle missing product data gracefully
 
-## Priority 3: Email Notifications (Library Exists, Not Wired)
-- [ ] **Wire up email library (src/lib/email.ts exists - 14KB)**:
-  - Send confirmation emails on reservation create
-  - Send waitlist notifications when product becomes available
-  - Add email preferences to user profile
-- [ ] **Verify email delivery works**:
-  - Add email verification flow for new registrations
-  - Test email sends in development (use Ethereal/Log)
-
-## Priority 4: Global Search (Just Added - Verify It Works)
-- [ ] **Verify global search implementation**:
-  - Test search farms and products from header search bar
-  - Search within individual farm pages
-  - Add keyboard shortcuts (/ to focus search)
-- [ ] **Polish search UX**:
-  - Debounce search input
-  - Show loading state while searching
+## Priority 5: Mobile & Search Polish
+- [ ] **Verify global search implementation works**:
+  - Test search from header search bar
+  - Verify keyboard shortcut (/) focuses search
   - Handle "no results" gracefully
-
-## Priority 5: Mobile Polish & Edge Cases
-- [ ] **Handle deleted/missing products gracefully**:
-  - Reservations referencing deleted products should show "Product unavailable"
-  - Orders should handle missing product data gracefully
-- [ ] **Verify suspended farms are filtered**:
-  - Ensure SUSPENDED/REMOVED farms don't appear in /explore and /categories
+- [ ] **Verify suspended farm filtering**:
+  - Ensure SUSPENDED/REMOVED farms don't appear in /explore
   - Ensure suspended farms still accessible to owners
-- [ ] **Mobile touch targets**:
-  - Verify all touch targets are 44px+ on mobile
-  - Test checkout flow on mobile devices
 
 ---
 
 ## Completed (Previous Sprints)
 
 - ✅ Build issues: node_modules reinstall, @types/node added
-- ✅ Product availability UI: badges, disabled add-to-cart for unavailable
+- ✅ Product availability UI: badges, disabled add-to-cart
 - ✅ Mobile navigation: hamburger menu, 44px+ touch targets
 - ✅ Open Graph meta tags for social sharing
 - ✅ Cart page with localStorage persistence
 - ✅ Dashboard wired to Prisma database
 - ✅ Checkout confirmation page
-- ✅ Reservations API and dashboard page (confirm/decline)
+- ✅ Reservations API and dashboard page
 - ✅ Customer orders tracking page (/orders)
 - ✅ Admin farms page with search and status badges
-- ✅ Admin farm status update API (/api/admin/farms/[id]/status)
-- ✅ Payment link display on farm pages
-- ✅ Categories and explore pages with search
-- ✅ Waitlist dashboard: position, notified status, notify button
-- ✅ User order history in profile (/api/orders/me)
-- ✅ Admin farm moderation (Ban/Activate actions)
-- ✅ Global search (just added - verify in this sprint)
-- ✅ Email library added (src/lib/email.ts - wire up in this sprint)
-- ✅ Keyboard shortcut (/) to focus search input
-- ✅ Mobile touch targets (44px+) on cart and reservation forms
+- ✅ Admin farm status update API
+- ✅ Categories and explore pages
+- ✅ Waitlist dashboard with notify button
+- ✅ User order history in profile
+- ✅ Admin farm moderation (Ban/Activate)
+- ✅ Global search
+- ✅ Email library added (src/lib/email.ts)
+- ✅ Keyboard shortcut (/) to focus search
+- ✅ Mobile touch targets (44px+)
 
 ---
 
@@ -84,7 +76,8 @@
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Build | ✅ | Passing - TypeScript clean |
+| Build | ✅ | TypeScript clean |
+| Core Pages | ✅ | All tested pages return 200 |
 | Cart | ✅ | Full localStorage persistence |
 | Product Availability | ✅ | Badges + disabled buttons |
 | Mobile Nav | ✅ | Hamburger menu, 44px targets |
@@ -92,13 +85,14 @@
 | Dashboard Data | ✅ | Prisma queries wired |
 | Order Tracking | ✅ | Works with email lookup |
 | Admin Farm Status | ✅ | API + frontend wired |
-| Global Search | ✅ | Just added (verify works) |
+| Global Search | ✅ | Implemented |
 | Keyboard Shortcuts | ✅ | / focuses search |
-| Auth System | ⚠️ | Demo mode only - needs real users |
-| Empty States | ❌ | Missing in dashboard sections |
+| Auth System | ⚠️ | Demo mode - needs real users |
+| Empty States | ❌ | Missing in dashboard |
 | Error Handling | ⚠️ | Basic - needs improvement |
-| Email Notifications | ⚠️ | Library exists but not wired |
+| Email Notifications | ❌ | Library exists, not wired |
 | Duplicate Prevention | ❌ | Not implemented |
+| Edge Cases | ⚠️ | Deleted products not handled |
 
 ---
 
@@ -113,10 +107,9 @@
 ## Recent Git Activity
 
 ```
-9e60c5f Sprint: Improve mobile touch targets (44px+) on cart quantity and reservation form buttons
+d53f849 Update task and test documentation
+9e60c5f Sprint: Improve mobile touch targets (44px+)
 a25246b Sprint: Add keyboard shortcut (/) to focus search input
 79bc292 Update test report
 97d7a63 Sprint: Add global search + wire up email notifications
-27a939e Sprint: Update task list - mark completed items
-35e14bb Sprint: Add user order history to profile + admin farm moderation
 ```

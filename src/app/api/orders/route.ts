@@ -46,25 +46,45 @@ export async function GET(request: Request) {
     });
 
     // Transform the data for the response
-    const orders = reservations.map((res) => ({
-      id: res.id,
-      productName: res.product.name,
-      productCategory: res.product.category,
-      productPrice: res.product.price,
-      productUnit: res.product.unit,
-      quantity: res.quantity,
-      status: res.status,
-      message: res.message,
-      createdAt: res.createdAt.toISOString(),
-      updatedAt: res.updatedAt.toISOString(),
-      farm: {
-        name: res.product.farm.name,
-        slug: res.product.farm.slug,
-        emoji: res.product.farm.emoji,
-        location: res.product.farm.location,
-        phone: res.product.farm.phone,
-      },
-    }));
+    const orders = reservations.map((res) => {
+      // Handle case where product might be deleted
+      if (!res.product) {
+        return {
+          id: res.id,
+          productName: "Product unavailable",
+          productCategory: null,
+          productPrice: null,
+          productUnit: null,
+          quantity: res.quantity,
+          status: res.status,
+          message: res.message,
+          createdAt: res.createdAt.toISOString(),
+          updatedAt: res.updatedAt.toISOString(),
+          farm: null,
+          productAvailable: false,
+        }
+      }
+      return {
+        id: res.id,
+        productName: res.product.name,
+        productCategory: res.product.category,
+        productPrice: res.product.price,
+        productUnit: res.product.unit,
+        quantity: res.quantity,
+        status: res.status,
+        message: res.message,
+        createdAt: res.createdAt.toISOString(),
+        updatedAt: res.updatedAt.toISOString(),
+        farm: {
+          name: res.product.farm.name,
+          slug: res.product.farm.slug,
+          emoji: res.product.farm.emoji,
+          location: res.product.farm.location,
+          phone: res.product.farm.phone,
+        },
+        productAvailable: res.product.isActive,
+      }
+    });
 
     return NextResponse.json({ orders });
   } catch (error) {

@@ -15,14 +15,18 @@ interface Order {
   message?: string
   quantity: number
   createdAt: string
-  product?: {
+  productName: string
+  productCategory?: string
+  productPrice?: number | null
+  productUnit?: string
+  productAvailable?: boolean
+  farm?: {
     name: string
-    price?: number
-    farm?: {
-      name: string
-      location: string
-    }
-  }
+    slug?: string
+    emoji?: string
+    location?: string
+    phone?: string
+  } | null
 }
 
 interface OrdersClientProps {
@@ -81,8 +85,14 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                 {/* Order Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <h3 className="font-semibold text-lg truncate">
-                      {order.product?.name || "Unknown Product"}
+                    <h3 className={`font-semibold text-lg truncate ${!order.productAvailable ? "text-red-500" : ""}`}>
+                      {order.productName}
+                      {!order.productAvailable && (
+                        <Badge className="ml-2 bg-red-100 text-red-700 border-red-200">
+                          <Package className="w-3 h-3 mr-1" />
+                          Unavailable
+                        </Badge>
+                      )}
                     </h3>
                     <Badge className={status.className}>
                       <StatusIcon className="w-3 h-3 mr-1" />
@@ -108,9 +118,9 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                 {/* Farm Info */}
                 <div className="text-sm text-gray-500 sm:text-right order-last sm:order-none mb-2 sm:mb-0">
                   <p className="font-medium text-gray-700">
-                    {order.product?.farm?.name || "Unknown Farm"}
+                    {order.farm?.name || "Unknown Farm"}
                   </p>
-                  <p className="text-xs">{order.product?.farm?.location || "-"} • Qty: {order.quantity || 1}</p>
+                  <p className="text-xs">{order.farm?.location || "-"} • Qty: {order.quantity || 1}</p>
                 </div>
 
                 {/* Status Actions */}
