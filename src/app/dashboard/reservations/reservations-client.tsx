@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import Link from "next/link"
 import { CheckCircle, XCircle, MoreHorizontal, AlertTriangle, Package } from "lucide-react"
 import { toast } from "sonner"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -182,9 +183,14 @@ export function ReservationsClient({ initialReservations }: ReservationsClientPr
             </div>
           ) : reservations.length === 0 ? (
             <div className="py-12 text-center">
-              <Package className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+              <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Package className="w-8 h-8 text-amber-400" />
+              </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No reservations yet</h3>
-              <p className="text-gray-500">When customers reserve your products, they'll appear here.</p>
+              <p className="text-gray-500 mb-6">When customers reserve your products, they'll appear here.</p>
+              <Link href="/dashboard/products">
+                <Button variant="outline">View Products</Button>
+              </Link>
             </div>
           ) : (
             <div className="space-y-4">

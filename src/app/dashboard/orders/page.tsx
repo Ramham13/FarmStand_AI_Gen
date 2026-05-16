@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -96,11 +97,16 @@ async function OrdersContent() {
       {transformedOrders.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <Package className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package className="w-8 h-8 text-blue-400" />
+            </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No orders yet</h3>
-            <p className="text-gray-500 max-w-sm mx-auto">
+            <p className="text-gray-500 max-w-sm mx-auto mb-6">
               Orders will appear here when customers make reservations. Share your farm link to start receiving orders.
             </p>
+            <Link href="/explore">
+              <Button variant="outline">Browse Farms</Button>
+            </Link>
           </CardContent>
         </Card>
       ) : (

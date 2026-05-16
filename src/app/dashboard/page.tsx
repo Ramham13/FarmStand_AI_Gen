@@ -66,57 +66,28 @@ export default async function DashboardPage() {
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-12">
           <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-          <Card>
-            <CardHeader>
-              <CardTitle>Welcome to Virtual Farm Stand!</CardTitle>
-              <CardDescription>Set up your farm to start selling</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-gray-600">Create your farm profile to start listing products for customers near you.</p>
-              <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Package className="w-4 h-4" />
-                      Products
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">0</div>
-                    <p className="text-xs text-gray-500">No products yet</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <ShoppingCart className="w-4 h-4" />
-                      Orders
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">0</div>
-                    <p className="text-xs text-gray-500">No orders yet</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      Waitlist
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">0</div>
-                    <p className="text-xs text-gray-500">No waitlist yet</p>
-                  </CardContent>
-                </Card>
+          <Card className="max-w-2xl mx-auto">
+            <CardContent className="pt-8 pb-8 text-center">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Package className="w-10 h-10 text-green-600" />
               </div>
-              <div className="mt-6 flex gap-4 flex-wrap">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl">Welcome to Virtual Farm Stand!</CardTitle>
+                <CardDescription className="text-base">Set up your farm to start selling fresh products to your community</CardDescription>
+              </CardHeader>
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                Create your farm profile, add your products, and start connecting with customers who want fresh, local farm produce.
+              </p>
+              <div className="flex gap-4 justify-center flex-wrap">
                 <Link href="/dashboard/farm/new">
-                  <Button className="bg-green-600 hover:bg-green-700">Create Your Farm</Button>
+                  <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                    Create Your Farm
+                  </Button>
                 </Link>
                 <Link href="/explore">
-                  <Button variant="outline">Browse Farms</Button>
+                  <Button size="lg" variant="outline">
+                    Browse Farms
+                  </Button>
                 </Link>
               </div>
             </CardContent>
