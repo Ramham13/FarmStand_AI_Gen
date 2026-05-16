@@ -115,6 +115,26 @@ export const getFarmBySlug = cache(async (slug: string) => {
   }
 })
 
+/**
+ * Check if a farm exists but is not active (suspended/banned)
+ * Returns farm basic info if found, null if farm doesn't exist at all
+ */
+export const getFarmStatus = cache(async (slug: string) => {
+  const farm = await prisma.farm.findUnique({
+    where: { slug },
+    select: { id: true, name: true, slug: true, status: true, emoji: true },
+  })
+
+  if (!farm) return { exists: false, status: null }
+
+  return {
+    exists: true,
+    status: farm.status,
+    name: farm.name,
+    emoji: farm.emoji,
+  }
+})
+
 function getFarmAvailability(productAvailabilities: string[]): string {
   if (productAvailabilities.some((a) => a === "AVAILABLE")) return "in_stock"
   if (productAvailabilities.some((a) => a === "SEASONAL")) return "seasonal"

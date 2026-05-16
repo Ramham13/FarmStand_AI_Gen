@@ -1,4 +1,4 @@
-# Sprint Tasks - Saturday, May 16th, 2026 - 1:06 AM UTC
+# Sprint Tasks - Saturday, May 16th, 2026 - 1:12 AM UTC
 
 ## Priority 1: Real Authentication System
 - [ ] **Wire up database user authentication**:
@@ -34,10 +34,10 @@
   - Lazy loading on product images
   - Proper image sizing/placeholders
 
-## Priority 5: Email Preferences (Lower Priority)
-- [ ] **Add email preferences to user profile**:
-  - Allow users to toggle notification types
-  - Currently email.ts IS wired to checkout, reservations, waitlist APIs
+## Priority 5: Email Preferences (Complete)
+- [x] **Add email preferences to user profile**:
+  - Allow users to toggle notification types ✅ (localStorage-based)
+  - Currently email.ts IS wired to checkout, reservations, waitlist APIs ✅
 
 ---
 
@@ -102,6 +102,8 @@
 ## Recent Git Activity
 
 ```
+5af16cd Sprint: Add email preferences to profile page and improve loading skeleton
+49817d3 Sprint: Auth pages + reservation form updates
 57f25c1 Sprint: Improve dashboard empty states with better UX
 5850577 Ready for deployment
 d53f849 Update task and test documentation
@@ -109,5 +111,4 @@ d53f849 Update task and test documentation
 a25246b Sprint: Add keyboard shortcut (/) to focus search input
 79bc292 Update test report
 97d7a63 Sprint: Add global search + wire up email notifications
-27a939e Sprint: Update task list - mark completed items
 ```

@@ -2,7 +2,10 @@ import { notFound } from "next/navigation"
 import { Metadata } from "next"
 import { FarmPageClient } from "./farm-page-client"
 import { CheckoutForm } from "@/components/farm/checkout-form"
-import { getFarmBySlug } from "@/lib/farms"
+import { getFarmBySlug, getFarmStatus } from "@/lib/farms"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { FarmClosedMessage } from "./farm-closed-message"
 
 export async function generateMetadata({ 
   params 
@@ -58,6 +61,20 @@ export default async function FarmPage({
 }) {
   const { slug } = await params
   const { checkout, productId, productName, price, unit } = await searchParams
+  
+  // First check if farm exists and its status
+  const farmStatus = await getFarmStatus(slug)
+  
+  // Farm doesn't exist at all - show 404
+  if (!farmStatus.exists) {
+    notFound()
+  }
+  
+  // Farm exists but is suspended/banned - show friendly message
+  if (farmStatus.status === "SUSPENDED" || farmStatus.status === "BANNED") {
+    return <FarmClosedMessage status={farmStatus.status} name={farmStatus.name} emoji={farmStatus.emoji || "🌾"} />
+  }
+  
   const farm = await getFarmBySlug(slug)
 
   if (!farm) {
