@@ -1,18 +1,18 @@
 # Sprint Tasks - Saturday, May 16th, 2026 - 12:07 AM UTC
 
 ## Priority 1: User Dashboard Order History
-- [ ] **Add "My Orders" to user dashboard** (`/profile`):
-  - Currently `/orders` requires email lookup each visit
-  - Persist authenticated user's order history in dashboard
-  - Show PENDING/CONFIRMED/DECLINED status with visual indicators
-  - Include quick actions (view farm, contact farm)
+- [x] **Add "My Orders" to user dashboard** (`/profile`):
+  - ✅ Currently `/orders` requires email lookup each visit
+  - ✅ Persist authenticated user's order history in dashboard
+  - ✅ Show PENDING/CONFIRMED/DECLINED status with visual indicators
+  - ✅ Include quick actions (view farm, contact farm)
 
 ## Priority 2: Admin Farm Moderation Actions
-- [ ] **Implement farm status update API**:
-  - Admin can suspend/activate farms (`/api/admin/farms/[id]/status`)
-  - Admin can remove farms (set status to REMOVED)
-  - Frontend: wire up Ban button in admin/farms page to call API
-  - Verify suspended farms don't appear in public listings
+- [x] **Implement farm status update API**:
+  - ✅ Admin can suspend/activate farms (`/api/admin/farms/[id]/status`)
+  - ✅ Admin can remove farms (set status to REMOVED)
+  - ✅ Frontend: wire up Ban button in admin/farms page to call API
+  - ⏳ Verify suspended farms don't appear in public listings
 
 ## Priority 3: Waitlist UX Polish
 - [ ] **Improve waitlist management**:
