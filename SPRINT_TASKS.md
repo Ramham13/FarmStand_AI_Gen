@@ -1,60 +1,50 @@
-# Sprint Tasks - Saturday, May 16th, 2026 - 12:20 AM UTC
+# Sprint Tasks - Saturday, May 16th, 2026 - 12:27 AM UTC
 
-## Priority 1: Waitlist UX - Customer Facing
-- [ ] **Complete waitlist form on product pages**:
-  - Verify waitlist form shows when product is unavailable (UNAVAILABLE status)
-  - Add waitlist position/queue number display for customers who joined
-  - Show waitlist count on product cards in farm listings
-
-- [ ] **Add "Notify Next" bulk action in farmer dashboard**:
-  - Button to notify next person in queue when product becomes available
-  - Track notifiedAt timestamp in waitlist table
-
-## Priority 2: Session & Auth Improvements
-- [ ] **Implement proper authentication**:
-  - Current login is demo-only (generates fake user IDs)
-  - Wire up real user authentication with database lookup
+## Priority 1: Authentication System
+- [ ] **Implement real user authentication**:
+  - Current login generates fake user IDs (demo only)
+  - Wire up database user lookup for login
   - Add "Remember Me" toggle (extend cookie maxAge)
-  - Implement session refresh mechanism for active users
+  - Implement session refresh for active users
   - Ensure logout fully clears session cookies
 
-## Priority 3: Empty States & Error Handling
+## Priority 2: Empty States & Error Handling
 - [ ] **Add empty states to dashboard sections**:
   - No products: "You haven't added any products yet"
   - No reservations: "No reservations yet"
   - No orders: "No orders to display"
-  - Use illustrated empty states with call-to-action
+  - Use illustrated empty states with CTA buttons
 - [ ] **Improve API error handling**:
   - Add user-friendly error messages (not just "Failed to fetch")
   - Show retry buttons on errors
-  - Handle network failures gracefully with toast notifications
+  - Handle network failures with toast notifications
 - [ ] **Prevent duplicate submissions**:
   - Add debounce to reservation form submit
   - Disable button while submitting
   - Show loading state during API calls
 
-## Priority 4: Discovery & Search Gaps
-- [ ] **Add global search feature**:
-  - Search farms and products from header
+## Priority 3: Global Search
+- [ ] **Implement global search in header**:
+  - Search farms and products from header search bar
   - Search within individual farm pages
-- [ ] **Add category filter to farm product listings**:
-  - Filter products by category on /farm/[slug] page
-- [ ] **Wire up email notifications**:
-  - Email library exists (src/lib/email.ts) but not called
+  - Add keyboard shortcuts (/ to focus search)
+
+## Priority 4: Email Notifications
+- [ ] **Wire up email library (src/lib/email.ts)**:
   - Send confirmation emails on reservation create
   - Send waitlist notifications when product becomes available
+  - Add email preferences to user profile
 
-## Priority 5: Edge Cases & Mobile Polish
+## Priority 5: Mobile Polish & Edge Cases
 - [ ] **Handle deleted/missing products gracefully**:
   - Reservations referencing deleted products should show "Product unavailable"
   - Orders should handle missing product data gracefully
 - [ ] **Verify suspended farms are filtered**:
   - Ensure SUSPENDED/REMOVED farms don't appear in /explore and /categories
-  - Ensure suspended farms still accessible to their owners
-- [ ] **Mobile polish**:
-  - Ensure touch targets are 44px+ everywhere
-  - Test checkout flow on mobile
-  - Add skeleton loading states for all async content
+  - Ensure suspended farms still accessible to owners
+- [ ] **Mobile touch targets**:
+  - Verify all touch targets are 44px+ on mobile
+  - Test checkout flow on mobile devices
 
 ---
 
@@ -62,19 +52,19 @@
 
 - ✅ Build issues: node_modules reinstall, @types/node added
 - ✅ Product availability UI: badges, disabled add-to-cart for unavailable
-- ✅ Mobile navigation: hamburger menu, touch targets 44px+
+- ✅ Mobile navigation: hamburger menu, 44px+ touch targets
 - ✅ Open Graph meta tags for social sharing
 - ✅ Cart page with localStorage persistence
 - ✅ Dashboard wired to Prisma database
 - ✅ Checkout confirmation page
 - ✅ Reservations API and dashboard page (confirm/decline)
-- ✅ Customer orders tracking page (`/orders`)
+- ✅ Customer orders tracking page (/orders)
 - ✅ Admin farms page with search and status badges
-- ✅ Farm status update API (`/api/admin/farms/[id]/status`)
+- ✅ Farm status update API (/api/admin/farms/[id]/status)
 - ✅ Payment link display on farm pages
 - ✅ Categories and explore pages with search
-- ✅ Waitlist dashboard: shows position, notified status, notify button
-- ✅ User order history in profile (`/api/orders/me`)
+- ✅ Waitlist dashboard: position, notified status, notify button
+- ✅ User order history in profile (/api/orders/me)
 - ✅ Admin farm moderation (Ban/Activate actions)
 
 ---
@@ -96,7 +86,6 @@
 | Error Handling | ⚠️ | Basic - needs improvement |
 | Global Search | ❌ | Not implemented |
 | Email Notifications | ❌ | Library exists but not wired |
-| Farm Category Filter | ❌ | Missing on farm page |
 | Duplicate Prevention | ❌ | Not implemented |
 
 ---

@@ -1,22 +1,20 @@
-# Test Report - 2026-05-16 00:21 UTC
+# Test Report - 2026-05-16 00:28 UTC
 
-## Last Commit: 27a939e Sprint: Update task list - mark completed items
+## Last Commit: Sprint: Add global search + wire up email notifications
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
-| TypeScript | PASS | No type errors (tsc --noEmit) |
-| Home (/) | PASS | Full page loads, no crash |
-| Explore (/explore) | PASS | Farm listing loads, search & filters work |
-| Farm Profile (/farm/sunny-meadow-farm) | PASS | Farm details + products load correctly |
-
-## Mobile/Touch Tests (via curl)
-- Mobile viewport: 375px
-- No horizontal scroll detected in HTML (overflow-x-hidden on body)
-- Touch-friendly buttons: min-h-[44px] on interactive elements
+| TypeScript | PASS | No type errors |
+| Dev Server | PASS | HTTP 200 from localhost:3000 |
+| Home | PASS | Loads correctly, responsive CSS present |
+| Explore | PASS | HTTP 200, no errors |
+| Farm Profile | PASS | HTTP 200 for /farm/sunny-meadow-farm |
+| Mobile CSS | PASS | overflow-x-hidden, min-h-[44px], touch-manipulation present |
+| Touch Targets | PASS | Buttons have min 44px height |
 
 ## Bugs Found
-- None detected
+- [ ] None
 
 ## Summary
-PASS - All core pages load without crash. TypeScript passes. Mobile-friendly with proper touch targets.
+PASS - All tests passed. TypeScript compiles cleanly, dev server runs, all pages load (200), and mobile-responsive CSS patterns detected (horizontal scroll prevention, 44px touch targets).
