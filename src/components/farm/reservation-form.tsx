@@ -97,7 +97,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, quantity: Math.max(1, formData.quantity - 1) })}
-                className="w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100"
+                className="min-w-11 min-h-11 w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100 touch-manipulation"
               >
                 −
               </button>
@@ -105,7 +105,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, quantity: Math.min(10, formData.quantity + 1) })}
-                className="w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100"
+                className="min-w-11 min-h-11 w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100 touch-manipulation"
               >
                 +
               </button>

@@ -29,7 +29,7 @@ function CartItemRow({ item, onUpdateQuantity, onRemove }: { item: CartItem; onU
         <div className="flex items-center gap-2 bg-gray-100 rounded-full px-2 py-1">
           <button
             onClick={() => onUpdateQuantity(item.quantity - 1)}
-            className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-200 touch-manipulation"
+            className="min-w-11 min-h-11 w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-200 touch-manipulation"
             aria-label="Decrease quantity"
           >
             <Minus className="w-3 h-3" />
@@ -37,7 +37,7 @@ function CartItemRow({ item, onUpdateQuantity, onRemove }: { item: CartItem; onU
           <span className="w-6 text-center text-sm">{item.quantity}</span>
           <button
             onClick={() => onUpdateQuantity(item.quantity + 1)}
-            className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-200 touch-manipulation"
+            className="min-w-11 min-h-11 w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-200 touch-manipulation"
             aria-label="Increase quantity"
           >
             <Plus className="w-3 h-3" />
