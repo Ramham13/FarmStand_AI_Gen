@@ -1,114 +1,23 @@
-# Sprint Tasks - Saturday, May 16th, 2026 - 1:12 AM UTC
+# Sprint Tasks - 2026-05-16 01:34 UTC
 
-## Priority 1: Real Authentication System
-- [ ] **Wire up database user authentication**:
-  - Login currently generates fake user IDs (src/lib/auth-server.ts checks for "demo-")
-  - Implement database user lookup for login
-  - Add proper session/cookie handling
-  - Ensure logout fully clears session cookies
+## Priority 1: Authentication & Account Security
+- [ ] Implement password reset flow - email-based reset link, new password page, proper auth error handling
+- [ ] Add email verification on signup - send verification email, require verified email before making reservations
 
-## Priority 2: Error Handling & User Feedback
-- [ ] **Improve error handling**:
-  - Replace generic "Failed to fetch" with user-friendly messages
-  - Add retry buttons on API failures
-  - Show toast notifications for network errors
-- [ ] **Prevent duplicate submissions**:
-  - Add debounce to reservation form submit
-  - Disable button while submitting
-  - Show loading state during API calls
+## Priority 2: Core E-commerce Features
+- [ ] Add ratings/reviews system - customers can leave star ratings + text reviews for farms (needs new Review model, API, and UI components)
 
-## Priority 3: Edge Cases & Data Integrity
-- [ ] **Handle deleted/missing products**:
-  - Reservations referencing deleted products show "Product unavailable"
-  - Products page handles missing product data gracefully
-- [ ] **Handle deleted farms**:
-  - Redirect to /explore if farm slug no longer exists
-  - Show friendly message for suspended farms
+## Priority 3: UX Improvements
+- [x] Add product search within farm pages - filter products by name on individual farm pages ✅ DONE
+- [x] Add in-app notification center - view reservation status, waitlist updates (complements existing email notifications) ✅ DONE (UI exists, local storage based)
+- [ ] Refine cart drawer mobile experience - full-screen slide-up on small screens
 
-## Priority 4: Loading States & Performance
-- [ ] **Add loading skeletons**:
-  - Product grid loading state
-  - Dashboard sections loading state
-  - Explore page loading state
-- [ ] **Optimize images**:
-  - Lazy loading on product images
-  - Proper image sizing/placeholders
+## Priority 4: Mobile & Performance
+- [x] Lazy load product images with blur placeholder ✅ DONE (BlurImage component)
+- [x] Add skeleton loading states for farm/product detail pages ✅ DONE (partial - needs refinement)
+- [ ] Optimize cart drawer for mobile (slide-up fullscreen on small screens)
 
-## Priority 5: Email Preferences (Complete)
-- [x] **Add email preferences to user profile**:
-  - Allow users to toggle notification types ✅ (localStorage-based)
-  - Currently email.ts IS wired to checkout, reservations, waitlist APIs ✅
-
----
-
-## Completed (Previous Sprints)
-
-- ✅ Build issues: node_modules reinstall, @types/node added
-- ✅ Product availability UI: badges, disabled add-to-cart
-- ✅ Mobile navigation: hamburger menu, 44px+ touch targets
-- ✅ Open Graph meta tags for social sharing
-- ✅ Cart page with localStorage persistence
-- ✅ Dashboard wired to Prisma database
-- ✅ Checkout confirmation page
-- ✅ Reservations API and dashboard page
-- ✅ Customer orders tracking page (/orders)
-- ✅ Admin farms page with search and status badges
-- ✅ Admin farm status update API
-- ✅ Categories and explore pages
-- ✅ Waitlist dashboard with notify button
-- ✅ User order history in profile
-- ✅ Admin farm moderation (Ban/Activate)
-- ✅ Global search
-- ✅ Email library wired to APIs (checkout, reservations, waitlist)
-- ✅ Keyboard shortcut (/) to focus search
-- ✅ Mobile touch targets (44px+)
-- ✅ Empty states on dashboard
-
----
-
-## Codebase Analysis
-
-| Area | Status | Notes |
-|------|--------|-------|
-| Build | ✅ | TypeScript clean |
-| Core Pages | ✅ | All tested pages return 200 |
-| Cart | ✅ | Full localStorage persistence |
-| Product Availability | ✅ | Badges + disabled buttons |
-| Mobile Nav | ✅ | Hamburger menu, 44px targets |
-| OG Tags | ✅ | Added to product/farm pages |
-| Dashboard Data | ✅ | Prisma queries wired |
-| Order Tracking | ✅ | Works with email lookup |
-| Admin Farm Status | ✅ | API + frontend wired |
-| Global Search | ✅ | Implemented |
-| Keyboard Shortcuts | ✅ | / focuses search |
-| Empty States | ✅ | Dashboard complete |
-| Email Notifications | ✅ | Wired to checkout/reservations/waitlist |
-| Auth System | ❌ | Demo mode - needs real users |
-| Error Handling | ❌ | Basic - needs improvement |
-| Form Protection | ❌ | Not implemented |
-| Edge Cases | ❌ | Deleted products/farms not handled |
-| Loading States | ⚠️ | Skeleton component exists, not widely used |
-
----
-
-## Stack
-
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui
-- **Database**: PostgreSQL (Neon)
-- **ORM**: Prisma
-
-## Recent Git Activity
-
-```
-5af16cd Sprint: Add email preferences to profile page and improve loading skeleton
-49817d3 Sprint: Auth pages + reservation form updates
-57f25c1 Sprint: Improve dashboard empty states with better UX
-5850577 Ready for deployment
-d53f849 Update task and test documentation
-9e60c5f Sprint: Improve mobile touch targets (44px+) on cart quantity and reservation form buttons
-a25246b Sprint: Add keyboard shortcut (/) to focus search input
-79bc292 Update test report
-97d7a63 Sprint: Add global search + wire up email notifications
-```
+## Priority 5: Technical Debt & Security
+- [ ] Add proper error boundaries per route (already has basic error.tsx, but per-route error handling for API failures)
+- [ ] Set up cron job for cleaning old expired reservations (auto-cancel after 24h)
+- [ ] Add rate limiting on reservation API endpoints

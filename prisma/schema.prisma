@@ -30,6 +30,7 @@ model Farm {
   products           Product[]
   userId             String    @unique
   user               User      @relation(fields: [userId], references: [id])
+  favorites          Favorite[]
 
   @@index([status])
 }
@@ -90,6 +91,20 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   farms     Farm[]
+  favorites Favorite[]
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  farmId    String
+  farm      Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, farmId])
+  @@index([userId])
+  @@index([farmId])
 }
 
 model Report {

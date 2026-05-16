@@ -1,25 +1,24 @@
-# Test Report - 2026-05-16 01:14 UTC
+# Test Report - 2026-05-16 01:36 UTC
 
-## Last Commit: 5af16cd - Sprint: Add email preferences to profile page and improve loading skeleton
+## Last Commit: 2d3ac2e Sprint: Add edge case handling for suspended/banned farms
 
 ## Tests
 | Page | Status | Notes |
 |------|--------|-------|
-| TypeScript | PASS | No type errors |
-| Dev Server | PASS | Running on localhost:3000 |
-| Home (/) | PASS | Loads with featured farms, search, categories |
-| Explore (/explore) | PASS | Loads with farm listing, category filters |
-| Farm Profile (/farm/sunny-meadow-farm) | PASS | Shows products, contact info, reserve buttons |
-| Mobile Viewport | SKIP | Playwright missing browser libs (libnspr4) |
-
-## Mobile/Touch Checks (Static Analysis)
-- Body has `overflow-x-hidden` - prevents horizontal scroll ✅
-- Touch buttons use `min-h-[44px]` - meets tap target size ✅
-- Category pills use `touch-manipulation` - optimized for touch ✅
-- Mobile menu button present in navbar ✅
+| TypeScript | FAIL | 7 errors in notification-center.tsx - missing exports from @/lib/notifications |
+| Home | PASS | Page loads correctly, no crash |
+| Explore | PASS | Page loads correctly with farm listings |
+| Farm Profile | PASS | Page loads correctly with products |
 
 ## Bugs Found
-- [ ] None detected
+- [ ] **TypeScript Error**: `notification-center.tsx` imports non-existent functions from `@/lib/notifications`:
+  - `getStoredNotifications` (suggested: `useNotifications`)
+  - `markAsRead`
+  - `markAllAsRead`
+  - `clearAllNotifications`
+  - `getUnreadCount`
+  - `formatTimestamp`
+- [ ] **TypeScript Error**: Invalid prop `system` passed to component - does not exist in `Record<NotificationType, Element>`
 
 ## Summary
-PASS - All major functionality working. TypeScript compiles clean, all pages load without errors. Mobile testing skipped due to missing Playwright browser dependencies, but static HTML analysis shows proper mobile-friendly CSS classes are applied.
+FAIL - TypeScript compilation failed. The notification-center.tsx component has broken imports that need to be fixed before merging. Pages render correctly when dev server is running.

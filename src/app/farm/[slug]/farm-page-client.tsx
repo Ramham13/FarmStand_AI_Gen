@@ -1,14 +1,43 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ReservationForm } from "@/components/farm/reservation-form"
 import { WaitlistForm } from "@/components/farm/waitlist-form"
 import { AddToCartButton } from "@/components/cart/add-to-cart-button"
+import { getBlurDataURL } from "@/lib/blur-placeholder"
 import { Search, ArrowUpDown, Package, FolderOpen, Sparkles, MessageSquare, Clock } from "lucide-react"
+
+// BlurImage component with lazy loading and blur placeholder
+function BlurImage({ src, alt, className, priority = false }: { src: string; alt: string; className?: string; priority?: boolean }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const blurDataURL = getBlurDataURL()
+
+  return (
+    <div className={`relative ${isLoading ? 'bg-gray-200 animate-pulse' : ''}`}>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Skeleton className="absolute inset-0" />
+        </div>
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        placeholder="blur"
+        blurDataURL={blurDataURL}
+        className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        onLoad={() => setIsLoading(false)}
+        priority={priority}
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      />
+    </div>
+  )
+}
 
 const availabilityConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   AVAILABLE: { label: "Available", variant: "default" },
@@ -131,10 +160,9 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
       <div className="bg-gradient-to-r from-green-700 to-green-800 text-white">
         {farm.imageUrl && (
           <div className="relative h-32 sm:h-48 md:h-56 w-full overflow-hidden">
-            <Image 
-              src={farm.imageUrl} 
-              alt={farm.name} 
-              fill
+            <BlurImage
+              src={farm.imageUrl}
+              alt={farm.name}
               className="object-cover opacity-40"
             />
           </div>
@@ -300,10 +328,9 @@ export function FarmPageClient({ farm }: FarmPageClientProps) {
                 <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow">
                   <div className={`h-28 sm:h-32 bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
                     {product.imageUrl ? (
-                      <Image 
-                        src={product.imageUrl} 
-                        alt={product.name} 
-                        fill
+                      <BlurImage
+                        src={product.imageUrl}
+                        alt={product.name}
                         className="object-cover"
                       />
                     ) : (

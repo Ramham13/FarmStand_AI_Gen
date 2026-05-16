@@ -72,8 +72,12 @@ export function CartDrawer() {
         onClick={() => setIsCartOpen(false)}
       />
 
-      {/* Drawer */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-xl flex flex-col animate-in slide-in-from-right duration-200">
+      {/* Drawer - side drawer on lg+, fullscreen slide-up on mobile */}
+      <div className="fixed inset-x-0 bottom-0 left-0 right-0 lg:inset-auto lg:right-0 lg:top-0 lg:h-full lg:w-full lg:max-w-md bg-white z-50 shadow-xl flex flex-col rounded-t-2xl lg:rounded-none animate-in slide-in-from-bottom lg:slide-in-from-right duration-200 lg:translate-x-0 lg:h-full h-[85vh] sm:h-[85vh]">
+        {/* Mobile handle bar */}
+        <div className="lg:hidden flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        </div>
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <ShoppingBag className="w-5 h-5" />
