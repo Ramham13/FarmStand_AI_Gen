@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -21,6 +21,7 @@ interface ReservationFormProps {
 export function ReservationForm({ productId, productName }: ReservationFormProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const submitRef = useRef(false) // Prevent double submission
   const [formData, setFormData] = useState({
     customerName: "",
     customerEmail: "",
@@ -31,6 +32,10 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevent double submission
+    if (loading || submitRef.current) return
+    submitRef.current = true
     setLoading(true)
     
     try {
@@ -45,19 +50,29 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
         setOpen(false)
         setFormData({ customerName: "", customerEmail: "", customerPhone: "", message: "", quantity: 1 })
       } else {
-        toast.error("Failed to send request. Please try again.")
+        const data = await res.json().catch(() => ({}))
+        toast.error(data.error || "Failed to send request. Please try again.")
       }
     } catch {
-      toast.error("Please try again.")
+      toast.error("Network error. Please check your connection and try again.")
     } finally {
       setLoading(false)
+      submitRef.current = false
+    }
+  }
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !loading) {
+      setOpen(false)
+    } else if (isOpen) {
+      setOpen(true)
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="w-full bg-green-600 hover:bg-green-700 font-medium">
+        <Button className="w-full bg-green-600 hover:bg-green-700 font-medium disabled:opacity-50">
           Reserve Now
         </Button>
       </DialogTrigger>
@@ -72,6 +87,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               value={formData.customerName}
               onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
               required
+              disabled={loading}
             />
           </div>
           <div>
@@ -81,6 +97,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               value={formData.customerEmail}
               onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
               required
+              disabled={loading}
             />
           </div>
           <div>
@@ -89,6 +106,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               placeholder="Phone (optional)"
               value={formData.customerPhone}
               onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+              disabled={loading}
             />
           </div>
           <div>
@@ -97,7 +115,8 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, quantity: Math.max(1, formData.quantity - 1) })}
-                className="min-w-11 min-h-11 w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100 touch-manipulation"
+                disabled={loading}
+                className="min-w-11 min-h-11 w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100 touch-manipulation disabled:opacity-50"
               >
                 −
               </button>
@@ -105,7 +124,8 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, quantity: Math.min(10, formData.quantity + 1) })}
-                className="min-w-11 min-h-11 w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100 touch-manipulation"
+                disabled={loading}
+                className="min-w-11 min-h-11 w-10 h-10 rounded-full border flex items-center justify-center text-lg hover:bg-gray-100 touch-manipulation disabled:opacity-50"
               >
                 +
               </button>
@@ -116,6 +136,7 @@ export function ReservationForm({ productId, productName }: ReservationFormProps
               placeholder="Message (optional)"
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              disabled={loading}
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>

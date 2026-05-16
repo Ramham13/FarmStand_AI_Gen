@@ -7,16 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevent double submission
+    if (loading) return
+    
     setError("")
     setLoading(true)
 
@@ -24,7 +30,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe }),
       })
 
       const data = await res.json()
@@ -33,19 +39,16 @@ export default function LoginPage() {
         // Store user info in localStorage
         localStorage.setItem("user", JSON.stringify(data.user))
         
-        // Set cookie for server-side auth
-        document.cookie = `auth-user-id=${data.user.id}; path=/; max-age=${7 * 24 * 60 * 60}`
-        
         // Small delay to ensure cookie is set before navigation
         setTimeout(() => {
           router.push("/dashboard")
         }, 100)
       } else {
         setError(data.error || "Login failed")
+        setLoading(false)
       }
     } catch {
-      setError("Something went wrong")
-    } finally {
+      setError("Something went wrong. Please try again.")
       setLoading(false)
     }
   }
@@ -71,6 +74,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
+                autoComplete="email"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -82,9 +87,26 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
+                autoComplete="current-password"
+                disabled={loading}
               />
             </div>
-            <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="rememberMe"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                disabled={loading}
+              />
+              <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
+                Remember me for 30 days
+              </Label>
+            </div>
+            <Button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50"
+            >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
             <p className="text-center text-sm text-gray-600">

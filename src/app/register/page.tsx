@@ -18,6 +18,10 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevent double submission
+    if (loading) return
+    
     setError("")
 
     if (!name || !email || !password) {
@@ -28,15 +32,13 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const res = await fetch("/api/onboarding", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
           password,
           farmName: name,
-          slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          location: "",
         }),
       })
 
@@ -48,19 +50,15 @@ export default function RegisterPage() {
           id: data.userId,
           email,
           role: "FARMER",
-          farm: { id: data.farmId, name, slug: data.farmSlug },
         }))
         
-        // Set cookie for server-side auth
-        document.cookie = `auth-user-id=${data.userId}; path=/; max-age=${7 * 24 * 60 * 60}`
-        
-        router.push("/onboarding")
+        router.push("/dashboard")
       } else {
         setError(data.error || "Registration failed")
+        setLoading(false)
       }
     } catch {
-      setError("Something went wrong")
-    } finally {
+      setError("Something went wrong. Please try again.")
       setLoading(false)
     }
   }
@@ -85,6 +83,8 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required 
+                autoComplete="organization"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -96,6 +96,8 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
+                autoComplete="email"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -107,9 +109,15 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
+                autoComplete="new-password"
+                disabled={loading}
               />
             </div>
-            <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700">
+            <Button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50"
+            >
               {loading ? "Creating account..." : "Create Account"}
             </Button>
             <p className="text-center text-sm text-gray-600">

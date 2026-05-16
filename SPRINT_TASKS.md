@@ -1,50 +1,43 @@
-# Sprint Tasks - Saturday, May 16th, 2026 - 12:48 AM UTC
+# Sprint Tasks - Saturday, May 16th, 2026 - 1:06 AM UTC
 
 ## Priority 1: Real Authentication System
 - [ ] **Wire up database user authentication**:
-  - Login currently generates fake user IDs (demo only)
+  - Login currently generates fake user IDs (src/lib/auth-server.ts checks for "demo-")
   - Implement database user lookup for login
   - Add proper session/cookie handling
-  - Implement "Remember Me" toggle
   - Ensure logout fully clears session cookies
 
-## Priority 2: Empty States & Dashboard UX
-- [ ] **Add empty states to dashboard sections**:
-  - No products: "You haven't added any products yet"
-  - No reservations: "No reservations yet"
-  - No orders: "No orders to display"
-  - Use illustrated empty states with CTA buttons
+## Priority 2: Error Handling & User Feedback
 - [ ] **Improve error handling**:
   - Replace generic "Failed to fetch" with user-friendly messages
   - Add retry buttons on API failures
   - Show toast notifications for network errors
-
-## Priority 3: Email Notifications
-- [ ] **Wire up email library (src/lib/email.ts exists - 14KB)**:
-  - Send reservation confirmation emails
-  - Send waitlist notifications when product available
-  - Add email preferences to user profile
-- [ ] **Test email delivery**:
-  - Verify email sends in development
-  - Handle failures gracefully
-
-## Priority 4: Form Submit Protection & Edge Cases
 - [ ] **Prevent duplicate submissions**:
   - Add debounce to reservation form submit
   - Disable button while submitting
   - Show loading state during API calls
+
+## Priority 3: Edge Cases & Data Integrity
 - [ ] **Handle deleted/missing products**:
   - Reservations referencing deleted products show "Product unavailable"
-  - Orders handle missing product data gracefully
+  - Products page handles missing product data gracefully
+- [ ] **Handle deleted farms**:
+  - Redirect to /explore if farm slug no longer exists
+  - Show friendly message for suspended farms
 
-## Priority 5: Mobile & Search Polish
-- [ ] **Verify global search implementation works**:
-  - Test search from header search bar
-  - Verify keyboard shortcut (/) focuses search
-  - Handle "no results" gracefully
-- [ ] **Verify suspended farm filtering**:
-  - Ensure SUSPENDED/REMOVED farms don't appear in /explore
-  - Ensure suspended farms still accessible to owners
+## Priority 4: Loading States & Performance
+- [ ] **Add loading skeletons**:
+  - Product grid loading state
+  - Dashboard sections loading state
+  - Explore page loading state
+- [ ] **Optimize images**:
+  - Lazy loading on product images
+  - Proper image sizing/placeholders
+
+## Priority 5: Email Preferences (Lower Priority)
+- [ ] **Add email preferences to user profile**:
+  - Allow users to toggle notification types
+  - Currently email.ts IS wired to checkout, reservations, waitlist APIs
 
 ---
 
@@ -66,9 +59,10 @@
 - ✅ User order history in profile
 - ✅ Admin farm moderation (Ban/Activate)
 - ✅ Global search
-- ✅ Email library added (src/lib/email.ts)
+- ✅ Email library wired to APIs (checkout, reservations, waitlist)
 - ✅ Keyboard shortcut (/) to focus search
 - ✅ Mobile touch targets (44px+)
+- ✅ Empty states on dashboard
 
 ---
 
@@ -87,12 +81,13 @@
 | Admin Farm Status | ✅ | API + frontend wired |
 | Global Search | ✅ | Implemented |
 | Keyboard Shortcuts | ✅ | / focuses search |
-| Auth System | ⚠️ | Demo mode - needs real users |
-| Empty States | ❌ | Missing in dashboard |
-| Error Handling | ⚠️ | Basic - needs improvement |
-| Email Notifications | ❌ | Library exists, not wired |
-| Duplicate Prevention | ❌ | Not implemented |
-| Edge Cases | ⚠️ | Deleted products not handled |
+| Empty States | ✅ | Dashboard complete |
+| Email Notifications | ✅ | Wired to checkout/reservations/waitlist |
+| Auth System | ❌ | Demo mode - needs real users |
+| Error Handling | ❌ | Basic - needs improvement |
+| Form Protection | ❌ | Not implemented |
+| Edge Cases | ❌ | Deleted products/farms not handled |
+| Loading States | ⚠️ | Skeleton component exists, not widely used |
 
 ---
 
@@ -107,9 +102,12 @@
 ## Recent Git Activity
 
 ```
+57f25c1 Sprint: Improve dashboard empty states with better UX
+5850577 Ready for deployment
 d53f849 Update task and test documentation
-9e60c5f Sprint: Improve mobile touch targets (44px+)
+9e60c5f Sprint: Improve mobile touch targets (44px+) on cart quantity and reservation form buttons
 a25246b Sprint: Add keyboard shortcut (/) to focus search input
 79bc292 Update test report
 97d7a63 Sprint: Add global search + wire up email notifications
+27a939e Sprint: Update task list - mark completed items
 ```
